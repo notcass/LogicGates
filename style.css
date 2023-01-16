@@ -1,0 +1,14 @@
+body {
+  background-color: rgb(40,40,40);
+}
+
+#sketch-holder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 3%;
+}
+
+a {
+  color: blanchedalmond;
+}
