@@ -5,23 +5,19 @@
  *
  */
 
-let testG;
-
-let gates = [];
+let board;
 
 function setup() {
   createCanvas(800, 600).parent('sketch-holder');
-  testG = new Gate('not', 400, 300);
-  gates.push(testG);
+  board = new Board();
+  board.makeNewGate('not', 400, 300);
 }
 
 function draw() {
   background(100);
-  gates.forEach((g) => {
-    g.show();
-    g.addConnection(mouseX, mouseY);
-    g.drag(mouseX, mouseY);
-  });
+
+  board.handleGates();
+  // board.handleInputs();
 }
 
 function keyPressed() {
@@ -29,19 +25,14 @@ function keyPressed() {
   if (key === 'r') redraw();
 }
 
+function mousePressed() {
+  board.addConnection(mouseX, mouseY);
+}
+
 function mouseReleased() {
-  // Stop drawing inputs
-  // gates.forEach((g) => {
-  //   g.inputs.forEach((i) => {
-  //     i.drawing = false;
-  //   });
-  // });
+  board.stopDrawingInputs();
 }
 
 function areDrawingInputs(gates) {
   gates.every((g) => [g.inputs[0].drawing]);
-}
-
-function showBoard() {
-  // Inputs
 }

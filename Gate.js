@@ -7,17 +7,11 @@ class Gate {
     this.h = 70;
     this.cSize = 20;
     this.inputs = []; // [0] = upper, [1] = lower
+    this.inputs[0] = new Node(this, 'INPUT-UPPER', this.cSize);
+    this.inputs[1] = new Node(this, 'INPUT-LOWER', this.cSize);
 
     // List of Nodes
     this.outputs = []; // [0] = upper, [1] = lower
-    this.setupInputs();
-  }
-
-  setupInputs() {
-    let inputUpper = new Node(this, 'input', this.cSize);
-    console.log(inputUpper);
-
-    this.inputs[0] = inputUpper;
   }
 
   show() {
@@ -56,9 +50,8 @@ class Gate {
       let dLower = dist(mouseX, mouseY, this.x, this.y + this.h - this.cSize);
 
       // Clicked on upper
-      if (dUpper < this.cSize) {
+      if (dUpper < this.cSize / 2) {
         // set upper input to draw
-        console.log('hi');
         this.inputs[0].drawing = true;
       } else {
         //IF DRAWING, TRY TO CONNECT??
@@ -69,12 +62,15 @@ class Gate {
 
       // Clicked on lower
       if (dLower < this.cSize) {
+        this.inputs[1].drawing = true;
+      } else {
+        this.inputs[1].drawing = false;
       }
     }
   }
 
   drag(mouseX, mouseY) {
-    if (mouseIsPressed) {
+    if (mouseIsPressed && !this.inputs[0].drawing && !this.inputs[1].drawing) {
       if (mouseX > this.x && mouseX < this.x + this.w) {
         if (mouseY > this.y && mouseY < this.y + this.h) {
           this.x = mouseX - this.w / 2;

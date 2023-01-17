@@ -3,14 +3,26 @@ class Node {
     this.parent = parent;
     this.type = type; // Input, Output, Power, ?
     this.size = size;
-    this.x = parent.x;
-    this.y = parent.y + this.size;
+    // this.x = parent.x;
+    // this.y = parent.y + this.size;
+    this.x = 0;
+    this.y = 0;
     this.drawing = false;
   }
 
   show() {
-    this.x = this.parent.x;
-    this.y = this.parent.y + this.size;
+    switch (this.type) {
+      case 'INPUT-UPPER':
+        this.x = this.parent.x;
+        this.y = this.parent.y + this.size;
+        break;
+      case 'INPUT-LOWER':
+        this.x = this.parent.x;
+        this.y = this.parent.y + this.parent.h - this.size;
+        break;
+    }
+    // this.x = this.parent.x;
+    // this.y = this.parent.y + this.size;
 
     circle(this.x, this.y, this.size);
     if (this.drawing) {
