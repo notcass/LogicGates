@@ -25,8 +25,7 @@ class Board {
 
   stopDrawingInputs() {
     this.gates.forEach((g) => {
-      g.inputs[0].drawing = false;
-      g.inputs[1].drawing = false;
+      g.inputs.forEach((i) => (i.drawing = false));
     });
   }
 }

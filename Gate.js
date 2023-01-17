@@ -1,17 +1,40 @@
 class Gate {
-  constructor(label, x, y) {
-    this.label = label;
-    this.x = x;
-    this.y = y;
+  constructor(args) {
+    this.label = args.label;
+    this.x = args.x;
+    this.y = args.y;
     this.w = 100;
     this.h = 70;
     this.cSize = 20;
-    this.inputs = []; // [0] = upper, [1] = lower
-    this.inputs[0] = new Node(this, 'INPUT-UPPER', this.cSize);
-    this.inputs[1] = new Node(this, 'INPUT-LOWER', this.cSize);
 
-    // List of Nodes
-    this.outputs = []; // [0] = upper, [1] = lower
+    this.inputs = new Array(args.inputs);
+    this.outputs = [];
+    this.setupIO();
+    // console.table(this);
+  }
+
+  setupIO() {
+    // Inputs
+    const input_labels = ['INPUT_UPPER', 'INPUT_CENTER', 'INPUT_LOWER'];
+    const input_amount = this.inputs.length;
+
+    // Output
+    this.outputs.push(new Node(this, 'OUTPUT'));
+
+    switch (input_amount) {
+      case 1:
+        this.inputs[0] = new Node(this, input_labels[1]); // Center
+        break;
+      case 2:
+        this.inputs[0] = new Node(this, input_labels[0]); // Upper
+        this.inputs[1] = new Node(this, input_labels[2]); // Lower
+        break;
+      case 3:
+        this.inputs[0] = new Node(this, input_labels[0]); // Upper
+        this.inputs[0] = new Node(this, input_labels[1]); // Center
+        this.inputs[0] = new Node(this, input_labels[2]); // Lower
+        break;
+    }
   }
 
   show() {
@@ -28,49 +51,60 @@ class Gate {
     text(this.label, this.x + 30, this.y + 23);
 
     // Inputs
-    // circle(this.x, this.y + this.cSize, this.cSize);
-    // circle(this.x, this.y + this.h - this.cSize, this.cSize);
     this.inputs.forEach((i) => {
       i.show();
     });
 
     // Output
-    // circle(this.x + this.w, this.y + this.h / 2, this.cSize);
+    this.outputs[0].show();
   }
 
   addConnection(mouseX, mouseY) {
-    // Upper Node
-    // if clicked
-    // draw a line to mouse
-    // when mouse is released
-    // look through power sources and outputs to check for valid nodes to connect
-    // Lower Node
     if (mouseIsPressed) {
-      let dUpper = dist(mouseX, mouseY, this.x, this.y + this.cSize);
-      let dLower = dist(mouseX, mouseY, this.x, this.y + this.h - this.cSize);
-
-      // Clicked on upper
-      if (dUpper < this.cSize / 2) {
-        // set upper input to draw
-        this.inputs[0].drawing = true;
-      } else {
-        //IF DRAWING, TRY TO CONNECT??
-        if (this.inputs[0].drawing) {
+      this.inputs.forEach((i) => {
+        if (i.isClicked(mouseX, mouseY)) {
+          i.drawing = true;
         }
-        this.inputs[0].drawing = false;
-      }
-
-      // Clicked on lower
-      if (dLower < this.cSize) {
-        this.inputs[1].drawing = true;
-      } else {
-        this.inputs[1].drawing = false;
-      }
+      });
     }
   }
+  //TODO: Refactoring this below v to this above ^
+
+  // addConnection(mouseX, mouseY) {
+  //   if (mouseIsPressed) {
+  //     let dUpper = dist(mouseX, mouseY, this.x, this.y + this.cSize);
+  //     let dLower = dist(mouseX, mouseY, this.x, this.y + this.h - this.cSize);
+  //     let dOutput = dist(mouseX, mouseY, this.x + this.w, this.y + this.h / 2);
+
+  //     // Clicked on upper
+  //     if (dUpper < this.cSize / 2) {
+  //       // set upper input to draw
+  //       this.inputs[0].drawing = true;
+  //     } else {
+  //       //IF DRAWING, TRY TO CONNECT??
+  //       if (this.inputs[0].drawing) {
+  //       }
+  //       this.inputs[0].drawing = false;
+  //     }
+
+  //     // Clicked on lower
+  //     if (dLower < this.cSize / 2) {
+  //       this.inputs[1].drawing = true;
+  //     } else {
+  //       this.inputs[1].drawing = false;
+  //     }
+
+  //     // Clicked on Output
+  //     if (dOutput < this.cSize / 2) {
+  //       this.outputs[0].drawing = true;
+  //     } else {
+  //       this.outputs[0].drawing = false;
+  //     }
+  //   }
+  // }
 
   drag(mouseX, mouseY) {
-    if (mouseIsPressed && !this.inputs[0].drawing && !this.inputs[1].drawing) {
+    if (mouseIsPressed && !this.inputs[0].drawing) {
       if (mouseX > this.x && mouseX < this.x + this.w) {
         if (mouseY > this.y && mouseY < this.y + this.h) {
           this.x = mouseX - this.w / 2;

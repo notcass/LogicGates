@@ -6,11 +6,18 @@
  */
 
 let board;
+const notGate = {
+  label: 'not',
+  x: 400,
+  y: 300,
+  inputs: 2,
+  outputs: 1,
+};
 
 function setup() {
   createCanvas(800, 600).parent('sketch-holder');
   board = new Board();
-  board.makeNewGate('not', 400, 300);
+  board.makeNewGate(notGate);
 }
 
 function draw() {
