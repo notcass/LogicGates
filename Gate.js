@@ -1,11 +1,12 @@
 class Gate {
-  constructor(args) {
+  constructor(args, parent) {
     this.label = args.label;
     this.x = args.x;
     this.y = args.y;
     this.w = 100;
     this.h = 70;
     this.cSize = 20;
+    this.parent = parent;
 
     this.inputs = new Array(args.inputs);
     this.outputs = [];
@@ -16,12 +17,12 @@ class Gate {
   setupIO() {
     // Inputs
     const input_labels = ['INPUT_UPPER', 'INPUT_CENTER', 'INPUT_LOWER'];
-    const input_amount = this.inputs.length;
+    const input_count = this.inputs.length;
 
     // Output
     this.outputs.push(new Node(this, 'OUTPUT'));
 
-    switch (input_amount) {
+    switch (input_count) {
       case 1:
         this.inputs[0] = new Node(this, input_labels[1]); // Center
         break;
@@ -102,15 +103,4 @@ class Gate {
   //     }
   //   }
   // }
-
-  drag(mouseX, mouseY) {
-    if (mouseIsPressed && !this.inputs[0].drawing) {
-      if (mouseX > this.x && mouseX < this.x + this.w) {
-        if (mouseY > this.y && mouseY < this.y + this.h) {
-          this.x = mouseX - this.w / 2;
-          this.y = mouseY - this.h / 2;
-        }
-      }
-    }
-  }
 }

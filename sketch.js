@@ -10,6 +10,14 @@ const notGate = {
   label: 'not',
   x: 400,
   y: 300,
+  inputs: 1,
+  outputs: 1,
+};
+
+const andGate = {
+  label: 'and',
+  x: 100,
+  y: 100,
   inputs: 2,
   outputs: 1,
 };
@@ -17,7 +25,8 @@ const notGate = {
 function setup() {
   createCanvas(800, 600).parent('sketch-holder');
   board = new Board();
-  board.makeNewGate(notGate);
+  board.makeNewGate(notGate, board);
+  board.makeNewGate(andGate, board);
 }
 
 function draw() {
@@ -30,6 +39,7 @@ function draw() {
 function keyPressed() {
   if (key === 'q') isLooping() ? noLoop() : loop();
   if (key === 'r') redraw();
+  if (key === '1') console.log(board.isDrawingConnections());
 }
 
 function mousePressed() {
@@ -37,9 +47,5 @@ function mousePressed() {
 }
 
 function mouseReleased() {
-  board.stopDrawingInputs();
-}
-
-function areDrawingInputs(gates) {
-  gates.every((g) => [g.inputs[0].drawing]);
+  board.mouseUp();
 }
