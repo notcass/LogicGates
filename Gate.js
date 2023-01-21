@@ -11,7 +11,6 @@ class Gate {
     this.inputs = new Array(args.inputs);
     this.outputs = [];
     this.setupIO();
-    // console.table(this);
   }
 
   setupIO() {
@@ -60,47 +59,5 @@ class Gate {
     this.outputs[0].show();
   }
 
-  addConnection(mouseX, mouseY) {
-    if (mouseIsPressed) {
-      this.inputs.forEach((i) => {
-        if (i.isClicked(mouseX, mouseY)) {
-          i.drawing = true;
-        }
-      });
-    }
-  }
-  //TODO: Refactoring this below v to this above ^
-
-  // addConnection(mouseX, mouseY) {
-  //   if (mouseIsPressed) {
-  //     let dUpper = dist(mouseX, mouseY, this.x, this.y + this.cSize);
-  //     let dLower = dist(mouseX, mouseY, this.x, this.y + this.h - this.cSize);
-  //     let dOutput = dist(mouseX, mouseY, this.x + this.w, this.y + this.h / 2);
-
-  //     // Clicked on upper
-  //     if (dUpper < this.cSize / 2) {
-  //       // set upper input to draw
-  //       this.inputs[0].drawing = true;
-  //     } else {
-  //       //IF DRAWING, TRY TO CONNECT??
-  //       if (this.inputs[0].drawing) {
-  //       }
-  //       this.inputs[0].drawing = false;
-  //     }
-
-  //     // Clicked on lower
-  //     if (dLower < this.cSize / 2) {
-  //       this.inputs[1].drawing = true;
-  //     } else {
-  //       this.inputs[1].drawing = false;
-  //     }
-
-  //     // Clicked on Output
-  //     if (dOutput < this.cSize / 2) {
-  //       this.outputs[0].drawing = true;
-  //     } else {
-  //       this.outputs[0].drawing = false;
-  //     }
-  //   }
-  // }
+  addConnection(mouseX, mouseY) {}
 }

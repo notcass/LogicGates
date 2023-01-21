@@ -1,21 +1,24 @@
-/**
- *  TODO:
- *    -Add side panels to hold power sources, buttons, etc
- *    -"Create Gate from board state" feature
- */
 class Board {
   constructor(w, h) {
     this.w = w;
     this.h = h;
     this.powerSources = 2;
     this.outputs = 1;
-    this.gates = [];
-    this.draggingGate = null;
+    this.gates = []; // All gates on the board
+    this.draggingGate = null; // Boolean
+    this.sourceNode = null; // Node we are drawing from
+    this.allNodes = []; // All nodes on all gates in one array
   }
 
   makeNewGate(label, x, y) {
     let newGate = new Gate(label, x, y);
     this.gates.push(newGate);
+
+    // Keep track of all input/output nodes on the board
+    this.allNodes = [];
+    this.gates.forEach((g) => {
+      this.allNodes.push(...g.inputs, ...g.outputs);
+    });
   }
 
   handleGates() {
@@ -38,11 +41,19 @@ class Board {
         }
       } else {
         let gate = this.gates[this.draggingGate];
+
         gate.x = mouseX - gate.w / 2;
         gate.y = mouseY - gate.h / 2;
+        gate.x = constrain(gate.x, 0, width - gate.w);
+        gate.y = constrain(gate.y, 0, height - gate.h);
+
         gate.show(); // Ensure gate that is being moved is always drawn last (on top)
       }
     }
+  }
+
+  handlePower() {
+    // Draw
   }
 
   addConnection(mouseX, mouseY) {
@@ -52,13 +63,12 @@ class Board {
   }
 
   mouseUp() {
-    console.log('mouseUp()');
     // Stop moving gates
     this.draggingGate = null;
-
     // Stop drawing inputs
     this.gates.forEach((g) => {
       g.inputs.forEach((i) => (i.drawing = false));
+      g.outputs.forEach((o) => (o.drawing = false));
     });
   }
 
@@ -68,6 +78,9 @@ class Board {
     this.gates.forEach((gate) => {
       gate.inputs.forEach((input) => {
         if (input.drawing) a = true;
+      });
+      gate.outputs.forEach((output) => {
+        if (output.drawing) a = true;
       });
     });
     return a;
