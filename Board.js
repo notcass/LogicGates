@@ -68,14 +68,35 @@ class Board {
     for (const node of this.allNodes) {
       // If we click on a node
       if (node.isClicked(mouseX, mouseY)) {
+        // console.log(node);
+
         // Clear any lines to or from node
-        if (node.partner != null) {
-          node.partner = null;
-        }
+        this.removeLines(node);
+        // if (node.partner != null) {
+        // node.partner.partner = null;
+        // node.partner = null;
+        // }
+
         // Start drawing it
         node.drawing = true;
         this.sourceNode = node;
+        // console.log(node);
+
         break;
+      }
+    }
+  }
+
+  removeLines(toNode) {
+    console.log(toNode);
+
+    for (const n of this.allNodes) {
+      if (n != toNode) {
+        if (n.partner == toNode) {
+          n.partner = null;
+          toNode.partner = null;
+          break;
+        }
       }
     }
   }
@@ -106,6 +127,7 @@ class Board {
         let diffType = targetNode.type != this.sourceNode.type;
 
         if (diffParent && diffType) {
+          this.removeLines(targetNode);
           // Then attach nodes together
           this.sourceNode.partner = targetNode;
           targetNode.partner = this.sourceNode;
