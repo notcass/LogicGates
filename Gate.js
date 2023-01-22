@@ -19,20 +19,20 @@ class Gate {
     const input_count = this.inputs.length;
 
     // Output
-    this.outputs.push(new Node(this, 'OUTPUT'));
+    this.outputs.push(new Node(this, 'output', 'OUTPUT'));
 
     switch (input_count) {
       case 1:
-        this.inputs[0] = new Node(this, input_labels[1]); // Center
+        this.inputs[0] = new Node(this, 'input', input_labels[1]); // Center
         break;
       case 2:
-        this.inputs[0] = new Node(this, input_labels[0]); // Upper
-        this.inputs[1] = new Node(this, input_labels[2]); // Lower
+        this.inputs[0] = new Node(this, 'input', input_labels[0]); // Upper
+        this.inputs[1] = new Node(this, 'input', input_labels[2]); // Lower
         break;
       case 3:
-        this.inputs[0] = new Node(this, input_labels[0]); // Upper
-        this.inputs[0] = new Node(this, input_labels[1]); // Center
-        this.inputs[0] = new Node(this, input_labels[2]); // Lower
+        this.inputs[0] = new Node(this, 'input', input_labels[0]); // Upper
+        this.inputs[0] = new Node(this, 'input', input_labels[1]); // Center
+        this.inputs[0] = new Node(this, 'input', input_labels[2]); // Lower
         break;
     }
   }
@@ -58,6 +58,4 @@ class Gate {
     // Output
     this.outputs[0].show();
   }
-
-  addConnection(mouseX, mouseY) {}
 }

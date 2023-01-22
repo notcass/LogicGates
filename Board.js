@@ -7,6 +7,7 @@ class Board {
     this.gates = []; // All gates on the board
     this.draggingGate = null; // Boolean
     this.sourceNode = null; // Node we are drawing from
+    this.tempNode = null; // Temp var holder
     this.allNodes = []; // All nodes on all gates in one array
   }
 
@@ -56,10 +57,27 @@ class Board {
     // Draw
   }
 
-  addConnection(mouseX, mouseY) {
+  addConnection(x, y) {
     this.gates.forEach((g) => {
-      g.addConnection(mouseX, mouseY);
+      g.addConnection(x, y);
     });
+  }
+
+  // TODO: START HERE
+  mousePressed() {
+    for (const node of this.allNodes) {
+      // If we click on a node
+      if (node.isClicked(mouseX, mouseY)) {
+        // Clear any lines to or from node
+        if (node.partner != null) {
+          node.partner = null;
+        }
+        // Start drawing it
+        node.drawing = true;
+        this.sourceNode = node;
+        break;
+      }
+    }
   }
 
   mouseUp() {
@@ -70,6 +88,30 @@ class Board {
       g.inputs.forEach((i) => (i.drawing = false));
       g.outputs.forEach((o) => (o.drawing = false));
     });
+
+    // If we're drawing a line
+    if (this.sourceNode) {
+      // and our mouse is over a node
+      let targetNode;
+      for (const n of this.allNodes) {
+        if (n.isClicked(mouseX, mouseY)) {
+          targetNode = n;
+          break;
+        }
+      }
+
+      // If target node isn't null, isn't on the same gate, and isn't same type
+      if (targetNode != null) {
+        let diffParent = targetNode.parent != this.sourceNode.parent;
+        let diffType = targetNode.type != this.sourceNode.type;
+
+        if (diffParent && diffType) {
+          // Then attach nodes together
+          this.sourceNode.partner = targetNode;
+          targetNode.partner = this.sourceNode;
+        }
+      }
+    }
   }
 
   // Check all inputs and outputs on all gates to see if drawing any connections

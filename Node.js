@@ -1,18 +1,19 @@
 class Node {
-  constructor(parent, type) {
+  constructor(parent, type, subtype) {
     this.parent = parent;
-    this.type = type; // INPUT_UPPER,INPUT_CENTER INPUT_LOWER, OUTPUT, POWER, ?
+    this.type = type; // output, input
+    this.subType = subtype; // INPUT_UPPER,INPUT_CENTER INPUT_LOWER, OUTPUT, POWER, ?
     this.size = parent.cSize;
     this.x = 0;
     this.y = 0;
     this.drawing = false;
     this.prev; // Previous Node
     this.next; // Next Node
-    this.connected = null;
+    this.partner = null;
   }
 
   show() {
-    switch (this.type) {
+    switch (this.subType) {
       case 'INPUT_UPPER':
         this.x = this.parent.x;
         this.y = this.parent.y + this.size;
@@ -41,10 +42,10 @@ class Node {
       line(this.x, this.y, mouseX, mouseY);
     }
 
-    if (this.connected != null) {
+    if (this.partner != null) {
       stroke(255, 100, 0);
       strokeWeight(2);
-      line(this.x, this.y, this.connected.x, this.connected.y);
+      line(this.x, this.y, this.partner.x, this.partner.y);
     }
   }
 

@@ -72,7 +72,7 @@ function keyPressed() {
 }
 
 function mousePressed() {
-  board.addConnection(mouseX, mouseY);
+  board.mousePressed();
 }
 
 function mouseReleased() {
