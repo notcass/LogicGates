@@ -4,7 +4,8 @@ class Board {
     this.y = h / 13;
     this.w = w - this.x * 2;
     this.h = h - this.y * 2;
-    this.powerSources = 2;
+    this.powerSources = 4;
+    this.power = [];
     this.outputs = 1;
     this.gates = []; // All gates on the board
     this.draggingGate = null; // Boolean
@@ -13,15 +14,28 @@ class Board {
     this.allNodes = []; // All nodes on all gates in one array
   }
 
+  setupPower() {
+    // Power sources
+    let divider = height / (this.powerSources + 1);
+
+    for (let i = 0; i < this.powerSources; i++) {
+      let x = this.x;
+      let y = divider + i * divider;
+      this.power.push(new Node(this, 'power', 'power', x, y));
+    }
+  }
+
   runApp() {
     // Show borders
-
     strokeWeight(2);
     stroke(155);
     fill(40);
     rect(this.x, this.y, this.w, this.h);
 
+    // Gates
     this.handleGates();
+    //Power
+    this.handlePower();
   }
 
   makeNewGate(label, x, y) {
@@ -29,7 +43,7 @@ class Board {
     this.gates.push(newGate);
 
     // Keep track of all input/output nodes on the board
-    this.allNodes = [];
+    this.allNodes = [...this.power];
     this.gates.forEach((g) => {
       this.allNodes.push(...g.inputs, ...g.outputs);
     });
@@ -67,7 +81,12 @@ class Board {
   }
 
   handlePower() {
+    // console.log(this.power[0].x, this.power[0].y);
+
     // Draw
+    this.power.forEach((p) => {
+      p.show();
+    });
   }
 
   addConnection(x, y) {

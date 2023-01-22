@@ -19,11 +19,11 @@
  *    -Combine gate inputs, gate outputs, board power into one data structure.
  *    Currently, we loop through gates.inputs and gates.outputs any
  *    time we need to handle power connections.
+ *    -Learn "Extends" keyword? make PowerNode class that extends node?
  *
  */
 
 let board;
-let allNodesTest = [];
 const notGate = {
   label: 'not',
   x: 400,
@@ -46,8 +46,8 @@ function setup() {
   board = new Board(width, height);
   board.makeNewGate(notGate, board);
   board.makeNewGate(andGate, board);
+  board.setupPower();
   // board.makeNewGate(andGate, board);
-  console.log(board);
 }
 
 function draw() {
