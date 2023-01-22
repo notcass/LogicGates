@@ -4,9 +4,13 @@
  *    FEATURES:
  *      -Draw border of board
  *      -Add power sources and output to board border area
- *      -Drop connection onto node
  *      -Add side panels to hold power sources, buttons, etc
- *      -"Create Gate from board state" feature
+ *      -Add Buttons "Create", "AND", "NOT"
+ *          -Create: Creates a gate from the board state
+ *          -AND:    Spawns an AND gate
+ *          -NOT:    Spawns a NOT gate
+ *      -Add text input area to name new gates
+ *
  *
  *  FIXME:
  *
@@ -37,18 +41,19 @@ const andGate = {
 };
 
 function setup() {
+  // createCanvas(1366, 768).parent('sketch-holder');
   createCanvas(800, 600).parent('sketch-holder');
-  board = new Board();
+  board = new Board(width, height);
   board.makeNewGate(notGate, board);
   board.makeNewGate(andGate, board);
   // board.makeNewGate(andGate, board);
+  console.log(board);
 }
 
 function draw() {
   background(100);
 
-  board.handleGates();
-  // board.handleInputs();
+  board.runApp();
 }
 
 function keyPressed() {

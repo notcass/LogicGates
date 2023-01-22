@@ -1,7 +1,9 @@
 class Board {
   constructor(w, h) {
-    this.w = w;
-    this.h = h;
+    this.x = w / 25;
+    this.y = h / 13;
+    this.w = w - this.x * 2;
+    this.h = h - this.y * 2;
     this.powerSources = 2;
     this.outputs = 1;
     this.gates = []; // All gates on the board
@@ -9,6 +11,17 @@ class Board {
     this.sourceNode = null; // Node we are drawing from
     this.tempNode = null; // Temp var holder
     this.allNodes = []; // All nodes on all gates in one array
+  }
+
+  runApp() {
+    // Show borders
+
+    strokeWeight(2);
+    stroke(155);
+    fill(40);
+    rect(this.x, this.y, this.w, this.h);
+
+    this.handleGates();
   }
 
   makeNewGate(label, x, y) {
@@ -45,8 +58,8 @@ class Board {
 
         gate.x = mouseX - gate.w / 2;
         gate.y = mouseY - gate.h / 2;
-        gate.x = constrain(gate.x, 0, width - gate.w);
-        gate.y = constrain(gate.y, 0, height - gate.h);
+        gate.x = constrain(gate.x, this.x, this.w + this.x - gate.w);
+        gate.y = constrain(gate.y, this.y, this.h + this.y - gate.h);
 
         gate.show(); // Ensure gate that is being moved is always drawn last (on top)
       }
@@ -63,24 +76,16 @@ class Board {
     });
   }
 
-  // TODO: START HERE
   mousePressed() {
     for (const node of this.allNodes) {
       // If we click on a node
       if (node.isClicked(mouseX, mouseY)) {
-        // console.log(node);
-
         // Clear any lines to or from node
         this.removeLines(node);
-        // if (node.partner != null) {
-        // node.partner.partner = null;
-        // node.partner = null;
-        // }
 
         // Start drawing it
         node.drawing = true;
         this.sourceNode = node;
-        // console.log(node);
 
         break;
       }
@@ -88,8 +93,6 @@ class Board {
   }
 
   removeLines(toNode) {
-    console.log(toNode);
-
     for (const n of this.allNodes) {
       if (n != toNode) {
         if (n.partner == toNode) {
@@ -127,7 +130,9 @@ class Board {
         let diffType = targetNode.type != this.sourceNode.type;
 
         if (diffParent && diffType) {
+          // Remove any other lines
           this.removeLines(targetNode);
+
           // Then attach nodes together
           this.sourceNode.partner = targetNode;
           targetNode.partner = this.sourceNode;
@@ -139,14 +144,12 @@ class Board {
   // Check all inputs and outputs on all gates to see if drawing any connections
   isDrawingConnections() {
     let a = false;
-    this.gates.forEach((gate) => {
-      gate.inputs.forEach((input) => {
-        if (input.drawing) a = true;
-      });
-      gate.outputs.forEach((output) => {
-        if (output.drawing) a = true;
-      });
-    });
+    for (const n of this.allNodes) {
+      if (n.drawing) {
+        a = true;
+        break;
+      }
+    }
     return a;
   }
 }
