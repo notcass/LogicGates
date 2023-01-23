@@ -12,6 +12,7 @@ class Board {
     this.sourceNode = null; // Node we are drawing from
     this.tempNode = null; // Temp var holder
     this.allNodes = []; // All nodes on all gates in one array
+    this.setupPower();
   }
 
   setupPower() {
@@ -23,6 +24,7 @@ class Board {
       let y = divider + i * divider;
       this.power.push(new PowerNode(this, 'POWER', 'POWER', x, y));
     }
+    this.allNodes.push(...this.power);
   }
 
   runApp() {
@@ -41,12 +43,7 @@ class Board {
   makeNewGate(label, x, y) {
     let newGate = new Gate(label, x, y);
     this.gates.push(newGate);
-
-    // Keep track of all input/output nodes on the board
-    this.allNodes = [...this.power];
-    this.gates.forEach((g) => {
-      this.allNodes.push(...g.inputs, ...g.outputs);
-    });
+    this.allNodes.push(...newGate.inputs, ...newGate.outputs);
   }
 
   handleGates() {
@@ -81,22 +78,16 @@ class Board {
   }
 
   handlePower() {
-    // console.log(this.power[0].x, this.power[0].y);
-
     // Draw
     this.power.forEach((p) => {
       p.show();
     });
   }
 
-  addConnection(x, y) {
-    this.gates.forEach((g) => {
-      g.addConnection(x, y);
-    });
-  }
-
   mousePressed() {
     for (const node of this.allNodes) {
+      // console.log(node);
+
       // If we click on a node
       if (node.isClicked(mouseX, mouseY)) {
         // Clear any lines to or from node
@@ -105,6 +96,7 @@ class Board {
         // Start drawing it
         node.drawing = true;
         this.sourceNode = node;
+        // console.log(node);
 
         break;
       }
@@ -131,6 +123,8 @@ class Board {
       g.inputs.forEach((i) => (i.drawing = false));
       g.outputs.forEach((o) => (o.drawing = false));
     });
+    //Stop drawing power
+    this.power.forEach((p) => (p.drawing = false));
 
     // If we're drawing a line
     if (this.sourceNode) {

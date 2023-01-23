@@ -48,7 +48,6 @@ function setup() {
   board = new Board(width, height);
   board.makeNewGate(notGate, board);
   board.makeNewGate(andGate, board);
-  board.setupPower();
   // board.makeNewGate(andGate, board);
 }
 
@@ -64,14 +63,11 @@ function keyPressed() {
   if (key === '1') console.log(mouseX, mouseY);
   if (key === '2') {
     board.gates.forEach((gate) => {
-      // console.log(`===========Gate===========`);
-      // console.log(gate);
-      // console.log(`Inputs`);
-      // console.log(gate.inputs);
-      // console.log(`Outputs`);
-      // console.log(gate.outputs);
-      gate.inputs.forEach((i) => console.log(i));
-      gate.outputs.forEach((o) => console.log(o));
+      // gate.inputs.forEach((i) => console.log(i));
+      // gate.outputs.forEach((o) => console.log(o));
+    });
+    board.power.forEach((p) => {
+      console.log(p);
     });
   }
 
