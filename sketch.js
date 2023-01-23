@@ -20,6 +20,8 @@
  *    Currently, we loop through gates.inputs and gates.outputs any
  *    time we need to handle power connections.
  *    -Learn "Extends" keyword? make PowerNode class that extends node?
+ *    -Make separate logicNode that extends Node?
+ *    -Make separate input/output nodes that extend node?
  *
  */
 
