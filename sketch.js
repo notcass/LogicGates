@@ -2,7 +2,7 @@
 /**
  *  TODO:
  *    FEATURES:
-       -Add power sources and output to board border area
+ *      -Add power sources and output to board border area
  *      -Add side panels to hold power sources, buttons, etc
  *      -Add Buttons "Create", "AND", "NOT"
  *          -Create: Creates a gate from the board state
@@ -28,16 +28,16 @@
 let board;
 const notGate = {
   label: 'not',
-  x: 400,
-  y: 300,
+  x: 200,
+  y: 270,
   inputs: 1,
   outputs: 1,
 };
 
 const andGate = {
   label: 'and',
-  x: 600,
-  y: 300,
+  x: 500,
+  y: 270,
   inputs: 2,
   outputs: 1,
 };

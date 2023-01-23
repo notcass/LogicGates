@@ -4,27 +4,36 @@ class Board {
     this.y = _h / 13;
     this.w = _w - this.x * 2;
     this.h = _h - this.y * 2;
-    this.powerSources = 2;
-    this.power = [];
-    this.outputs = 1;
+    this.powerNodeCount = 2;
+    this.powerNodes = [];
+    this.outputNodeCount = 1;
+    this.outputNodes = [];
     this.gates = []; // All gates on the board
     this.draggingGate = null; // Boolean
     this.sourceNode = null; // Node we are drawing from
     this.tempNode = null; // Temp var holder
     this.allNodes = []; // All nodes on all gates in one array
-    this.setupPower();
+    this.setupIO();
   }
 
-  setupPower() {
-    // Power sources
-    let divider = height / (this.powerSources + 1);
-
-    for (let i = 0; i < this.powerSources; i++) {
+  setupIO() {
+    // Power Nodes
+    let divider = height / (this.powerNodeCount + 1);
+    for (let i = 0; i < this.powerNodeCount; i++) {
       let x = this.x;
       let y = divider + i * divider;
-      this.power.push(new PowerNode(this, 'output', 'POWER', x, y));
+      this.powerNodes.push(new PowerNode(this, 'OUTPUT', 'POWER', x, y));
     }
-    this.allNodes.push(...this.power);
+
+    // Output Nodes
+    divider = height / (this.outputNodeCount + 1);
+    for (let i = 0; i < this.outputNodeCount; i++) {
+      let x = this.x + this.w;
+      let y = divider + i * divider;
+      this.outputNodes.push(new OutputNode(this, 'INPUT', 'POWER_OUT', x, y));
+    }
+
+    this.allNodes.push(...this.powerNodes, ...this.outputNodes);
   }
 
   runApp() {
@@ -37,7 +46,7 @@ class Board {
     // Gates
     this.handleGates();
     //Power
-    this.handlePower();
+    this.handleIO();
   }
 
   makeNewGate(label, x, y) {
@@ -77,11 +86,11 @@ class Board {
     }
   }
 
-  handlePower() {
-    // Draw
-    this.power.forEach((p) => {
-      p.show();
-    });
+  handleIO() {
+    // Draw power
+    this.powerNodes.forEach((p) => p.show());
+    // Draw board output
+    this.outputNodes.forEach((o) => o.show());
   }
 
   mousePressed() {
@@ -116,13 +125,14 @@ class Board {
   mouseUp() {
     // Stop moving gates
     this.draggingGate = null;
-    // Stop drawing inputs
+    // Stop drawing gate IO
     this.gates.forEach((g) => {
       g.inputs.forEach((i) => (i.drawing = false));
       g.outputs.forEach((o) => (o.drawing = false));
     });
-    //Stop drawing power
-    this.power.forEach((p) => (p.drawing = false));
+    //Stop drawing board IO
+    this.powerNodes.forEach((p) => (p.drawing = false));
+    this.outputNodes.forEach((o) => (o.drawing = false));
 
     // If we're drawing a line
     if (this.sourceNode) {

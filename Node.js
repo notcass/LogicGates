@@ -53,3 +53,14 @@ class Node {
     return d < this.size / 2;
   }
 }
+class PowerNode extends Node {
+  constructor(_parent, _type, _subtype, _x, _y) {
+    super(_parent, _type, _subtype, _x, _y);
+  }
+}
+
+class OutputNode extends Node {
+  constructor(_parent, _type, _subtype, _x, _y) {
+    super(_parent, _type, _subtype, _x, _y);
+  }
+}

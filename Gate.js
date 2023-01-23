@@ -10,29 +10,28 @@ class Gate {
 
     this.inputs = new Array(_args.inputs);
     this.outputs = [];
-    this.setupIO();
+    this.setupGateIO();
   }
 
-  setupIO() {
+  setupGateIO() {
     // Inputs
-    const input_labels = ['INPUT_UPPER', 'INPUT_CENTER', 'INPUT_LOWER'];
     const input_count = this.inputs.length;
 
     // Output
-    this.outputs.push(new Node(this, 'output', 'OUTPUT'));
+    this.outputs.push(new Node(this, 'OUTPUT', 'OUTPUT'));
 
     switch (input_count) {
       case 1:
-        this.inputs[0] = new Node(this, 'input', input_labels[1]); // Center
+        this.inputs[0] = new Node(this, 'INPUT', 'INPUT_CENTER'); // Center
         break;
       case 2:
-        this.inputs[0] = new Node(this, 'input', input_labels[0]); // Upper
-        this.inputs[1] = new Node(this, 'input', input_labels[2]); // Lower
+        this.inputs[0] = new Node(this, 'INPUT', 'INPUT_UPPER'); // Upper
+        this.inputs[1] = new Node(this, 'INPUT', 'INPUT_LOWER'); // Lower
         break;
       case 3:
-        this.inputs[0] = new Node(this, 'input', input_labels[0]); // Upper
-        this.inputs[0] = new Node(this, 'input', input_labels[1]); // Center
-        this.inputs[0] = new Node(this, 'input', input_labels[2]); // Lower
+        this.inputs[0] = new Node(this, 'INPUT', 'INPUT_UPPER'); // Upper
+        this.inputs[0] = new Node(this, 'INPUT', 'INPUT_CENTER'); // Center
+        this.inputs[0] = new Node(this, 'INPUT', 'INPUT_LOWER'); // Lower
         break;
     }
   }
