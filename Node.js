@@ -3,13 +3,16 @@ class Node {
     this.parent = _parent;
     this.type = _type; // output, input
     this.subType = _subtype; // INPUT_UPPER,INPUT_CENTER INPUT_LOWER, OUTPUT, POWER, ?
-    this.size = _parent.cSize ?? 30;
+    this.size = _parent.cSize ?? 40;
     this.x = _x ?? 0;
     this.y = _y ?? 0;
     this.drawing = false;
     this.prev; // Previous Node
     this.next; // Next Node
     this.partner = null;
+    this.poweredOn = false;
+    this.onColor = color(255, 50, 0);
+    this.offColor = color(255);
   }
 
   show() {
@@ -32,20 +35,26 @@ class Node {
         break;
     }
 
-    stroke(255);
-    fill(255);
+    this.setColors();
+    noStroke();
     circle(this.x, this.y, this.size);
+
     if (this.drawing) {
-      stroke(255);
+      this.setColors();
       strokeWeight(2);
       line(this.x, this.y, mouseX, mouseY);
     }
 
     if (this.partner != null) {
-      stroke(255, 100, 0);
+      this.setColors();
       strokeWeight(2);
       line(this.x, this.y, this.partner.x, this.partner.y);
     }
+  }
+
+  setColors() {
+    this.poweredOn ? stroke(this.onColor) : stroke(this.offColor);
+    this.poweredOn ? fill(this.onColor) : fill(this.offColor);
   }
 
   isClicked(mouseX, mouseY) {
@@ -57,10 +66,15 @@ class PowerNode extends Node {
   constructor(_parent, _type, _subtype, _x, _y) {
     super(_parent, _type, _subtype, _x, _y);
   }
+
+  switchState() {
+    this.poweredOn = !this.poweredOn;
+  }
 }
 
 class OutputNode extends Node {
   constructor(_parent, _type, _subtype, _x, _y) {
     super(_parent, _type, _subtype, _x, _y);
   }
+  calculateState() {}
 }

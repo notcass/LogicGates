@@ -6,6 +6,7 @@ class Board {
     this.h = _h - this.y * 2;
     this.powerNodeCount = 2;
     this.powerNodes = [];
+    this.powerButtons = [];
     this.outputNodeCount = 1;
     this.outputNodes = [];
     this.gates = []; // All gates on the board
@@ -20,9 +21,34 @@ class Board {
     // Power Nodes
     let divider = height / (this.powerNodeCount + 1);
     for (let i = 0; i < this.powerNodeCount; i++) {
-      let x = this.x;
+      let x = this.x + 30;
       let y = divider + i * divider;
       this.powerNodes.push(new PowerNode(this, 'OUTPUT', 'POWER', x, y));
+
+      // Power Button
+      let button = {
+        x: x - 50,
+        y: y,
+        attachedNode: this.powerNodes[i],
+        radius: 13,
+        show: function () {
+          fill(255);
+          stroke(255);
+          strokeWeight(2);
+          line(this.x, this.y, this.x + 40, this.y);
+          noStroke();
+          circle(this.x, this.y, this.radius * 2);
+        },
+        clicked: function (x, y) {
+          let d = dist(x, y, this.x, this.y);
+          if (d < this.radius) {
+            // POWER ON NODE
+            console.log(`Clicked ${i} `);
+            this.attachedNode.poweredOn = !this.attachedNode.poweredOn;
+          }
+        },
+      };
+      this.powerButtons.push(button);
     }
 
     // Output Nodes
@@ -87,6 +113,8 @@ class Board {
   }
 
   handleIO() {
+    // Draw power buttons
+    this.powerButtons.forEach((pb) => pb.show());
     // Draw power
     this.powerNodes.forEach((p) => p.show());
     // Draw board output
@@ -94,6 +122,7 @@ class Board {
   }
 
   mousePressed() {
+    // All Nodes
     for (const node of this.allNodes) {
       // If we click on a node
       if (node.isClicked(mouseX, mouseY)) {
@@ -106,6 +135,10 @@ class Board {
         this.sourceNode = node;
         break;
       }
+    }
+    // Power Buttons
+    for (const p of this.powerButtons) {
+      p.clicked(mouseX, mouseY);
     }
   }
 

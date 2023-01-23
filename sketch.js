@@ -43,12 +43,11 @@ const andGate = {
 };
 
 function setup() {
-  // createCanvas(1366, 768).parent('sketch-holder');
-  createCanvas(800, 600).parent('sketch-holder');
+  createCanvas(1366, 768).parent('sketch-holder');
+  // createCanvas(800, 600).parent('sketch-holder');
   board = new Board(width, height);
   board.makeNewGate(notGate, board);
   board.makeNewGate(andGate, board);
-  // board.makeNewGate(andGate, board);
 }
 
 function draw() {
