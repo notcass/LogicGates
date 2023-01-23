@@ -31,8 +31,6 @@ class Node {
         this.y = this.parent.y + this.parent.h / 2;
         break;
     }
-    // this.x = this.parent.x;
-    // this.y = this.parent.y + this.size;
 
     stroke(255);
     fill(255);

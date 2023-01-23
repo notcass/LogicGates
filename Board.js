@@ -22,7 +22,7 @@ class Board {
     for (let i = 0; i < this.powerSources; i++) {
       let x = this.x;
       let y = divider + i * divider;
-      this.power.push(new PowerNode(this, 'POWER', 'POWER', x, y));
+      this.power.push(new PowerNode(this, 'output', 'POWER', x, y));
     }
     this.allNodes.push(...this.power);
   }
@@ -86,23 +86,21 @@ class Board {
 
   mousePressed() {
     for (const node of this.allNodes) {
-      // console.log(node);
-
       // If we click on a node
       if (node.isClicked(mouseX, mouseY)) {
-        // Clear any lines to or from node
-        this.removeLines(node);
-
+        // Clear any other lines to or from node
+        if (node.type != 'POWER') {
+          this.removeLines(node);
+        }
         // Start drawing it
         node.drawing = true;
         this.sourceNode = node;
-        // console.log(node);
-
         break;
       }
     }
   }
 
+  // Clear any lines between node and partner
   removeLines(toNode) {
     for (const n of this.allNodes) {
       if (n != toNode) {

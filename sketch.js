@@ -2,8 +2,7 @@
 /**
  *  TODO:
  *    FEATURES:
- *      -Draw border of board
- *      -Add power sources and output to board border area
+       -Add power sources and output to board border area
  *      -Add side panels to hold power sources, buttons, etc
  *      -Add Buttons "Create", "AND", "NOT"
  *          -Create: Creates a gate from the board state
@@ -13,6 +12,7 @@
  *
  *
  *  FIXME:
+ *    -Stop erasing lines when clicking on a node, since we need to click on power to turn it on
  *
  *
  *  CLEAN:
@@ -62,13 +62,7 @@ function keyPressed() {
   if (key === 'r') redraw();
   if (key === '1') console.log(mouseX, mouseY);
   if (key === '2') {
-    board.gates.forEach((gate) => {
-      // gate.inputs.forEach((i) => console.log(i));
-      // gate.outputs.forEach((o) => console.log(o));
-    });
-    board.power.forEach((p) => {
-      console.log(p);
-    });
+    console.log(board.allNodes);
   }
 
   if (key === 'a') console.log(frameRate());
