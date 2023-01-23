@@ -1,11 +1,11 @@
 class Node {
-  constructor(parent, type, subtype, x, y) {
-    this.parent = parent;
-    this.type = type; // output, input
-    this.subType = subtype; // INPUT_UPPER,INPUT_CENTER INPUT_LOWER, OUTPUT, POWER, ?
-    this.size = parent.cSize ?? 30;
-    this.x = x ?? 0;
-    this.y = y ?? 0;
+  constructor(_parent, _type, _subtype, _x, _y) {
+    this.parent = _parent;
+    this.type = _type; // output, input
+    this.subType = _subtype; // INPUT_UPPER,INPUT_CENTER INPUT_LOWER, OUTPUT, POWER, ?
+    this.size = _parent.cSize ?? 30;
+    this.x = _x ?? 0;
+    this.y = _y ?? 0;
     this.drawing = false;
     this.prev; // Previous Node
     this.next; // Next Node

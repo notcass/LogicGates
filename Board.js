@@ -1,9 +1,9 @@
 class Board {
-  constructor(w, h) {
-    this.x = w / 25;
-    this.y = h / 13;
-    this.w = w - this.x * 2;
-    this.h = h - this.y * 2;
+  constructor(_w, _h) {
+    this.x = _w / 25;
+    this.y = _h / 13;
+    this.w = _w - this.x * 2;
+    this.h = _h - this.y * 2;
     this.powerSources = 4;
     this.power = [];
     this.outputs = 1;
@@ -21,7 +21,7 @@ class Board {
     for (let i = 0; i < this.powerSources; i++) {
       let x = this.x;
       let y = divider + i * divider;
-      this.power.push(new Node(this, 'power', 'power', x, y));
+      this.power.push(new PowerNode(this, 'power', 'power', x, y));
     }
   }
 

@@ -1,14 +1,14 @@
 class Gate {
-  constructor(args, parent) {
-    this.label = args.label;
-    this.x = args.x;
-    this.y = args.y;
+  constructor(_args, _parent) {
+    this.label = _args.label;
+    this.x = _args.x;
+    this.y = _args.y;
     this.w = 100;
     this.h = 70;
     this.cSize = 20;
-    this.parent = parent;
+    this.parent = _parent;
 
-    this.inputs = new Array(args.inputs);
+    this.inputs = new Array(_args.inputs);
     this.outputs = [];
     this.setupIO();
   }
