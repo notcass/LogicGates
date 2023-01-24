@@ -44,7 +44,7 @@ class Board {
           if (d < this.radius) {
             // POWER ON NODE
             console.log(`Clicked ${i} `);
-            this.attachedNode.poweredOn = !this.attachedNode.poweredOn;
+            this.attachedNode.switchState();
           }
         },
       };
@@ -119,18 +119,24 @@ class Board {
     this.powerNodes.forEach((p) => p.show());
     // Draw board output
     this.outputNodes.forEach((o) => o.show());
+
+    // Draw powerConnections
+    this.powerNodes.forEach((pn) => {
+      // console.log(pb);
+      if (pn.next && pn.poweredOn) {
+        pn.next.switchState();
+      }
+    });
   }
 
-  mousePressed() {
+  mouseDown() {
     // All Nodes
     for (const node of this.allNodes) {
       // If we click on a node
       if (node.isClicked(mouseX, mouseY)) {
         // Clear any other lines to or from node
-        if (node.type != 'POWER') {
-          this.removeLines(node);
-        }
-        // Start drawing it
+        this.removeLines(node);
+        // Set drawing flag
         node.drawing = true;
         this.sourceNode = node;
         break;
@@ -139,19 +145,6 @@ class Board {
     // Power Buttons
     for (const p of this.powerButtons) {
       p.clicked(mouseX, mouseY);
-    }
-  }
-
-  // Clear any lines between node and partner
-  removeLines(toNode) {
-    for (const n of this.allNodes) {
-      if (n != toNode) {
-        if (n.partner == toNode) {
-          n.partner = null;
-          toNode.partner = null;
-          break;
-        }
-      }
     }
   }
 
@@ -190,11 +183,27 @@ class Board {
           // Then attach nodes together
           this.sourceNode.partner = targetNode;
           targetNode.partner = this.sourceNode;
+
+          //TODO: SETUP Node.next relationships
+          this.sourceNode.next = targetNode;
         }
       }
     }
   }
 
+  // Clear any lines between node and partner
+  removeLines(toNode) {
+    for (const n of this.allNodes) {
+      if (n != toNode) {
+        if (n.partner == toNode) {
+          n.partner = null;
+          toNode.partner = null;
+          n.next = null;
+          break;
+        }
+      }
+    }
+  }
   // Check all inputs and outputs on all gates to see if drawing any connections
   isDrawingConnections() {
     let a = false;

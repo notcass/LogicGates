@@ -7,8 +7,7 @@ class Node {
     this.x = _x ?? 0;
     this.y = _y ?? 0;
     this.drawing = false;
-    this.prev; // Previous Node
-    this.next; // Next Node
+    this.next = null; // Next Node
     this.partner = null;
     this.poweredOn = false;
     this.onColor = color(255, 50, 0);
@@ -61,14 +60,14 @@ class Node {
     let d = dist(mouseX, mouseY, this.x, this.y);
     return d < this.size / 2;
   }
+  switchState() {
+    this.poweredOn = !this.poweredOn;
+    if (this.next) this.next.switchState();
+  }
 }
 class PowerNode extends Node {
   constructor(_parent, _type, _subtype, _x, _y) {
     super(_parent, _type, _subtype, _x, _y);
-  }
-
-  switchState() {
-    this.poweredOn = !this.poweredOn;
   }
 }
 
