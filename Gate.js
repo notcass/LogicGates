@@ -1,5 +1,5 @@
 class Gate {
-  constructor(_args, _parent) {
+  constructor(_args, _parent, _id) {
     this.label = _args.label;
     this.x = _args.x;
     this.y = _args.y;
@@ -7,10 +7,35 @@ class Gate {
     this.h = 70;
     this.cSize = 20;
     this.parent = _parent;
+    this.id = _id;
 
     this.inputs = new Array(_args.inputs);
     this.outputs = [];
     this.setupGateIO();
+  }
+
+  /**
+   * TODO: Oh boy
+   * This needs be done in a dynamic way so that we can create a
+   * new logic gate from a Board state later on.
+   *
+   *  ---MAYBE we just start by hard programming the 'NOT' and 'AND' gate
+   */
+  checkLogic() {
+    // NOT GATE LOGIC
+
+    if (this.label === 'not') {
+      // If the input is hooked up to something
+      // if (this.inputs[0].partner) {
+      this.outputs[0].power = !this.inputs[0].power;
+      // } else {
+      //   this.outputs[0].power = false;
+      // }
+    } else if (this.label === 'and') {
+      // if(this.inputs[0].partner && this.inputs[1].partner) {
+      this.outputs[0].power = this.inputs[0].power && this.inputs[1].power;
+      // }
+    }
   }
 
   setupGateIO() {
