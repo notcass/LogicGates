@@ -1,17 +1,34 @@
 class Node {
   constructor(_parent, _type, _subtype, _x, _y) {
     this.parent = _parent;
-    this.type = _type; // output, input
-    this.subType = _subtype; // INPUT_UPPER,INPUT_CENTER INPUT_LOWER, OUTPUT, POWER, ?
+    this.type = _type; // INPUT, OUTPUT
+    this.subType = _subtype; // INPUT_UPPER,INPUT_CENTER INPUT_LOWER, OUTPUT, POWER, POWER_OUT
     this.size = _parent.cSize ?? 40;
     this.x = _x ?? 0;
     this.y = _y ?? 0;
     this.drawing = false;
     this.next = null; // Next Node
-    this.partner = null;
-    this.poweredOn = false;
+    this.power = false;
     this.onColor = color(255, 50, 0);
     this.offColor = color(255);
+  }
+
+  setPower(bool) {
+    this.power = bool;
+  }
+
+  switchState() {
+    this.power = !this.power;
+  }
+
+  evalPower() {
+    // console.log(this);
+    // if (this.type == 'INPUT' && this.subType != 'POWER_OUT' && this.next) {
+    if (this.subType == 'POWER' && this.next) {
+      this.next.power = this.power;
+
+      // console.log('Powered');
+    }
   }
 
   show() {
@@ -44,25 +61,32 @@ class Node {
       line(this.x, this.y, mouseX, mouseY);
     }
 
-    if (this.partner != null) {
+    if (this.next != null) {
       this.setColors();
       strokeWeight(2);
-      line(this.x, this.y, this.partner.x, this.partner.y);
+      line(this.x, this.y, this.next.x, this.next.y);
     }
   }
 
   setColors() {
-    this.poweredOn ? stroke(this.onColor) : stroke(this.offColor);
-    this.poweredOn ? fill(this.onColor) : fill(this.offColor);
+    this.power ? stroke(this.onColor) : stroke(this.offColor);
+    this.power ? fill(this.onColor) : fill(this.offColor);
   }
 
   isClicked(mouseX, mouseY) {
     let d = dist(mouseX, mouseY, this.x, this.y);
     return d < this.size / 2;
   }
-  switchState() {
-    this.poweredOn = !this.poweredOn;
-    if (this.next) this.next.switchState();
+
+  DEBUGGING() {
+    // console.log(this.parent);
+    // console.log(this.type);
+    // console.log(this.subType);
+    // Going to power on nodes with clicks for now, until we get the logic of the gates
+    // down.  Then I'll add a power connection after
+    if (this.type == 'INPUT' && typeof this.parent != 'Board') {
+      this.power = !this.power;
+    }
   }
 }
 class PowerNode extends Node {

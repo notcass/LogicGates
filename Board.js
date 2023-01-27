@@ -73,6 +73,10 @@ class Board {
     this.handleGates();
     //Power
     this.handleIO();
+    // Connections
+    this.allNodes.forEach((n) => {
+      n.evalPower();
+    });
   }
 
   makeNewGate(label, x, y) {
@@ -85,6 +89,8 @@ class Board {
     // Show Gates
     this.gates.forEach((g) => {
       g.show();
+
+      g.checkLogic();
     });
 
     // Drag gates
@@ -107,7 +113,7 @@ class Board {
         gate.x = constrain(gate.x, this.x, this.w + this.x - gate.w);
         gate.y = constrain(gate.y, this.y, this.h + this.y - gate.h);
 
-        gate.show(); // Ensure gate that is being moved is always drawn last (on top)
+        // gate.show(); // Ensure gate that is being moved is always drawn last (on top)
       }
     }
   }
@@ -121,12 +127,13 @@ class Board {
     this.outputNodes.forEach((o) => o.show());
 
     // Draw powerConnections
-    this.powerNodes.forEach((pn) => {
-      // console.log(pb);
-      if (pn.next && pn.poweredOn) {
-        pn.next.switchState();
-      }
-    });
+    // this.powerNodes.forEach((pn) => {
+    //   // console.log(pb);
+    //   if (pn.next && pn.power) {
+    //     // pn.next.switchState();
+    //     console.log('here');
+    //   }
+    // });
   }
 
   mouseDown() {
@@ -181,23 +188,24 @@ class Board {
           this.removeLines(targetNode);
 
           // Then attach nodes together
-          this.sourceNode.partner = targetNode;
-          targetNode.partner = this.sourceNode;
-
-          //TODO: SETUP Node.next relationships
-          this.sourceNode.next = targetNode;
+          if (this.sourceNode.type != 'INPUT') {
+            this.sourceNode.next = targetNode;
+          } else {
+            targetNode.next = this.sourceNode;
+          }
         }
       }
     }
   }
 
-  // Clear any lines between node and partner
+  // Clear any lines between node and next
   removeLines(toNode) {
     for (const n of this.allNodes) {
       if (n != toNode) {
-        if (n.partner == toNode) {
-          n.partner = null;
-          toNode.partner = null;
+        if (n.next == toNode) {
+          //TODO:FIXME
+          n.next = null;
+          toNode.next = null;
           n.next = null;
           break;
         }
