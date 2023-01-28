@@ -84,6 +84,8 @@ class Board {
     this.allNodes.push(...newGate.inputs, ...newGate.outputs);
   }
 
+  makeNewGateTest(label, x, y) {}
+
   handleGates() {
     // Show Gates
     this.gates.forEach((g) => {
@@ -142,7 +144,6 @@ class Board {
       if (node.isClicked(mouseX, mouseY)) {
         // Clear any other lines to or from node
         this.removeLines(node);
-        // console.log(node);
 
         // Set drawing flag
         node.drawing = true;
@@ -191,26 +192,57 @@ class Board {
           // Then attach nodes together
           if (this.sourceNode.type != 'INPUT') {
             this.sourceNode.next = targetNode;
-            targetNode.prev = this.sourceNode; // Set parent test
+            targetNode.prev = this.sourceNode;
           } else {
             targetNode.next = this.sourceNode;
-            this.sourceNode.prev = targetNode; // Set parent test
+            this.sourceNode.prev = targetNode;
           }
         }
       }
     }
   }
 
-  // Clear any lines between node and next
-  removeLines(toNode) {
-    for (const n of this.allNodes) {
-      if (n != toNode) {
-        if (n.next == toNode || n.prev == toNode) {
-          console.log(toNode);
+  //TESTING
+  //TODO: decide which one to keep. Not even sure if the top one is bug free 🤷‍♂️
+  removeLines(nodeA) {
+    if (nodeA.next) {
+      // Power switch off
+      if (nodeA.subType != 'POWER') {
+        nodeA.power = false;
+      }
+      nodeA.next.power = false;
 
-          n.next = null;
-          toNode.next = null;
-          // break;
+      // Line removal
+      nodeA.next.prev = null;
+      nodeA.next = null;
+    }
+
+    if (nodeA.prev) {
+      // Power switch off
+      if (nodeA.subType != 'POWER') {
+        nodeA.power = false;
+      }
+      // nodeA.prev.power = false;
+
+      // Line removal
+      nodeA.prev.next = null;
+      nodeA.prev = null;
+    }
+  }
+
+  // Clear any lines between node and next
+  removeLinesOriginal(nodeA) {
+    for (const nodeB of this.allNodes) {
+      if (nodeB != nodeA) {
+        if (nodeB.next == nodeA || nodeB.prev == nodeA) {
+          // // Turn off power if it's not a PowerNode
+          [nodeA, nodeB].forEach((n) => {
+            if (n.subType != 'POWER') n.power = false;
+          });
+
+          nodeB.next = null;
+          nodeA.next = null;
+          break;
         }
       }
     }

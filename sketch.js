@@ -1,6 +1,10 @@
 /// <reference path="libraries/p5.global-mode.d.ts" />
 /**
  *  TODO:
+ *    STRUCTURE
+ *      -Add incrementing ID numbers to gates and nodes for easier debugging/identifying
+ *          -Bonus: Create automatic incrementing value without a global var
+ *
  *    FEATURES:
  *      -Add side panels to hold power sources, buttons, etc
  *      -Add Buttons "Create", "AND", "NOT"
@@ -10,6 +14,7 @@
  *      -Add text input area to name new gates
  *
  *  FIXME:
+ *      -Add gates always being drawn on top when dragging them
  *
  *
  *  CLEAN:

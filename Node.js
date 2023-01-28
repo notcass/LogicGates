@@ -23,12 +23,10 @@ class Node {
   }
 
   evalPower() {
-    // console.log(this);
-    // if (this.type == 'INPUT' && this.subType != 'POWER_OUT' && this.next) {
-    if (this.subType == 'POWER' && this.next) {
-      this.next.power = this.power;
-
-      // console.log('Powered');
+    if (this.subType == 'POWER' || this.subType == 'OUTPUT') {
+      if (this.next) {
+        this.next.power = this.power;
+      }
     }
   }
 
@@ -100,5 +98,4 @@ class OutputNode extends Node {
   constructor(_parent, _type, _subtype, _x, _y) {
     super(_parent, _type, _subtype, _x, _y);
   }
-  calculateState() {}
 }

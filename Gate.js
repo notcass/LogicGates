@@ -15,6 +15,8 @@ class Gate {
   }
 
   /**
+   * Determines gate OUTPUT based on the gates INPUTS
+   *
    * TODO: Oh boy
    * This needs be done in a dynamic way so that we can create a
    * new logic gate from a Board state later on.
@@ -30,9 +32,7 @@ class Gate {
 
       // AND gate logic
       if (this.label === 'and') {
-        // if(this.inputs[0].partner && this.inputs[1].partner) {
         this.outputs[0].power = this.inputs[0].power && this.inputs[1].power;
-        // }
       }
     }
   }
