@@ -8,6 +8,7 @@ class Node {
     this.y = _y ?? 0;
     this.drawing = false;
     this.next = null; // Next Node
+    this.prev = null; // Prev Node
     this.power = false;
     this.onColor = color(255, 50, 0);
     this.offColor = color(255);

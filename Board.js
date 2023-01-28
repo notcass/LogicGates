@@ -43,7 +43,6 @@ class Board {
           let d = dist(x, y, this.x, this.y);
           if (d < this.radius) {
             // POWER ON NODE
-            console.log(`Clicked ${i} `);
             this.attachedNode.switchState();
           }
         },
@@ -143,6 +142,8 @@ class Board {
       if (node.isClicked(mouseX, mouseY)) {
         // Clear any other lines to or from node
         this.removeLines(node);
+        // console.log(node);
+
         // Set drawing flag
         node.drawing = true;
         this.sourceNode = node;
@@ -190,8 +191,10 @@ class Board {
           // Then attach nodes together
           if (this.sourceNode.type != 'INPUT') {
             this.sourceNode.next = targetNode;
+            targetNode.prev = this.sourceNode; // Set parent test
           } else {
             targetNode.next = this.sourceNode;
+            this.sourceNode.prev = targetNode; // Set parent test
           }
         }
       }
@@ -202,12 +205,12 @@ class Board {
   removeLines(toNode) {
     for (const n of this.allNodes) {
       if (n != toNode) {
-        if (n.next == toNode) {
-          //TODO:FIXME
+        if (n.next == toNode || n.prev == toNode) {
+          console.log(toNode);
+
           n.next = null;
           toNode.next = null;
-          n.next = null;
-          break;
+          // break;
         }
       }
     }

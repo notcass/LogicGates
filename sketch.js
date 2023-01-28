@@ -2,7 +2,6 @@
 /**
  *  TODO:
  *    FEATURES:
- *      -Add power sources and output to board border area
  *      -Add side panels to hold power sources, buttons, etc
  *      -Add Buttons "Create", "AND", "NOT"
  *          -Create: Creates a gate from the board state
@@ -18,7 +17,6 @@
  *    Currently, we loop through gates.inputs and gates.outputs any
  *    time we need to handle power connections.
  *    -Learn "Extends" keyword? make PowerNode class that extends node?
- *    -Make separate logicNode that extends Node?
  *    -Make separate input/output nodes that extend node?
  *
  */

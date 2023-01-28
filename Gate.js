@@ -22,20 +22,27 @@ class Gate {
    *  ---MAYBE we just start by hard programming the 'NOT' and 'AND' gate
    */
   checkLogic() {
-    // NOT GATE LOGIC
+    if (this.getInputsFull() && this.getOutputsFull()) {
+      // NOT gate logic
+      if (this.label === 'not') {
+        this.outputs[0].power = !this.inputs[0].power;
+      }
 
-    if (this.label === 'not') {
-      // If the input is hooked up to something
-      // if (this.inputs[0].partner) {
-      this.outputs[0].power = !this.inputs[0].power;
-      // } else {
-      //   this.outputs[0].power = false;
-      // }
-    } else if (this.label === 'and') {
-      // if(this.inputs[0].partner && this.inputs[1].partner) {
-      this.outputs[0].power = this.inputs[0].power && this.inputs[1].power;
-      // }
+      // AND gate logic
+      if (this.label === 'and') {
+        // if(this.inputs[0].partner && this.inputs[1].partner) {
+        this.outputs[0].power = this.inputs[0].power && this.inputs[1].power;
+        // }
+      }
     }
+  }
+
+  getInputsFull() {
+    return this.inputs.every((input) => input.prev);
+  }
+
+  getOutputsFull() {
+    return this.outputs.every((output) => output.next);
   }
 
   setupGateIO() {
