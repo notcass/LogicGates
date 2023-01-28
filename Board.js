@@ -4,11 +4,11 @@ class Board {
     this.y = _h / 13;
     this.w = _w - this.x * 2;
     this.h = _h - this.y * 2;
-    this.powerNodeCount = 2;
-    this.powerNodes = [];
+    this.inputCount = 2;
+    this.inputs = [];
     this.powerButtons = [];
-    this.outputNodeCount = 1;
-    this.outputNodes = [];
+    this.outputCount = 1;
+    this.outputs = [];
     this.gates = []; // All gates on the board
     this.draggingGate = null; // Boolean
     this.sourceNode = null; // Node we are drawing from
@@ -19,17 +19,17 @@ class Board {
 
   setupIO() {
     // Power Nodes
-    let divider = height / (this.powerNodeCount + 1);
-    for (let i = 0; i < this.powerNodeCount; i++) {
+    let divider = height / (this.inputCount + 1);
+    for (let i = 0; i < this.inputCount; i++) {
       let x = this.x + 30;
       let y = divider + i * divider;
-      this.powerNodes.push(new PowerNode(this, 'OUTPUT', 'POWER', x, y));
+      this.inputs.push(new Input(this, 'OUTPUT', 'POWER', x, y));
 
       // Power Button
       let button = {
         x: x - 50,
         y: y,
-        attachedNode: this.powerNodes[i],
+        attachedNode: this.inputs[i],
         radius: 13,
         show: function () {
           fill(255);
@@ -51,14 +51,14 @@ class Board {
     }
 
     // Output Nodes
-    divider = height / (this.outputNodeCount + 1);
-    for (let i = 0; i < this.outputNodeCount; i++) {
+    divider = height / (this.outputCount + 1);
+    for (let i = 0; i < this.outputCount; i++) {
       let x = this.x + this.w;
       let y = divider + i * divider;
-      this.outputNodes.push(new OutputNode(this, 'INPUT', 'POWER_OUT', x, y));
+      this.outputs.push(new Output(this, 'INPUT', 'POWER_OUT', x, y));
     }
 
-    this.allNodes.push(...this.powerNodes, ...this.outputNodes);
+    this.allNodes.push(...this.inputs, ...this.outputs);
   }
 
   runApp() {
@@ -78,10 +78,10 @@ class Board {
     });
   }
 
-  makeNewGate(label, x, y) {
-    let newGate = new Gate(label, x, y);
+  makeNewGate(gateObj, x, y) {
+    let newGate = new Gate(gateObj, x, y);
     this.gates.push(newGate);
-    this.allNodes.push(...newGate.inputs, ...newGate.outputs);
+    this.allNodes.push(...newGate.gateInputs, ...newGate.gateOutputs);
   }
 
   makeNewGateTest(label, x, y) {}
@@ -123,9 +123,9 @@ class Board {
     // Draw power buttons
     this.powerButtons.forEach((pb) => pb.show());
     // Draw power
-    this.powerNodes.forEach((p) => p.show());
+    this.inputs.forEach((p) => p.show());
     // Draw board output
-    this.outputNodes.forEach((o) => o.show());
+    this.outputs.forEach((o) => o.show());
 
     // Draw powerConnections
     // this.powerNodes.forEach((pn) => {
@@ -162,12 +162,12 @@ class Board {
     this.draggingGate = null;
     // Stop drawing gate IO
     this.gates.forEach((g) => {
-      g.inputs.forEach((i) => (i.drawing = false));
-      g.outputs.forEach((o) => (o.drawing = false));
+      g.gateInputs.forEach((i) => (i.drawing = false));
+      g.gateOutputs.forEach((o) => (o.drawing = false));
     });
     //Stop drawing board IO
-    this.powerNodes.forEach((p) => (p.drawing = false));
-    this.outputNodes.forEach((o) => (o.drawing = false));
+    this.inputs.forEach((p) => (p.drawing = false));
+    this.outputs.forEach((o) => (o.drawing = false));
 
     // If we're drawing a line
     if (this.sourceNode) {
@@ -235,7 +235,7 @@ class Board {
     for (const nodeB of this.allNodes) {
       if (nodeB != nodeA) {
         if (nodeB.next == nodeA || nodeB.prev == nodeA) {
-          // // Turn off power if it's not a PowerNode
+          // // Turn off power if it's not a Input
           [nodeA, nodeB].forEach((n) => {
             if (n.subType != 'POWER') n.power = false;
           });

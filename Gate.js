@@ -9,8 +9,8 @@ class Gate {
     this.parent = _parent;
     this.id = _id;
 
-    this.inputs = new Array(_args.inputs);
-    this.outputs = [];
+    this.gateInputs = new Array(_args.gateInputs);
+    this.gateOutputs = [];
     this.setupGateIO();
   }
 
@@ -27,43 +27,44 @@ class Gate {
     if (this.getInputsFull() && this.getOutputsFull()) {
       // NOT gate logic
       if (this.label === 'not') {
-        this.outputs[0].power = !this.inputs[0].power;
+        this.gateOutputs[0].power = !this.gateInputs[0].power;
       }
 
       // AND gate logic
       if (this.label === 'and') {
-        this.outputs[0].power = this.inputs[0].power && this.inputs[1].power;
+        this.gateOutputs[0].power =
+          this.gateInputs[0].power && this.gateInputs[1].power;
       }
     }
   }
 
   getInputsFull() {
-    return this.inputs.every((input) => input.prev);
+    return this.gateInputs.every((input) => input.prev);
   }
 
   getOutputsFull() {
-    return this.outputs.every((output) => output.next);
+    return this.gateOutputs.every((output) => output.next);
   }
 
   setupGateIO() {
     // Inputs
-    const input_count = this.inputs.length;
+    const input_count = this.gateInputs.length;
 
     // Output
-    this.outputs.push(new Node(this, 'OUTPUT', 'OUTPUT'));
+    this.gateOutputs.push(new Node(this, 'OUTPUT', 'OUTPUT'));
 
     switch (input_count) {
       case 1:
-        this.inputs[0] = new Node(this, 'INPUT', 'INPUT_CENTER'); // Center
+        this.gateInputs[0] = new Node(this, 'INPUT', 'INPUT_CENTER'); // Center
         break;
       case 2:
-        this.inputs[0] = new Node(this, 'INPUT', 'INPUT_UPPER'); // Upper
-        this.inputs[1] = new Node(this, 'INPUT', 'INPUT_LOWER'); // Lower
+        this.gateInputs[0] = new Node(this, 'INPUT', 'INPUT_UPPER'); // Upper
+        this.gateInputs[1] = new Node(this, 'INPUT', 'INPUT_LOWER'); // Lower
         break;
       case 3:
-        this.inputs[0] = new Node(this, 'INPUT', 'INPUT_UPPER'); // Upper
-        this.inputs[0] = new Node(this, 'INPUT', 'INPUT_CENTER'); // Center
-        this.inputs[0] = new Node(this, 'INPUT', 'INPUT_LOWER'); // Lower
+        this.gateInputs[0] = new Node(this, 'INPUT', 'INPUT_UPPER'); // Upper
+        this.gateInputs[0] = new Node(this, 'INPUT', 'INPUT_CENTER'); // Center
+        this.gateInputs[0] = new Node(this, 'INPUT', 'INPUT_LOWER'); // Lower
         break;
     }
   }
@@ -79,14 +80,14 @@ class Gate {
     fill(255);
     textAlign(LEFT, TOP);
     textSize(26);
-    text(this.label, this.x + 30, this.y + 23);
+    text(this.label, this.x + 22, this.y + 23);
 
     // Inputs
-    this.inputs.forEach((i) => {
+    this.gateInputs.forEach((i) => {
       i.show();
     });
 
     // Output
-    this.outputs[0].show();
+    this.gateOutputs[0].show();
   }
 }

@@ -4,6 +4,7 @@
  *    STRUCTURE
  *      -Add incrementing ID numbers to gates and nodes for easier debugging/identifying
  *          -Bonus: Create automatic incrementing value without a global var
+ *      -Dynamic text sizing on gate labels
  *
  *    FEATURES:
  *      -Add side panels to hold power sources, buttons, etc
@@ -19,7 +20,7 @@
  *
  *  CLEAN:
  *    -Combine gate inputs, gate outputs, board power into one data structure.
- *    Currently, we loop through gates.inputs and gates.outputs any
+ *    Currently, we loop through gates.gateInputs and gates.outputs any
  *    time we need to handle power connections.
  *    -Learn "Extends" keyword? make PowerNode class that extends node?
  *    -Make separate input/output nodes that extend node?
@@ -28,19 +29,19 @@
 
 let board;
 const notGate = {
-  label: 'not',
+  label: 'NOT',
   x: 200,
   y: 270,
-  inputs: 1,
-  outputs: 1,
+  gateInputs: 1,
+  gateOutputs: 1,
 };
 
 const andGate = {
-  label: 'and',
+  label: 'AND',
   x: 500,
   y: 270,
-  inputs: 2,
-  outputs: 1,
+  gateInputs: 2,
+  gateOutputs: 1,
 };
 
 function setup() {
