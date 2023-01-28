@@ -1,7 +1,7 @@
 class Node {
   constructor(_parent, _type, _subtype, _x, _y) {
     this.parent = _parent;
-    this.type = _type; // INPUT, OUTPUT
+    this.type = _type; // INPUT, OUTPUT, gateInput, gateOutput
     this.subType = _subtype; // INPUT_UPPER,INPUT_CENTER INPUT_LOWER, OUTPUT, POWER, POWER_OUT
     this.size = _parent.cSize ?? 40;
     this.x = _x ?? 0;
@@ -88,13 +88,13 @@ class Node {
     }
   }
 }
-class PowerNode extends Node {
+class Input extends Node {
   constructor(_parent, _type, _subtype, _x, _y) {
     super(_parent, _type, _subtype, _x, _y);
   }
 }
 
-class OutputNode extends Node {
+class Output extends Node {
   constructor(_parent, _type, _subtype, _x, _y) {
     super(_parent, _type, _subtype, _x, _y);
   }
