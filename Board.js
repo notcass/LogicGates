@@ -18,12 +18,12 @@ class Board {
   }
 
   setupIO() {
-    // Power Nodes
+    // Input Nodes
     let divider = height / (this.inputCount + 1);
     for (let i = 0; i < this.inputCount; i++) {
       let x = this.x + 30;
       let y = divider + i * divider;
-      this.inputs.push(new Input(this, 'OUTPUT', 'POWER', x, y));
+      this.inputs.push(new InputNode(this, 'INPUT', x, y));
 
       // Power Button
       let button = {
@@ -55,7 +55,7 @@ class Board {
     for (let i = 0; i < this.outputCount; i++) {
       let x = this.x + this.w;
       let y = divider + i * divider;
-      this.outputs.push(new Output(this, 'INPUT', 'POWER_OUT', x, y));
+      this.outputs.push(new OutputNode(this, 'OUTPUT', x, y));
     }
 
     this.allNodes.push(...this.inputs, ...this.outputs);
@@ -83,8 +83,6 @@ class Board {
     this.gates.push(newGate);
     this.allNodes.push(...newGate.gateInputs, ...newGate.gateOutputs);
   }
-
-  makeNewGateTest(label, x, y) {}
 
   handleGates() {
     // Show Gates
@@ -122,19 +120,10 @@ class Board {
   handleIO() {
     // Draw power buttons
     this.powerButtons.forEach((pb) => pb.show());
-    // Draw power
+    // Draw Inputs
     this.inputs.forEach((p) => p.show());
     // Draw board output
     this.outputs.forEach((o) => o.show());
-
-    // Draw powerConnections
-    // this.powerNodes.forEach((pn) => {
-    //   // console.log(pb);
-    //   if (pn.next && pn.power) {
-    //     // pn.next.switchState();
-    //     console.log('here');
-    //   }
-    // });
   }
 
   mouseDown() {
@@ -187,15 +176,15 @@ class Board {
 
         if (diffParent && diffType) {
           // Remove any other lines
-          this.removeLines(targetNode);
+          // this.removeLines(targetNode);
 
           // Then attach nodes together
           if (this.sourceNode.type != 'INPUT') {
-            this.sourceNode.next = targetNode;
-            targetNode.prev = this.sourceNode;
-          } else {
             targetNode.next = this.sourceNode;
             this.sourceNode.prev = targetNode;
+          } else {
+            this.sourceNode.next = targetNode;
+            targetNode.prev = this.sourceNode;
           }
         }
       }
@@ -204,7 +193,7 @@ class Board {
 
   //TESTING
   //TODO: decide which one to keep. Not even sure if the top one is bug free 🤷‍♂️
-  removeLines(nodeA) {
+  removeLinesNew(nodeA) {
     if (nodeA.next) {
       // Power switch off
       if (nodeA.subType != 'POWER') {
@@ -231,13 +220,14 @@ class Board {
   }
 
   // Clear any lines between node and next
-  removeLinesOriginal(nodeA) {
+  removeLines(nodeA) {
     for (const nodeB of this.allNodes) {
       if (nodeB != nodeA) {
         if (nodeB.next == nodeA || nodeB.prev == nodeA) {
           // // Turn off power if it's not a Input
           [nodeA, nodeB].forEach((n) => {
-            if (n.subType != 'POWER') n.power = false;
+            // if (n.subType != 'POWER') n.power = false;
+            if (n.type != 'INPUT') n.power = false;
           });
 
           nodeB.next = null;

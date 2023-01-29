@@ -10,7 +10,7 @@ class Gate {
     this.id = _id;
 
     this.gateInputs = new Array(_args.gateInputs);
-    this.gateOutputs = [];
+    this.gateOutputs = new Array(_args.gateOutputs);
     this.setupGateIO();
   }
 
@@ -26,19 +26,22 @@ class Gate {
   checkLogic() {
     if (this.getInputsFull() && this.getOutputsFull()) {
       // NOT gate logic
-      if (this.label === 'not') {
+      if (this.label === 'NOT') {
         this.gateOutputs[0].power = !this.gateInputs[0].power;
       }
 
       // AND gate logic
-      if (this.label === 'and') {
-        this.gateOutputs[0].power =
-          this.gateInputs[0].power && this.gateInputs[1].power;
+      if (this.label === 'AND') {
+        console.log('here');
+
+        this.gateOutputs[0].power = this.gateInputs[0].power && this.gateInputs[1].power;
       }
     }
   }
 
   getInputsFull() {
+    // console.log(this.gateInputs);
+
     return this.gateInputs.every((input) => input.prev);
   }
 
@@ -47,25 +50,17 @@ class Gate {
   }
 
   setupGateIO() {
-    // Inputs
     const input_count = this.gateInputs.length;
+    const output_count = this.gateOutputs.length;
+
+    // Inputs
+    for (let i = 0; i < input_count; i++) {
+      this.gateInputs[i] = new Node(this, 'GATE_INPUT');
+    }
 
     // Output
-    this.gateOutputs.push(new Node(this, 'OUTPUT', 'OUTPUT'));
-
-    switch (input_count) {
-      case 1:
-        this.gateInputs[0] = new Node(this, 'INPUT', 'INPUT_CENTER'); // Center
-        break;
-      case 2:
-        this.gateInputs[0] = new Node(this, 'INPUT', 'INPUT_UPPER'); // Upper
-        this.gateInputs[1] = new Node(this, 'INPUT', 'INPUT_LOWER'); // Lower
-        break;
-      case 3:
-        this.gateInputs[0] = new Node(this, 'INPUT', 'INPUT_UPPER'); // Upper
-        this.gateInputs[0] = new Node(this, 'INPUT', 'INPUT_CENTER'); // Center
-        this.gateInputs[0] = new Node(this, 'INPUT', 'INPUT_LOWER'); // Lower
-        break;
+    for (let i = 0; i < output_count; i++) {
+      this.gateOutputs[i] = new Node(this, 'GATE_OUTPUT');
     }
   }
 
@@ -83,11 +78,30 @@ class Gate {
     text(this.label, this.x + 22, this.y + 23);
 
     // Inputs
-    this.gateInputs.forEach((i) => {
-      i.show();
+    // this.gateInputs.forEach((i) => {
+    //   //TODO:CHANGE SHOW TO NEW SHOW ONCE IT"S READY
+    //   i.show();
+    // });
+
+    // // Output
+    // this.gateOutputs[0].show();
+
+    // Setup gate's input and output positions
+    const input_count = this.gateInputs.length;
+    const output_count = this.gateOutputs.length;
+    const inDivider = this.h / (input_count + 1);
+    const outDivider = this.h / (output_count + 1);
+
+    this.gateInputs.forEach((gI, index) => {
+      gI.x = this.x;
+      gI.y = this.y + inDivider + index * inDivider;
+      gI.newShow();
     });
 
-    // Output
-    this.gateOutputs[0].show();
+    this.gateOutputs.forEach((gO, index) => {
+      gO.x = this.x + this.w;
+      gO.y = this.y + outDivider + index * outDivider;
+      gO.newShow();
+    });
   }
 }

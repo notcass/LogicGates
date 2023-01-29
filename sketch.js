@@ -2,28 +2,29 @@
 /**
  *  TODO:
  *    STRUCTURE
- *      -Add incrementing ID numbers to gates and nodes for easier debugging/identifying
+ *      DONE --Dynamic placement of nodes onto gates for when we have custom gates
+ *      --Add incrementing ID numbers to gates and nodes for easier debugging/identifying
  *          -Bonus: Create automatic incrementing value without a global var
- *      -Dynamic text sizing on gate labels
+ *      --Dynamic text sizing on gate labels
  *
  *    FEATURES:
- *      -Add side panels to hold power sources, buttons, etc
- *      -Add Buttons "Create", "AND", "NOT"
+ *      --Add side panels to hold power sources, buttons, etc
+ *      --Add Buttons "Create", "AND", "NOT"
  *          -Create: Creates a gate from the board state
  *          -AND:    Spawns an AND gate
  *          -NOT:    Spawns a NOT gate
- *      -Add text input area to name new gates
+ *      --Add text input area to name new gates
  *
  *  FIXME:
- *      -Add gates always being drawn on top when dragging them
+ *      --Add gates always being drawn on top when dragging them
  *
  *
  *  CLEAN:
- *    -Combine gate inputs, gate outputs, board power into one data structure.
+ *    --Combine gate inputs, gate outputs, board power into one data structure.
  *    Currently, we loop through gates.gateInputs and gates.outputs any
  *    time we need to handle power connections.
- *    -Learn "Extends" keyword? make PowerNode class that extends node?
- *    -Make separate input/output nodes that extend node?
+ *    --Learn "Extends" keyword? make PowerNode class that extends node?
+ *    --Make separate input/output nodes that extend node?
  *
  */
 
