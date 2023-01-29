@@ -1,8 +1,7 @@
 class Node {
-  constructor(_parent, _type, _subtype, _x, _y) {
+  constructor(_parent, _type, _x, _y) {
     this.parent = _parent;
-    this.type = _type; // INPUT, OUTPUT, gateInput, gateOutput
-    this.subType = _subtype; // INPUT_UPPER,INPUT_CENTER INPUT_LOWER, OUTPUT, POWER, POWER_OUT
+    this.type = _type; // INPUT, OUTPUT, GATE_INPUT, GATE_OUTPUT
     this.size = _parent.cSize ?? 40;
     this.x = _x ?? 0;
     this.y = _y ?? 0;
@@ -23,10 +22,34 @@ class Node {
   }
 
   evalPower() {
-    if (this.subType == 'POWER' || this.subType == 'OUTPUT') {
+    // if (this.subType == 'POWER' || this.subType == 'OUTPUT') {
+    //   if (this.next) {
+    //     this.next.power = this.power;
+    //   }
+    // }
+    if (this.type == 'INPUT' || this.type == 'GATE_OUTPUT') {
       if (this.next) {
         this.next.power = this.power;
       }
+    }
+  }
+
+  newShow() {
+    this.setColors();
+    noStroke();
+
+    circle(this.x, this.y, this.size);
+
+    if (this.drawing) {
+      this.setColors();
+      strokeWeight(2);
+      line(this.x, this.y, mouseX, mouseY);
+    }
+
+    if (this.next != null) {
+      this.setColors();
+      strokeWeight(2);
+      line(this.x, this.y, this.next.x, this.next.y);
     }
   }
 
@@ -52,6 +75,7 @@ class Node {
 
     this.setColors();
     noStroke();
+
     circle(this.x, this.y, this.size);
 
     if (this.drawing) {
@@ -88,14 +112,14 @@ class Node {
     }
   }
 }
-class Input extends Node {
-  constructor(_parent, _type, _subtype, _x, _y) {
-    super(_parent, _type, _subtype, _x, _y);
+class InputNode extends Node {
+  constructor(_parent, _type, _x, _y) {
+    super(_parent, _type, _x, _y);
   }
 }
 
-class Output extends Node {
-  constructor(_parent, _type, _subtype, _x, _y) {
-    super(_parent, _type, _subtype, _x, _y);
+class OutputNode extends Node {
+  constructor(_parent, _type, _x, _y) {
+    super(_parent, _type, _x, _y);
   }
 }
