@@ -1,11 +1,19 @@
 /// <reference path="libraries/p5.global-mode.d.ts" />
 /**
  *  TODO:
- *    STRUCTURE
+ *    STRUCTURE:
  *      DONE --Dynamic placement of nodes onto gates for when we have custom gates
  *      --Add incrementing ID numbers to gates and nodes for easier debugging/identifying
  *          -Bonus: Create automatic incrementing value without a global var
  *      --Dynamic text sizing on gate labels
+ *
+ *      --Change the way we draw to the mouse.
+ *         Instead of node objects having a drawingToMouse boolean,
+ *         put that property onto the board object as an integer. The int
+ *         corresponds to the node that we are drawing to's ID. If
+ *         we aren't drawing, maybe it's -1? See "Add ID's" todo above.
+ *
+ *
  *
  *    FEATURES:
  *      --Add side panels to hold power sources, buttons, etc
@@ -32,7 +40,7 @@ let board;
 const notGate = {
   label: 'NOT',
   x: 200,
-  y: 270,
+  y: 200,
   gateInputs: 1,
   gateOutputs: 1,
 };
@@ -50,12 +58,14 @@ function setup() {
   createCanvas(800, 600).parent('sketch-holder');
   board = new Board(width, height);
   board.makeNewGate(notGate, board, 0);
-  board.makeNewGate(andGate, board, 1);
+  // board.makeNewGate(notGate, board, 1);
+  board.makeNewGate(andGate, board, 2);
+  // board.gates[1].x = 200;
+  // board.gates[1].y = 300;
 }
 
 function draw() {
   background(100);
-
   board.runApp();
 }
 
@@ -65,6 +75,9 @@ function keyPressed() {
   if (key === '1') console.log(mouseX, mouseY);
   if (key === '2') {
     console.log(board.allNodes);
+  }
+  if (key === '3') {
+    console.log(board.isDrawingConnectionsNew());
   }
 
   if (key === 'a') console.log(frameRate());

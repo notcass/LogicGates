@@ -88,12 +88,11 @@ class Board {
     // Show Gates
     this.gates.forEach((g) => {
       g.show();
-
       g.checkLogic();
     });
 
     // Drag gates
-    if (!this.isDrawingConnections()) {
+    if (!this.isDrawingToMouse()) {
       if (this.draggingGate == null) {
         if (mouseIsPressed) {
           this.gates.forEach((g, index) => {
@@ -127,15 +126,15 @@ class Board {
   }
 
   mouseDown() {
-    // All Nodes
+    // For each node
     for (const node of this.allNodes) {
-      // If we click on a node
-      if (node.isClicked(mouseX, mouseY)) {
-        // Clear any other lines to or from node
-        this.removeLines(node);
+      // If we are hovering one
+      if (node.mouseHovering(mouseX, mouseY)) {
+        // Clear any other lines to or from the node
+        this.removeConnections(node);
 
         // Set drawing flag
-        node.drawing = true;
+        node.drawingToMouse = true;
         this.sourceNode = node;
         break;
       }
@@ -146,81 +145,107 @@ class Board {
     }
   }
 
+  // Stop any mouse movement animations
   mouseUp() {
-    // Stop moving gates
     this.draggingGate = null;
-    // Stop drawing gate IO
-    this.gates.forEach((g) => {
-      g.gateInputs.forEach((i) => (i.drawing = false));
-      g.gateOutputs.forEach((o) => (o.drawing = false));
-    });
-    //Stop drawing board IO
-    this.inputs.forEach((p) => (p.drawing = false));
-    this.outputs.forEach((o) => (o.drawing = false));
 
-    // If we're drawing a line
+    this.stopDrawingToMouse();
+
+    // If we're currently drawing a line from a source node to mouse
     if (this.sourceNode) {
-      // and our mouse is over a node
-      let targetNode;
-      for (const n of this.allNodes) {
-        if (n.isClicked(mouseX, mouseY)) {
-          targetNode = n;
-          break;
-        }
+      this.connectNodes();
+    }
+  }
+
+  stopDrawingToMouse() {
+    // Stop drawing lines from GATE_INPUTS and GATE_OUTPUTS
+    this.gates.forEach((g) => {
+      g.gateInputs.forEach((i) => (i.drawingToMouse = false));
+      g.gateOutputs.forEach((o) => (o.drawingToMouse = false));
+    });
+    //Stop drawing lines from INPUTS and OUTPUTS
+    this.inputs.forEach((p) => (p.drawingToMouse = false));
+    this.outputs.forEach((o) => (o.drawingToMouse = false));
+  }
+
+  // This function accounts for what order you connect nodes in, so that power is always
+  // flowing from output -> input
+  connectNodes() {
+    // Get the node that is under the cursor and set it to target
+    let targetNode;
+    for (const n of this.allNodes) {
+      if (n.mouseHovering(mouseX, mouseY)) {
+        targetNode = n;
+        break;
       }
+    }
 
-      // If target node isn't null, isn't on the same gate, and isn't same type
-      if (targetNode != null) {
-        let diffParent = targetNode.parent != this.sourceNode.parent;
-        let diffType = targetNode.type != this.sourceNode.type;
+    // If target node isn't null, isn't on the same gate, and isn't same type
+    if (targetNode) {
+      let diffParent = targetNode.parent != this.sourceNode.parent;
+      let diffParentType = targetNode.parent.constructor.name != this.sourceNode.parent.constructor.name;
+      // console.log(`diffParent ${diffParent}`);
+      // console.log(`diffParentType ${diffParentType}`);
 
-        if (diffParent && diffType) {
-          // Remove any other lines
-          // this.removeLines(targetNode);
+      // Will this expression work?
+      if (diffParent || diffParentType) {
+        // Remove any other lines
+        this.removeConnections(targetNode);
 
-          // Then attach nodes together
-          if (this.sourceNode.type != 'INPUT') {
+        //FIXME:
+        // Attach nodes together.
+        // If the sourceNode isn't an INPUT or GATE_INPUT, make the sourceNode
+        // the first in the chain. This way power always flows right
+
+        // if (this.sourceNode.type != 'INPUT' && this.sourceNode.type != 'GATE_INPUT') {
+        //   console.log('first');
+
+        //   targetNode.prev = this.sourceNode;
+        //   this.sourceNode.next = targetNode;
+        // } else {
+        //   console.log('second');
+        //   this.sourceNode.prev = targetNode;
+        //   targetNode.next = this.sourceNode;
+        // }
+
+        // FIX ATTEMPTS
+        // console.log(targetNode.type);
+
+        let sourceType = this.sourceNode.type;
+        let targetType = targetNode.type;
+        // Clicking from inputs
+        if (sourceType.includes('INPUT')) {
+          console.log('Clicked from Input');
+
+          if (targetType.includes('INPUT')) {
+            console.log('Left to Right 1');
+            targetNode.prev = this.sourceNode;
+            this.sourceNode.next = targetNode;
+          } else {
+            console.log('Right to Left 1');
             targetNode.next = this.sourceNode;
             this.sourceNode.prev = targetNode;
-          } else {
-            this.sourceNode.next = targetNode;
+          }
+          // Clicking from outputs
+        } else {
+          console.log('Clicked from Output');
+
+          if (targetType.includes('INPUT')) {
+            console.log('Left to Right 2');
             targetNode.prev = this.sourceNode;
+            this.sourceNode.next = targetNode;
+          } else {
+            console.log('Right to Left 2');
+            targetNode.next = this.sourceNode;
+            this.sourceNode.prev = targetNode;
           }
         }
       }
     }
   }
 
-  //TESTING
-  //TODO: decide which one to keep. Not even sure if the top one is bug free 🤷‍♂️
-  removeLinesNew(nodeA) {
-    if (nodeA.next) {
-      // Power switch off
-      if (nodeA.subType != 'POWER') {
-        nodeA.power = false;
-      }
-      nodeA.next.power = false;
-
-      // Line removal
-      nodeA.next.prev = null;
-      nodeA.next = null;
-    }
-
-    if (nodeA.prev) {
-      // Power switch off
-      if (nodeA.subType != 'POWER') {
-        nodeA.power = false;
-      }
-      // nodeA.prev.power = false;
-
-      // Line removal
-      nodeA.prev.next = null;
-      nodeA.prev = null;
-    }
-  }
-
   // Clear any lines between node and next
-  removeLines(nodeA) {
+  removeConnections(nodeA) {
     for (const nodeB of this.allNodes) {
       if (nodeB != nodeA) {
         if (nodeB.next == nodeA || nodeB.prev == nodeA) {
@@ -237,11 +262,16 @@ class Board {
       }
     }
   }
+
+  // Returns TRUE as soon as we find a node that IS being drawn from
+  isDrawingToMouse() {
+    return !this.allNodes.every((n) => !n.drawingToMouse);
+  }
   // Check all inputs and outputs on all gates to see if drawing any connections
-  isDrawingConnections() {
+  isDrawingToMouseOld() {
     let a = false;
     for (const n of this.allNodes) {
-      if (n.drawing) {
+      if (n.drawingToMouse) {
         a = true;
         break;
       }

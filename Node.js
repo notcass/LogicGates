@@ -5,7 +5,7 @@ class Node {
     this.size = _parent.cSize ?? 40;
     this.x = _x ?? 0;
     this.y = _y ?? 0;
-    this.drawing = false;
+    this.drawingToMouse = false;
     this.next = null; // Next Node
     this.prev = null; // Prev Node
     this.power = false;
@@ -22,11 +22,6 @@ class Node {
   }
 
   evalPower() {
-    // if (this.subType == 'POWER' || this.subType == 'OUTPUT') {
-    //   if (this.next) {
-    //     this.next.power = this.power;
-    //   }
-    // }
     if (this.type == 'INPUT' || this.type == 'GATE_OUTPUT') {
       if (this.next) {
         this.next.power = this.power;
@@ -34,92 +29,44 @@ class Node {
     }
   }
 
-  newShow() {
-    this.setColors();
-    noStroke();
-
-    circle(this.x, this.y, this.size);
-
-    if (this.drawing) {
-      this.setColors();
-      strokeWeight(2);
-      line(this.x, this.y, mouseX, mouseY);
-    }
-
-    if (this.next != null) {
-      this.setColors();
-      strokeWeight(2);
-      line(this.x, this.y, this.next.x, this.next.y);
-    }
-  }
-
   show() {
-    switch (this.subType) {
-      case 'INPUT_UPPER':
-        this.x = this.parent.x;
-        this.y = this.parent.y + this.size;
-        break;
-      case 'INPUT_CENTER':
-        this.x = this.parent.x;
-        this.y = this.parent.y + this.parent.h / 2;
-        break;
-      case 'INPUT_LOWER':
-        this.x = this.parent.x;
-        this.y = this.parent.y + this.parent.h - this.size;
-        break;
-      case 'OUTPUT':
-        this.x = this.parent.x + this.parent.w;
-        this.y = this.parent.y + this.parent.h / 2;
-        break;
-    }
-
     this.setColors();
     noStroke();
 
     circle(this.x, this.y, this.size);
 
-    if (this.drawing) {
+    if (this.drawingToMouse) {
       this.setColors();
-      strokeWeight(2);
       line(this.x, this.y, mouseX, mouseY);
     }
 
     if (this.next != null) {
       this.setColors();
-      strokeWeight(2);
       line(this.x, this.y, this.next.x, this.next.y);
     }
   }
 
   setColors() {
+    strokeWeight(3);
     this.power ? stroke(this.onColor) : stroke(this.offColor);
     this.power ? fill(this.onColor) : fill(this.offColor);
   }
 
-  isClicked(mouseX, mouseY) {
+  mouseHovering(mouseX, mouseY) {
     let d = dist(mouseX, mouseY, this.x, this.y);
     return d < this.size / 2;
-  }
-
-  DEBUGGING() {
-    // console.log(this.parent);
-    // console.log(this.type);
-    // console.log(this.subType);
-    // Going to power on nodes with clicks for now, until we get the logic of the gates
-    // down.  Then I'll add a power connection after
-    if (this.type == 'INPUT' && typeof this.parent != 'Board') {
-      this.power = !this.power;
-    }
   }
 }
 class InputNode extends Node {
   constructor(_parent, _type, _x, _y) {
     super(_parent, _type, _x, _y);
+    this.isGateNode = false;
   }
 }
 
 class OutputNode extends Node {
   constructor(_parent, _type, _x, _y) {
     super(_parent, _type, _x, _y);
+    this.isGateNode = false;
   }
 }

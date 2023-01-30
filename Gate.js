@@ -32,16 +32,12 @@ class Gate {
 
       // AND gate logic
       if (this.label === 'AND') {
-        console.log('here');
-
         this.gateOutputs[0].power = this.gateInputs[0].power && this.gateInputs[1].power;
       }
     }
   }
 
   getInputsFull() {
-    // console.log(this.gateInputs);
-
     return this.gateInputs.every((input) => input.prev);
   }
 
@@ -77,15 +73,6 @@ class Gate {
     textSize(26);
     text(this.label, this.x + 22, this.y + 23);
 
-    // Inputs
-    // this.gateInputs.forEach((i) => {
-    //   //TODO:CHANGE SHOW TO NEW SHOW ONCE IT"S READY
-    //   i.show();
-    // });
-
-    // // Output
-    // this.gateOutputs[0].show();
-
     // Setup gate's input and output positions
     const input_count = this.gateInputs.length;
     const output_count = this.gateOutputs.length;
@@ -95,13 +82,13 @@ class Gate {
     this.gateInputs.forEach((gI, index) => {
       gI.x = this.x;
       gI.y = this.y + inDivider + index * inDivider;
-      gI.newShow();
+      gI.show();
     });
 
     this.gateOutputs.forEach((gO, index) => {
       gO.x = this.x + this.w;
       gO.y = this.y + outDivider + index * outDivider;
-      gO.newShow();
+      gO.show();
     });
   }
 }
