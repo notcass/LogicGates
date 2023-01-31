@@ -129,7 +129,7 @@ class Board {
     // For each node
     for (const node of this.allNodes) {
       // If we are hovering one
-      // if (node.mouseHovering(mouseX, mouseY)) {
+      if (node.mouseHovering(mouseX, mouseY)) {
         // Clear any other lines to or from the node
         this.removeConnections(node);
 
@@ -138,6 +138,7 @@ class Board {
         this.sourceNode = node;
         break;
       }
+    }
     // Power Buttons
     for (const p of this.powerButtons) {
       p.clicked(mouseX, mouseY);
