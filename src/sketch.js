@@ -1,4 +1,4 @@
-/// <reference path="libraries/p5.global-mode.d.ts" />
+/// <reference path="../libraries/p5.global-mode.d.ts" />
 /**
  *  TODO:
  *    STRUCTURE:
@@ -56,12 +56,17 @@ const andGate = {
 function setup() {
   // createCanvas(1366, 768).parent('sketch-holder');
   createCanvas(800, 600).parent('sketch-holder');
+  resetSketch();
+}
+
+function resetSketch() {
   board = new Board(width, height);
   board.makeNewGate(notGate, board, 0);
   // board.makeNewGate(notGate, board, 1);
   board.makeNewGate(andGate, board, 2);
   // board.gates[1].x = 200;
   // board.gates[1].y = 300;
+  console.clear();
 }
 
 function draw() {
@@ -69,6 +74,7 @@ function draw() {
   board.runApp();
 }
 
+// Testin/Debug Helpers
 function keyPressed() {
   if (key === 'q') isLooping() ? noLoop() : loop();
   if (key === 'r') redraw();
@@ -77,10 +83,10 @@ function keyPressed() {
     console.log(board.allNodes);
   }
   if (key === '3') {
-    console.log(board.isDrawingConnectionsNew());
   }
 
   if (key === 'a') console.log(frameRate());
+  if(key === 'r') resetSketch();
 }
 
 function mousePressed() {
