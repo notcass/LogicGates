@@ -129,7 +129,7 @@ class Board {
     // For each node
     for (const node of this.allNodes) {
       // If we are hovering one
-      if (node.mouseHovering(mouseX, mouseY)) {
+      // if (node.mouseHovering(mouseX, mouseY)) {
         // Clear any other lines to or from the node
         this.removeConnections(node);
 
@@ -138,7 +138,6 @@ class Board {
         this.sourceNode = node;
         break;
       }
-    }
     // Power Buttons
     for (const p of this.powerButtons) {
       p.clicked(mouseX, mouseY);
@@ -182,100 +181,63 @@ class Board {
 
     // If target node isn't null, isn't on the same gate, and isn't same type
     if (targetNode) {
-      let diffParent = targetNode.parent != this.sourceNode.parent;
-      let diffParentType = targetNode.parent.constructor.name != this.sourceNode.parent.constructor.name;
-      // console.log(`diffParent ${diffParent}`);
-      // console.log(`diffParentType ${diffParentType}`);
+        const sourceType = this.sourceNode.type;
+        const targetType = targetNode.type;
 
-      // Will this expression work?
-      if (diffParent || diffParentType) {
-        // Remove any other lines
+      function canConnect(sourceNodeType, targetNodeType) {
+        if(sourceNodeType === 'INPUT') return targetNodeType === 'GATE_INPUT';
+
+        if(sourceNodeType === 'GATE_INPUT') return targetNodeType === 'INPUT' || targetNodeType === 'GATE_OUTPUT';
+
+        if(sourceNodeType === 'GATE_OUTPUT') return targetNodeType === 'OUTPUT' || targetNodeType === 'GATE_INPUT';
+
+        if(sourceNodeType === 'OUTPUT') return targetNodeType === 'GATE_OUTPUT';
+
+      }
+
+      // Make sure we aren't connecting two incompatible nodes, (two inputs, two outputs, etc..)
+      const validTypes = canConnect(sourceType, targetType);
+      const diffParent = this.sourceNode.parent != targetNode.parent;
+
+      if(validTypes && diffParent) {
+        // Stop drawing to this node so we can overwrite it with the new connection
         this.removeConnections(targetNode);
 
-        //FIXME:
-        // Attach nodes together.
         // If the sourceNode isn't an INPUT or GATE_INPUT, make the sourceNode
         // the first in the chain. This way power always flows right
-
-        // if (this.sourceNode.type != 'INPUT' && this.sourceNode.type != 'GATE_INPUT') {
-        //   console.log('first');
-
-        //   targetNode.prev = this.sourceNode;
-        //   this.sourceNode.next = targetNode;
-        // } else {
-        //   console.log('second');
-        //   this.sourceNode.prev = targetNode;
-        //   targetNode.next = this.sourceNode;
-        // }
-
-        // FIX ATTEMPTS
-        // console.log(targetNode.type);
-
-        let sourceType = this.sourceNode.type;
-        let targetType = targetNode.type;
-        // Clicking from inputs
-        if (sourceType.includes('INPUT')) {
-          console.log('Clicked from Input');
-
-          if (targetType.includes('INPUT')) {
-            console.log('Left to Right 1');
-            targetNode.prev = this.sourceNode;
-            this.sourceNode.next = targetNode;
-          } else {
-            console.log('Right to Left 1');
-            targetNode.next = this.sourceNode;
-            this.sourceNode.prev = targetNode;
-          }
-          // Clicking from outputs
+        if(sourceType === 'INPUT' || sourceType === 'GATE_OUTPUT') {
+          // Drawing connection from the 'left'
+          this.sourceNode.next = targetNode;
+          targetNode.prev = this.sourceNode;
         } else {
-          console.log('Clicked from Output');
-
-          if (targetType.includes('INPUT')) {
-            console.log('Left to Right 2');
-            targetNode.prev = this.sourceNode;
-            this.sourceNode.next = targetNode;
-          } else {
-            console.log('Right to Left 2');
-            targetNode.next = this.sourceNode;
-            this.sourceNode.prev = targetNode;
-          }
+          // Drawing connection from the 'right'
+          this.sourceNode.prev = targetNode;
+          targetNode.next = this.sourceNode;
         }
+
       }
     }
   }
 
-  // Clear any lines between node and next
+  // Clear any lines coming from node
   removeConnections(nodeA) {
-    for (const nodeB of this.allNodes) {
-      if (nodeB != nodeA) {
-        if (nodeB.next == nodeA || nodeB.prev == nodeA) {
-          // // Turn off power if it's not a Input
-          [nodeA, nodeB].forEach((n) => {
-            // if (n.subType != 'POWER') n.power = false;
-            if (n.type != 'INPUT') n.power = false;
-          });
+    if(nodeA.next) {
+      if(nodeA.next.type !== 'INPUT') nodeA.next.power = false;
+      if(nodeA.type !== 'INPUT') nodeA.power = false;
+      nodeA.next.prev = null;
+      nodeA.next = null;
+    }
 
-          nodeB.next = null;
-          nodeA.next = null;
-          break;
-        }
-      }
+    if(nodeA.prev) {
+      if(nodeA.prev.type !== 'INPUT') nodeA.prev.power = false;
+      if(nodeA.type !== 'INPUT') nodeA.power = false;
+      nodeA.prev.next = null;
+      nodeA.prev = null;
     }
   }
 
   // Returns TRUE as soon as we find a node that IS being drawn from
   isDrawingToMouse() {
     return !this.allNodes.every((n) => !n.drawingToMouse);
-  }
-  // Check all inputs and outputs on all gates to see if drawing any connections
-  isDrawingToMouseOld() {
-    let a = false;
-    for (const n of this.allNodes) {
-      if (n.drawingToMouse) {
-        a = true;
-        break;
-      }
-    }
-    return a;
   }
 }
