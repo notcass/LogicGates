@@ -32,6 +32,8 @@ class Node {
   show() {
     this.setColors();
     noStroke();
+    textSize(12);
+    text(this.type, this.x - 20, this.y - 50);
 
     circle(this.x, this.y, this.size);
 
@@ -55,6 +57,16 @@ class Node {
   mouseHovering(mouseX, mouseY) {
     let d = dist(mouseX, mouseY, this.x, this.y);
     return d < this.size / 2;
+  }
+
+  returnNext() {
+    if (this.type === 'INPUT' || this.type === 'GATE_OUTPUT') {
+      // console.log(this.next);
+      return this.next;
+    } else if (this.type === 'GATE_INPUT') {
+      // console.log(this.parent.gateOutputs[0]);
+      return this.parent.gateOutputs[0];
+    }
   }
 }
 class InputNode extends Node {

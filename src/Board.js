@@ -1,9 +1,9 @@
 class Board {
-  constructor(_w, _h) {
-    this.x = _w / 25;
-    this.y = _h / 13;
-    this.w = _w - this.x * 2;
-    this.h = _h - this.y * 2;
+  constructor(w, h) {
+    this.x = w / 25;
+    this.y = h / 13;
+    this.w = w - this.x * 2;
+    this.h = h - this.y * 2;
     this.inputCount = 2;
     this.inputs = [];
     this.powerButtons = [];
@@ -15,6 +15,48 @@ class Board {
     this.tempNode = null; // Temp var holder
     this.allNodes = []; // All nodes on all gates in one array
     this.setupIO();
+  }
+
+  /**
+   *    ~Steps/Notes~
+   * Make sure we have a valid input to output connection.
+   * Check which inputs/outputs are CONNECTED to something.
+   * I think we have to ignore the ones that aren't or we'll get bugs.
+   */
+  makeTruthTable() {
+    // check for valid connection
+    // this.inputs.forEach(i => {
+    // Write a traverse function in Node object? since we can't just say i.next
+    // })
+    let firstInput = this.inputs[0];
+  }
+
+  traverseConnections() {
+    console.clear();
+    let foundOutputFlag = false;
+
+    this.inputs.forEach((input) => {
+      let start = this.inputs[0];
+      let node = start.returnNext();
+      console.log('Start');
+      console.log(start);
+
+      if (node) {
+        while (node.returnNext()) {
+          console.log('Node');
+          console.log(node);
+          node = node.returnNext();
+        }
+
+        console.log('Last');
+        console.log(node);
+
+        // Examine last node in connection
+        if (node.type === 'OUTPUT') {
+          console.log('Found connection');
+        }
+      }
+    });
   }
 
   setupIO() {
@@ -32,11 +74,12 @@ class Board {
         attachedNode: this.inputs[i],
         radius: 13,
         show: function () {
-          fill(255);
-          stroke(255);
-          strokeWeight(2);
+          fill(45);
+          stroke(155);
+          strokeWeight(3);
           line(this.x, this.y, this.x + 40, this.y);
-          noStroke();
+          stroke(155);
+          fill(45);
           circle(this.x, this.y, this.radius * 2);
         },
         clicked: function (x, y) {
@@ -182,31 +225,39 @@ class Board {
 
     // If target node isn't null, isn't on the same gate, and isn't same type
     if (targetNode) {
-        const sourceType = this.sourceNode.type;
-        const targetType = targetNode.type;
+      const sourceType = this.sourceNode.type;
+      const targetType = targetNode.type;
 
       function canConnect(sourceNodeType, targetNodeType) {
-        if(sourceNodeType === 'INPUT') return targetNodeType === 'GATE_INPUT';
+        if (sourceNodeType === 'INPUT') {
+          return targetNodeType === 'GATE_INPUT';
+        }
 
-        if(sourceNodeType === 'GATE_INPUT') return targetNodeType === 'INPUT' || targetNodeType === 'GATE_OUTPUT';
+        if (sourceNodeType === 'GATE_INPUT') {
+          return targetNodeType === 'INPUT' || targetNodeType === 'GATE_OUTPUT';
+        }
 
-        if(sourceNodeType === 'GATE_OUTPUT') return targetNodeType === 'OUTPUT' || targetNodeType === 'GATE_INPUT';
+        if (sourceNodeType === 'GATE_OUTPUT') {
+          return targetNodeType === 'OUTPUT' || targetNodeType === 'GATE_INPUT';
+        }
 
-        if(sourceNodeType === 'OUTPUT') return targetNodeType === 'GATE_OUTPUT';
-
+        if (sourceNodeType === 'OUTPUT') {
+          return targetNodeType === 'GATE_OUTPUT';
+        }
       }
 
       // Make sure we aren't connecting two incompatible nodes, (two inputs, two outputs, etc..)
       const validTypes = canConnect(sourceType, targetType);
       const diffParent = this.sourceNode.parent != targetNode.parent;
 
-      if(validTypes && diffParent) {
+      if (validTypes && diffParent) {
         // Stop drawing to this node so we can overwrite it with the new connection
         this.removeConnections(targetNode);
 
         // If the sourceNode isn't an INPUT or GATE_INPUT, make the sourceNode
-        // the first in the chain. This way power always flows right
-        if(sourceType === 'INPUT' || sourceType === 'GATE_OUTPUT') {
+        // the first in the chain. This way power always flows right.
+        // (aka node.next is always valid)
+        if (sourceType === 'INPUT' || sourceType === 'GATE_OUTPUT') {
           // Drawing connection from the 'left'
           this.sourceNode.next = targetNode;
           targetNode.prev = this.sourceNode;
@@ -215,28 +266,28 @@ class Board {
           this.sourceNode.prev = targetNode;
           targetNode.next = this.sourceNode;
         }
-
       }
     }
   }
 
   // Clear any lines coming from node
   removeConnections(nodeA) {
-    if(nodeA.next) {
-      if(nodeA.next.type !== 'INPUT') nodeA.next.power = false;
-      if(nodeA.type !== 'INPUT') nodeA.power = false;
+    if (nodeA.next) {
+      if (nodeA.next.type !== 'INPUT') nodeA.next.power = false;
+      if (nodeA.type !== 'INPUT') nodeA.power = false;
       nodeA.next.prev = null;
       nodeA.next = null;
     }
 
-    if(nodeA.prev) {
-      if(nodeA.prev.type !== 'INPUT') nodeA.prev.power = false;
-      if(nodeA.type !== 'INPUT') nodeA.power = false;
+    if (nodeA.prev) {
+      if (nodeA.prev.type !== 'INPUT') nodeA.prev.power = false;
+      if (nodeA.type !== 'INPUT') nodeA.power = false;
       nodeA.prev.next = null;
       nodeA.prev = null;
     }
   }
 
+  //TODO: See TODO at top of sketch.js
   // Returns TRUE as soon as we find a node that IS being drawn from
   isDrawingToMouse() {
     return !this.allNodes.every((n) => !n.drawingToMouse);

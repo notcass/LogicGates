@@ -11,7 +11,7 @@ class Gate {
 
     this.gateInputs = new Array(_args.gateInputs);
     this.gateOutputs = new Array(_args.gateOutputs);
-    this.setupGateIO();
+    this.init();
   }
 
   /**
@@ -32,7 +32,8 @@ class Gate {
 
       // AND gate logic
       if (this.label === 'AND') {
-        this.gateOutputs[0].power = this.gateInputs[0].power && this.gateInputs[1].power;
+        this.gateOutputs[0].power =
+          this.gateInputs[0].power && this.gateInputs[1].power;
       }
     }
   }
@@ -45,7 +46,8 @@ class Gate {
     return this.gateOutputs.every((output) => output.next);
   }
 
-  setupGateIO() {
+  init() {
+    // Setup Gate I/O
     const input_count = this.gateInputs.length;
     const output_count = this.gateOutputs.length;
 
