@@ -1,20 +1,21 @@
 class Board {
-  constructor(w, h) {
+  constructor(w, h, inputs, outputs) {
     this.x = w / 25;
     this.y = h / 13;
     this.w = w - this.x * 2;
     this.h = h - this.y * 2;
-    this.inputCount = 2;
+    this.inputCount = inputs;
     this.inputs = [];
     this.powerButtons = [];
-    this.outputCount = 1;
+    this.outputCount = outputs;
     this.outputs = [];
     this.gates = []; // All gates on the board
+    this.nodeIdCounter = 0;
     this.draggingGate = null; // Boolean
     this.sourceNode = null; // Node we are drawing from
     this.tempNode = null; // Temp var holder
     this.allNodes = []; // All nodes on all gates in one array
-    this.setupIO();
+    this.init();
   }
 
   /**
@@ -24,18 +25,22 @@ class Board {
    * I think we have to ignore the ones that aren't or we'll get bugs.
    */
   makeTruthTable() {
-    // check for valid connection
-    // this.inputs.forEach(i => {
-    // Write a traverse function in Node object? since we can't just say i.next
-    // })
-    let firstInput = this.inputs[0];
+    // Get indexes of fully connected input nodes
+    const connectedNodes = this.findConnections(true);
+    console.log(connectedNodes);
+    let bs = new BoardStater(this, connectedNodes);
+    console.log(bs);
   }
 
-  findConnections() {
+  findConnections(consoleClearFlag) {
     console.clear();
 
-    // Array of any input nodes that have a connection to the output
-    const fullConnections = [];
+    // Array of de indexes that have a connection to the output
+    const fullConnections = {
+      inputs: [],
+      outputs: [],
+    };
+
     const purpColor = '#a3f';
     const blueColor = 'deepskyblue';
 
@@ -66,7 +71,18 @@ class Board {
             `%cFound complete connection at ${index}`,
             `color: deeppink`
           );
-          fullConnections.push(index);
+          console.log(node);
+
+          // Add connected inputs to return object
+          if (fullConnections.inputs.indexOf(startNode) === -1) {
+            fullConnections.inputs.push(startNode);
+          }
+
+          // Add connected outputs to return object
+          const output = this.outputs[node.index];
+          if (fullConnections.outputs.indexOf(output) === -1) {
+            fullConnections.outputs.push(output);
+          }
         }
       }
       console.log(
@@ -76,15 +92,17 @@ class Board {
     });
 
     console.log(fullConnections);
+    if (consoleClearFlag) console.clear();
+    return fullConnections;
   }
 
-  setupIO() {
+  init() {
     // Input Nodes
     let divider = height / (this.inputCount + 1);
     for (let i = 0; i < this.inputCount; i++) {
       let x = this.x + 30;
       let y = divider + i * divider;
-      this.inputs.push(new InputNode(this, 'INPUT', x, y));
+      this.inputs.push(new InputNode(this, 'INPUT', x, y, this.idCounter(), i));
 
       // Power Button
       let button = {
@@ -117,7 +135,9 @@ class Board {
     for (let i = 0; i < this.outputCount; i++) {
       let x = this.x + this.w;
       let y = divider + i * divider;
-      this.outputs.push(new OutputNode(this, 'OUTPUT', x, y));
+      this.outputs.push(
+        new OutputNode(this, 'OUTPUT', x, y, this.idCounter(), i)
+      );
     }
 
     this.allNodes.push(...this.inputs, ...this.outputs);
@@ -289,6 +309,11 @@ class Board {
     }
   }
 
+  // FIXME:need to check the other side of gates?
+  // if you clear a connect on the left side of a gate, the right side
+  // will stay powered on.
+  //
+  //
   // Clear any lines coming from node
   removeConnections(nodeA) {
     if (nodeA.next) {
@@ -310,5 +335,9 @@ class Board {
   // Returns TRUE as soon as we find a node that IS being drawn from
   isDrawingToMouse() {
     return !this.allNodes.every((n) => !n.drawingToMouse);
+  }
+
+  idCounter() {
+    return this.nodeIdCounter++;
   }
 }

@@ -35,6 +35,8 @@ class Gate {
         this.gateOutputs[0].power =
           this.gateInputs[0].power && this.gateInputs[1].power;
       }
+    } else {
+      this.gateOutputs.forEach((output) => (output.power = false));
     }
   }
 
@@ -53,12 +55,26 @@ class Gate {
 
     // Inputs
     for (let i = 0; i < input_count; i++) {
-      this.gateInputs[i] = new Node(this, 'GATE_INPUT');
+      this.gateInputs[i] = new Node(
+        this,
+        'GATE_INPUT',
+        null,
+        null,
+        this.parent.idCounter(),
+        i
+      );
     }
 
     // Output
     for (let i = 0; i < output_count; i++) {
-      this.gateOutputs[i] = new Node(this, 'GATE_OUTPUT');
+      this.gateOutputs[i] = new Node(
+        this,
+        'GATE_OUTPUT',
+        null,
+        null,
+        this.parent.idCounter(),
+        i
+      );
     }
   }
 

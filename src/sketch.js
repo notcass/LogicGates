@@ -60,13 +60,12 @@ function setup() {
 }
 
 function resetSketch() {
-  board = new Board(width, height);
+  board = new Board(width, height, 2, 1);
   board.makeNewGate(notGate, board, 0);
-  // board.makeNewGate(notGate, board, 1);
+  board.makeNewGate(notGate, board, 1);
   board.makeNewGate(andGate, board, 2);
-  // board.gates[1].x = 200;
-  // board.gates[1].y = 300;
-  console.clear();
+  board.gates[1].x = 200;
+  board.gates[1].y = 300;
 }
 
 function draw() {
@@ -74,21 +73,14 @@ function draw() {
   board.runApp();
 }
 
-// Testin/Debug Helpers
 function keyPressed() {
   if (key === 'q') isLooping() ? noLoop() : loop();
   if (key === 'r') redraw();
+  // DEBUGGING
   if (key === '1') console.log(mouseX, mouseY);
-  if (key === '2') {
-    console.log(board.allNodes);
-  }
-  if (key === '3') {
-    board.makeTruthTable();
-  }
-  if (key === '4') {
-    board.findConnections();
-  }
-
+  if (key === '2') console.log(board.allNodes);
+  if (key === '3') board.makeTruthTable();
+  if (key === '4') board.findConnections();
   if (key === 'a') console.log(frameRate());
   if (key === 'r') resetSketch();
 }

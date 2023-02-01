@@ -1,10 +1,12 @@
 class Node {
-  constructor(_parent, _type, _x, _y) {
+  constructor(_parent, _type, _x, _y, _id, _index) {
     this.parent = _parent;
     this.type = _type; // INPUT, OUTPUT, GATE_INPUT, GATE_OUTPUT
     this.size = _parent.cSize ?? 40;
     this.x = _x ?? 0;
     this.y = _y ?? 0;
+    this.id = _id;
+    this.index = _index; // The nodes index in it's board's relavent holder array
     this.drawingToMouse = false;
     this.next = null; // Next Node
     this.prev = null; // Prev Node
@@ -70,15 +72,15 @@ class Node {
   }
 }
 class InputNode extends Node {
-  constructor(_parent, _type, _x, _y) {
-    super(_parent, _type, _x, _y);
+  constructor(_parent, _type, _x, _y, _id, _index) {
+    super(_parent, _type, _x, _y, _id, _index);
     this.isGateNode = false;
   }
 }
 
 class OutputNode extends Node {
-  constructor(_parent, _type, _x, _y) {
-    super(_parent, _type, _x, _y);
+  constructor(_parent, _type, _x, _y, _id, _index) {
+    super(_parent, _type, _x, _y, _id, _index);
     this.isGateNode = false;
   }
 }
