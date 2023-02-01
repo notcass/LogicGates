@@ -63,7 +63,7 @@ function resetSketch() {
   board = new Board(width, height);
   board.makeNewGate(notGate, board, 0);
   // board.makeNewGate(notGate, board, 1);
-  // board.makeNewGate(andGate, board, 2);
+  board.makeNewGate(andGate, board, 2);
   // board.gates[1].x = 200;
   // board.gates[1].y = 300;
   console.clear();
@@ -86,7 +86,7 @@ function keyPressed() {
     board.makeTruthTable();
   }
   if (key === '4') {
-    board.traverseConnections();
+    board.findConnections();
   }
 
   if (key === 'a') console.log(frameRate());

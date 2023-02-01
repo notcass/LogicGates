@@ -31,32 +31,51 @@ class Board {
     let firstInput = this.inputs[0];
   }
 
-  traverseConnections() {
+  findConnections() {
     console.clear();
-    let foundOutputFlag = false;
 
-    this.inputs.forEach((input) => {
-      let start = this.inputs[0];
-      let node = start.returnNext();
-      console.log('Start');
-      console.log(start);
+    // Array of any input nodes that have a connection to the output
+    const fullConnections = [];
+    const purpColor = '#a3f';
+    const blueColor = 'deepskyblue';
+
+    // For each input, traverse through the next item in the chain
+    this.inputs.forEach((startNode, index) => {
+      let node = startNode.returnNext();
+      console.log(
+        `%c=============== Linked Nodes ===============`,
+        `color: ${purpColor}`
+      );
+      console.log(`%c--Start Node: ${index}`, `color: #0f6`);
+
+      console.log(startNode);
 
       if (node) {
         while (node.returnNext()) {
-          console.log('Node');
+          console.log(`%c--Node:`, `color: ${blueColor}`);
           console.log(node);
           node = node.returnNext();
         }
 
-        console.log('Last');
+        console.log(`%c--Last:`, `color: red`);
         console.log(node);
 
         // Examine last node in connection
         if (node.type === 'OUTPUT') {
-          console.log('Found connection');
+          console.log(
+            `%cFound complete connection at ${index}`,
+            `color: deeppink`
+          );
+          fullConnections.push(index);
         }
       }
+      console.log(
+        `%c============================================`,
+        `color: ${purpColor}`
+      );
     });
+
+    console.log(fullConnections);
   }
 
   setupIO() {
