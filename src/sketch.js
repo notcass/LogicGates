@@ -3,6 +3,7 @@
  *  TODO:
  *    STRUCTURE:
  *      DONE --Dynamic placement of nodes onto gates for when we have custom gates
+ *
  *      --Add incrementing ID numbers to gates and nodes for easier debugging/identifying
  *          -Bonus: Create automatic incrementing value without a global var
  *      --Dynamic text sizing on gate labels
@@ -12,6 +13,10 @@
  *         put that property onto the board object as an integer. The int
  *         corresponds to the node that we are drawing to's ID. If
  *         we aren't drawing, maybe it's -1? See "Add ID's" todo above.
+ *
+ *      --Generate a truth table from the board state
+ *         Only consider inputs that connect all the way to the output
+ *         Use this to create a new gate from the board state?
  *
  *
  *
@@ -63,9 +68,8 @@ function resetSketch() {
   board = new Board(width, height, 2, 1);
   board.makeNewGate(notGate, board, 0);
   board.makeNewGate(notGate, board, 1);
-  board.makeNewGate(andGate, board, 2);
-  board.gates[1].x = 200;
   board.gates[1].y = 300;
+  board.makeNewGate(andGate, board, 2);
 }
 
 function draw() {
@@ -75,7 +79,7 @@ function draw() {
 
 function keyPressed() {
   if (key === 'q') isLooping() ? noLoop() : loop();
-  if (key === 'r') redraw();
+  if (key === 'w') redraw();
   // DEBUGGING
   if (key === '1') console.log(mouseX, mouseY);
   if (key === '2') console.log(board.allNodes);
@@ -83,6 +87,7 @@ function keyPressed() {
   if (key === '4') board.findConnections();
   if (key === 'a') console.log(frameRate());
   if (key === 'r') resetSketch();
+  if (key === 'f') DEBUG();
 }
 
 function mousePressed() {
@@ -91,4 +96,20 @@ function mousePressed() {
 
 function mouseReleased() {
   board.mouseUp();
+}
+
+function DEBUG() {
+  // Connect nodes at the start
+  const all = board.allNodes;
+  all[0].next = all[3];
+  all[3].prev = all[0];
+
+  all[4].next = all[2];
+  all[2].prev = all[4];
+
+  // all[4].next = all[7];
+  // all[7].prev = all[4];
+
+  // all[9].next = all[2];
+  // all[2].prev = all[9];
 }

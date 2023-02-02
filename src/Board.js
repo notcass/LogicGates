@@ -27,15 +27,15 @@ class Board {
   makeTruthTable() {
     // Get indexes of fully connected input nodes
     const connectedNodes = this.findConnections(true);
-    console.log(connectedNodes);
+    // console.log(connectedNodes);
     let bs = new BoardStater(this, connectedNodes);
-    console.log(bs);
+    bs.start();
   }
 
   findConnections(consoleClearFlag) {
     console.clear();
 
-    // Array of de indexes that have a connection to the output
+    // Array of indexes that have a connection to the output
     const fullConnections = {
       inputs: [],
       outputs: [],
@@ -47,15 +47,16 @@ class Board {
     // For each input, traverse through the next item in the chain
     this.inputs.forEach((startNode, index) => {
       let node = startNode.returnNext();
-      console.log(
-        `%c=============== Linked Nodes ===============`,
-        `color: ${purpColor}`
-      );
-      console.log(`%c--Start Node: ${index}`, `color: #0f6`);
-
-      console.log(startNode);
-
       if (node) {
+        console.log(
+          `%c=============== Linked Nodes ===============`,
+          `color: ${purpColor}`
+        );
+        // console.groupCollapsed('Nodes');
+        console.log(`%c--Start Node: ${index}`, `color: #0f6`);
+
+        console.log(startNode);
+
         while (node.returnNext()) {
           console.log(`%c--Node:`, `color: ${blueColor}`);
           console.log(node);
@@ -71,7 +72,7 @@ class Board {
             `%cFound complete connection at ${index}`,
             `color: deeppink`
           );
-          console.log(node);
+          // console.log(node);
 
           // Add connected inputs to return object
           if (fullConnections.inputs.indexOf(startNode) === -1) {
@@ -84,14 +85,15 @@ class Board {
             fullConnections.outputs.push(output);
           }
         }
+        // console.groupEnd();
+        console.log(
+          `%c============================================`,
+          `color: ${purpColor}`
+        );
       }
-      console.log(
-        `%c============================================`,
-        `color: ${purpColor}`
-      );
     });
 
-    console.log(fullConnections);
+    // console.log(fullConnections);
     if (consoleClearFlag) console.clear();
     return fullConnections;
   }

@@ -2,10 +2,10 @@ class Node {
   constructor(_parent, _type, _x, _y, _id, _index) {
     this.parent = _parent;
     this.type = _type; // INPUT, OUTPUT, GATE_INPUT, GATE_OUTPUT
+    this.id = _id;
     this.size = _parent.cSize ?? 40;
     this.x = _x ?? 0;
     this.y = _y ?? 0;
-    this.id = _id;
     this.index = _index; // The nodes index in it's board's relavent holder array
     this.drawingToMouse = false;
     this.next = null; // Next Node
@@ -32,11 +32,15 @@ class Node {
   }
 
   show() {
-    this.setColors();
+    //======== DEBUG ========
     noStroke();
+    fill(255);
     textSize(12);
-    text(this.type, this.x - 20, this.y - 50);
+    text(`${this.type}`, this.x - 20, this.y - 50);
+    text(`${this.id}`, this.x - 20, this.y - 65);
+    //=============== =======
 
+    this.setColors();
     circle(this.x, this.y, this.size);
 
     if (this.drawingToMouse) {
