@@ -4,8 +4,9 @@
  *    STRUCTURE:
  *      DONE --Dynamic placement of nodes onto gates for when we have custom gates
  *
- *      --Add incrementing ID numbers to gates and nodes for easier debugging/identifying
- *          -Bonus: Create automatic incrementing value without a global var
+ *      DONE --Add incrementing ID numbers to gates and nodes for easier debugging/identifying
+ *            -Bonus: Create automatic incrementing value without a global var
+ *
  *      --Dynamic text sizing on gate labels
  *
  *      --Change the way we draw to the mouse.
@@ -27,6 +28,10 @@
  *          -AND:    Spawns an AND gate
  *          -NOT:    Spawns a NOT gate
  *      --Add text input area to name new gates
+ *
+ *    RANDOM:
+ *      --Go back in commit history and find the bug that leaves burn-in on my laptop screen for a minute or so
+ *        when a node flashes red and white on the same frame somehow 🤔
  *
  *  FIXME:
  *      --Add gates always being drawn on top when dragging them
@@ -62,14 +67,16 @@ function setup() {
   // createCanvas(1366, 768).parent('sketch-holder');
   createCanvas(800, 600).parent('sketch-holder');
   resetSketch();
+  // DEBUG();
 }
 
 function resetSketch() {
-  board = new Board(width, height, 2, 1);
-  board.makeNewGate(notGate, board, 0);
-  board.makeNewGate(notGate, board, 1);
-  board.gates[1].y = 300;
-  board.makeNewGate(andGate, board, 2);
+  // board = new Board(width, height, 2, 2);
+  // board.makeNewGate(notGate, board, 0);
+  // board.makeNewGate(notGate, board, 1);
+  // board.gates[1].y = 300;
+  // board.makeNewGate(andGate, board, 2);
+  DEBUG_SETUPS(2);
 }
 
 function draw() {
@@ -81,13 +88,13 @@ function keyPressed() {
   if (key === 'q') isLooping() ? noLoop() : loop();
   if (key === 'w') redraw();
   // DEBUGGING
-  if (key === '1') console.log(mouseX, mouseY);
-  if (key === '2') console.log(board.allNodes);
+  if (key === '1') DEBUG_SETUPS(1);
+  if (key === '2') DEBUG_SETUPS(2);
   if (key === '3') board.makeTruthTable();
   if (key === '4') board.findConnections();
   if (key === 'a') console.log(frameRate());
   if (key === 'r') resetSketch();
-  if (key === 'f') DEBUG();
+  if (key === 'm') console.log(mouseX, mouseY);
 }
 
 function mousePressed() {
@@ -98,18 +105,49 @@ function mouseReleased() {
   board.mouseUp();
 }
 
-function DEBUG() {
-  // Connect nodes at the start
-  const all = board.allNodes;
-  all[0].next = all[3];
-  all[3].prev = all[0];
+function DEBUG_SETUPS(n) {
+  if (n === 1) {
+    board = new Board(width, height, 2, 2);
+    const a = board.allNodes;
+    board.makeNewGate(notGate, board, 0);
+    board.makeNewGate(notGate, board, 1);
+    board.gates[1].y = 350;
 
-  all[4].next = all[2];
-  all[2].prev = all[4];
+    // Two AND gates
+    a[0].next = a[4];
+    a[4].prev = a[2];
 
-  // all[4].next = all[7];
-  // all[7].prev = all[4];
+    a[5].next = a[2];
+    a[2].prev = a[5];
 
-  // all[9].next = all[2];
-  // all[2].prev = all[9];
+    a[1].next = a[6];
+    a[6].prev = a[1];
+
+    a[7].next = a[3];
+    a[3].prev = a[7];
+  }
+
+  if (n === 2) {
+    board = new Board(width, height, 3, 2);
+    const a = board.allNodes;
+    board.makeNewGate(notGate, board, 0);
+    board.makeNewGate(andGate, board, 1);
+
+    // 3 inputs
+    // One NOT and one AND gate
+    a[0].next = a[5];
+    a[5].prev = a[0];
+
+    a[6].next = a[3];
+    a[3].prev = a[6];
+
+    a[1].next = a[7];
+    a[7].prev = a[1];
+
+    a[9].next = a[4];
+    a[4].prev = a[9];
+
+    a[2].next = a[8];
+    a[8].prev = a[2];
+  }
 }

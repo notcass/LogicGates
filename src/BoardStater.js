@@ -7,30 +7,46 @@ class BoardStater {
     this.gates = parent.gates;
     this.allNodes = parent.allNodes;
     this.connectedNodes = connectedNodes;
+    this.inpCount = this.connectedNodes.inputs.length;
+  }
+
+  /**
+   *  Cool as fuck decimal to binary trick to generate permutations for our inputs
+   *
+   * By counting up in decimal and converting the digits to binary
+   * we generate the needed permutations for which inputs are switched on
+   * Example:
+   * 4 inputs: 0000
+   * Possible ON/OFF arrangements is the same as counting up in binary
+   * 0000
+   * 0001
+   * 0010
+   * 0011
+   * etc...*
+   *
+   */
+  generatePermutations() {
+    const permsCount = 2 ** this.inpCount;
+    const permsStrings = [];
+
+    for (let i = 0; i < permsCount; i++) {
+      // Convert decimal to binary string  5 => 101
+      let val = i.toString(2);
+      // Add leading zeroes to match the amount of inputs
+      val = val.padStart(this.inpCount, '0');
+      // Add to array
+      permsStrings.push(val);
+    }
+    return permsStrings;
   }
 
   start() {
     const inpCount = this.connectedNodes.inputs.length;
     const outCount = this.connectedNodes.outputs.length;
     const outputStartIndex = inpCount;
-
-    // console.log(`inpCount ${inpCount}`);
-    // console.log(`outCount ${outCount}`);
-    // console.log('Connected Nodes:');
-    // console.log(this.connectedNodes);
-    this.getOutputState(0);
-
     let truthTable = {};
-
-    // For each INPUT
-    for (let input = 0; input < inpCount; input++) {
-      // For each POWER STATE of the input (always 1 or 0)
-      for (let inputState = 0; inputState < 2; inputState++) {
-        // Examine the OUTPUT, with the INPUT's POWERSTATE
-        this.examine(input, inputState);
-        // STORE THE RESULT??
-      }
-    }
+    let perms = this.generatePermutations();
+    console.table(perms);
   }
 
   examine(input, inputState) {

@@ -27,7 +27,7 @@ class Board {
   makeTruthTable() {
     // Get indexes of fully connected input nodes
     const connectedNodes = this.findConnections(true);
-    // console.log(connectedNodes);
+    // Create boardstate object to help encapsulate?
     let bs = new BoardStater(this, connectedNodes);
     bs.start();
   }
@@ -311,11 +311,6 @@ class Board {
     }
   }
 
-  // FIXME:need to check the other side of gates?
-  // if you clear a connect on the left side of a gate, the right side
-  // will stay powered on.
-  //
-  //
   // Clear any lines coming from node
   removeConnections(nodeA) {
     if (nodeA.next) {
