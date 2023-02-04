@@ -17,16 +17,14 @@ class Board {
     this.init();
     // DEBUG
     this.bs;
-    // this.startBoardStater();
   }
 
   // Setup object to help with board state to gate
   startBoardStater() {
     // Create boardstate object to help encapsulate?
-    // this.bs = new BoardStater(this);
-    // this.bs.start();
-    // let truthTable = BoardStater(this);
-    // console.log(truthTable);
+    this.bs = new BoardStater(this);
+    console.log(this.bs.start());
+
     // let truthTable = BoardStaterObj.start(this);
     // console.log(BoardStaterObj);
   }

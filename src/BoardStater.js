@@ -5,21 +5,17 @@ class BoardStater {
     this.inpCount = this.connectedNodes.inputs.length;
   }
 
-  start(parent) {
-    this.board = parent;
-    this.connectedNodes = this.findConnections();
-    this.inpCount = this.connectedNodes.inputs.length;
-
+  start() {
     const truthTable = [];
-    const perms = generatePermutations();
+    const perms = this.generatePermutations();
 
     // For each input permutation
     perms.forEach((p) => {
       // Set the board nodes to the permutation
-      setNodesToPerm(p);
+      this.setNodesToPerm(p);
 
       // Propagate power to outputs
-      computeOutputs();
+      this.computeOutputs();
 
       // Then examine the outputs
       let outString = '';
@@ -27,7 +23,7 @@ class BoardStater {
         // Add outupts to the end of the perm string and insert into truth table
         outString += o.power ? '1' : '0';
       });
-      truthTable.push([p + outString]);
+      truthTable.push(p + outString);
     });
 
     return truthTable;
@@ -38,14 +34,14 @@ class BoardStater {
     for (let i = 0; i < this.inpCount; i++) {
       inps[i].power = permutation.charAt(i) === '1' ? true : false;
     }
-    evalNodePower();
+    this.evalNodePower();
   }
 
   computeOutputs() {
     this.board.gates.forEach((g) => {
       g.checkLogic();
     });
-    evalNodePower();
+    this.evalNodePower();
   }
 
   evalNodePower() {
@@ -79,7 +75,38 @@ class BoardStater {
       // Add to array
       permsStrings.push(val);
     }
+
     return permsStrings;
+  }
+
+  /**
+   *
+   *  Abusing the fact that sets can only contain unique values. 😎
+   *
+   * Generate a random permutation
+   * set.add(randomPerm)
+   * repeat enough times that we totally 100% for sure 😉 have all permutations
+   *
+   */
+  generatePermutationsWACKY(w) {
+    const set = new Set();
+    const width = w ?? 1;
+
+    // Just a big loop
+    for (let i = 0; i < width * 10; i++) {
+      let str = '';
+
+      // Generate random permutation
+      for (let i = 0; i < width; i++) {
+        let digit = Math.random() > 0.5 ? '1' : '0';
+        str += digit;
+      }
+
+      // Try to add to set
+      set.add(str);
+    }
+
+    console.log(set);
   }
 
   findConnections() {
