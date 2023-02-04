@@ -14,15 +14,7 @@ class Gate {
     this.init();
   }
 
-  /**
-   * Determines gate OUTPUT based on the gates INPUTS
-   *
-   * TODO: Oh boy
-   * This needs be done in a dynamic way so that we can create a
-   * new logic gate from a Board state later on.
-   *
-   *  ---MAYBE we just start by hard programming the 'NOT' and 'AND' gate
-   */
+  // Determines gate OUTPUT based on the gates INPUTS
   checkLogic() {
     if (this.getInputsFull() && this.getOutputsFull()) {
       // NOT gate logic

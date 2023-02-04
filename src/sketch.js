@@ -1,5 +1,10 @@
 /// <reference path="../libraries/p5.global-mode.d.ts" />
 /**
+ *                 A clone of the program in the youtube video
+ *             "Exploring How Computers Work", by Sebastian Lague.
+ *                      https://youtu.be/QZwneRb-zqA
+ *
+ *
  *  TODO:
  *    STRUCTURE:
  *      DONE --Dynamic placement of nodes onto gates for when we have custom gates
@@ -22,6 +27,7 @@
  *
  *
  *    FEATURES:
+ *      --Draw smooth/curved lines (😳😩) between nodes, like in the reference video
  *      --Add side panels to hold power sources, buttons, etc
  *      --Add Buttons "Create", "AND", "NOT"
  *          -Create: Creates a gate from the board state
@@ -90,7 +96,7 @@ function keyPressed() {
   // DEBUGGING
   if (key === '1') DEBUG_SETUPS(1);
   if (key === '2') DEBUG_SETUPS(2);
-  if (key === '3') board.makeTruthTable();
+  if (key === '3') board.startBoardStater();
   if (key === '4') board.findConnections();
   if (key === 'a') console.log(frameRate());
   if (key === 'r') resetSketch();
@@ -132,6 +138,8 @@ function DEBUG_SETUPS(n) {
     const a = board.allNodes;
     board.makeNewGate(notGate, board, 0);
     board.makeNewGate(andGate, board, 1);
+    board.gates[1].x = 200;
+    board.gates[1].y = 350;
 
     // 3 inputs
     // One NOT and one AND gate

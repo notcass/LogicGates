@@ -13,89 +13,22 @@ class Board {
     this.nodeIdCounter = 0;
     this.draggingGate = null; // Boolean
     this.sourceNode = null; // Node we are drawing from
-    this.tempNode = null; // Temp var holder
     this.allNodes = []; // All nodes on all gates in one array
     this.init();
+    // DEBUG
+    this.bs;
+    // this.startBoardStater();
   }
 
-  /**
-   *    ~Steps/Notes~
-   * Make sure we have a valid input to output connection.
-   * Check which inputs/outputs are CONNECTED to something.
-   * I think we have to ignore the ones that aren't or we'll get bugs.
-   */
-  makeTruthTable() {
-    // Get indexes of fully connected input nodes
-    const connectedNodes = this.findConnections(true);
+  // Setup object to help with board state to gate
+  startBoardStater() {
     // Create boardstate object to help encapsulate?
-    let bs = new BoardStater(this, connectedNodes);
-    bs.start();
-  }
-
-  findConnections(consoleClearFlag) {
-    console.clear();
-
-    // Array of indexes that have a connection to the output
-    const fullConnections = {
-      inputs: [],
-      outputs: [],
-    };
-
-    const purpColor = '#a3f';
-    const blueColor = 'deepskyblue';
-
-    // For each input, traverse through the next item in the chain
-    this.inputs.forEach((startNode, index) => {
-      let node = startNode.returnNext();
-      if (node) {
-        console.log(
-          `%c=============== Linked Nodes ===============`,
-          `color: ${purpColor}`
-        );
-        // console.groupCollapsed('Nodes');
-        console.log(`%c--Start Node: ${index}`, `color: #0f6`);
-
-        console.log(startNode);
-
-        while (node.returnNext()) {
-          console.log(`%c--Node:`, `color: ${blueColor}`);
-          console.log(node);
-          node = node.returnNext();
-        }
-
-        console.log(`%c--Last:`, `color: red`);
-        console.log(node);
-
-        // Examine last node in connection
-        if (node.type === 'OUTPUT') {
-          console.log(
-            `%cFound complete connection at ${index}`,
-            `color: deeppink`
-          );
-          // console.log(node);
-
-          // Add connected inputs to return object
-          if (fullConnections.inputs.indexOf(startNode) === -1) {
-            fullConnections.inputs.push(startNode);
-          }
-
-          // Add connected outputs to return object
-          const output = this.outputs[node.index];
-          if (fullConnections.outputs.indexOf(output) === -1) {
-            fullConnections.outputs.push(output);
-          }
-        }
-        // console.groupEnd();
-        console.log(
-          `%c============================================`,
-          `color: ${purpColor}`
-        );
-      }
-    });
-
-    // console.log(fullConnections);
-    if (consoleClearFlag) console.clear();
-    return fullConnections;
+    // this.bs = new BoardStater(this);
+    // this.bs.start();
+    // let truthTable = BoardStater(this);
+    // console.log(truthTable);
+    // let truthTable = BoardStaterObj.start(this);
+    // console.log(BoardStaterObj);
   }
 
   init() {

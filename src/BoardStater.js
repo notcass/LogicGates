@@ -1,13 +1,55 @@
 class BoardStater {
-  constructor(parent, connectedNodes) {
+  constructor(parent) {
     this.board = parent;
-    this.inputs = parent.inputs;
-    this.powerButtons = parent.powerButtons;
-    this.outputs = parent.outputs;
-    this.gates = parent.gates;
-    this.allNodes = parent.allNodes;
-    this.connectedNodes = connectedNodes;
+    this.connectedNodes = this.findConnections();
     this.inpCount = this.connectedNodes.inputs.length;
+  }
+
+  start(parent) {
+    this.board = parent;
+    this.connectedNodes = this.findConnections();
+    this.inpCount = this.connectedNodes.inputs.length;
+
+    const truthTable = [];
+    const perms = generatePermutations();
+
+    // For each input permutation
+    perms.forEach((p) => {
+      // Set the board nodes to the permutation
+      setNodesToPerm(p);
+
+      // Propagate power to outputs
+      computeOutputs();
+
+      // Then examine the outputs
+      let outString = '';
+      this.board.outputs.forEach((o) => {
+        // Add outupts to the end of the perm string and insert into truth table
+        outString += o.power ? '1' : '0';
+      });
+      truthTable.push([p + outString]);
+    });
+
+    return truthTable;
+  }
+  setNodesToPerm(permutation) {
+    const inps = this.board.inputs;
+
+    for (let i = 0; i < this.inpCount; i++) {
+      inps[i].power = permutation.charAt(i) === '1' ? true : false;
+    }
+    evalNodePower();
+  }
+
+  computeOutputs() {
+    this.board.gates.forEach((g) => {
+      g.checkLogic();
+    });
+    evalNodePower();
+  }
+
+  evalNodePower() {
+    this.board.allNodes.forEach((n) => n.evalPower());
   }
 
   /**
@@ -40,24 +82,36 @@ class BoardStater {
     return permsStrings;
   }
 
-  start() {
-    const inpCount = this.connectedNodes.inputs.length;
-    const outCount = this.connectedNodes.outputs.length;
-    const outputStartIndex = inpCount;
-    let truthTable = {};
-    let perms = this.generatePermutations();
-    console.table(perms);
-  }
+  findConnections() {
+    // Array of indexes that have a connection to an output
+    const fullConnections = {
+      inputs: [],
+      outputs: [],
+    };
+    // For each input, traverse through the next item in the chain
+    this.board.inputs.forEach((startNode) => {
+      let node = startNode.returnNext();
+      if (node) {
+        while (node.returnNext()) {
+          node = node.returnNext();
+        }
 
-  examine(input, inputState) {
-    let cn = this.connectedNodes;
-    // console.log(`input: ${input} `);
-    // console.log(`inputState: ${inputState} `);
-    return [inputState];
-  }
+        // Examine last node in connection
+        if (node.type === 'OUTPUT') {
+          // Add connected inputs to return object
+          if (fullConnections.inputs.indexOf(startNode) === -1) {
+            fullConnections.inputs.push(startNode);
+          }
 
-  getOutputState(index) {
-    const bool = this.connectedNodes.outputs[index].power;
-    console.log(parseInt(bool));
+          // Add connected outputs to return object
+          const output = this.board.outputs[node.index];
+          if (fullConnections.outputs.indexOf(output) === -1) {
+            fullConnections.outputs.push(output);
+          }
+        }
+      }
+    });
+
+    return fullConnections;
   }
 }

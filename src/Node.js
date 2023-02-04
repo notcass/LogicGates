@@ -78,13 +78,11 @@ class Node {
 class InputNode extends Node {
   constructor(_parent, _type, _x, _y, _id, _index) {
     super(_parent, _type, _x, _y, _id, _index);
-    this.isGateNode = false;
   }
 }
 
 class OutputNode extends Node {
   constructor(_parent, _type, _x, _y, _id, _index) {
     super(_parent, _type, _x, _y, _id, _index);
-    this.isGateNode = false;
   }
 }
