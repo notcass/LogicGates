@@ -12,6 +12,10 @@
  *      DONE --Add incrementing ID numbers to gates and nodes for easier debugging/identifying
  *            -Bonus: Create automatic incrementing value without a global var
  *
+ *      DONE --Generate a truth table from the board state
+ *         Only consider inputs that connect all the way to the output
+ *         Use this to create a new gate from the board state?
+ *
  *      --Dynamic text sizing on gate labels
  *
  *      --Change the way we draw to the mouse.
@@ -20,9 +24,8 @@
  *         corresponds to the node that we are drawing to's ID. If
  *         we aren't drawing, maybe it's -1? See "Add ID's" todo above.
  *
- *      --Generate a truth table from the board state
- *         Only consider inputs that connect all the way to the output
- *         Use this to create a new gate from the board state?
+ *      --Choose type of function declaration/expression thing for BoardStater
+ *
  *
  *
  *
@@ -44,11 +47,7 @@
  *
  *
  *  CLEAN:
- *    --Combine gate inputs, gate outputs, board power into one data structure.
- *    Currently, we loop through gates.gateInputs and gates.outputs any
- *    time we need to handle power connections.
- *    --Learn "Extends" keyword? make PowerNode class that extends node?
- *    --Make separate input/output nodes that extend node?
+ *
  *
  */
 
@@ -59,6 +58,10 @@ const notGate = {
   y: 200,
   gateInputs: 1,
   gateOutputs: 1,
+  truthTable: {
+    0: '1',
+    1: '0',
+  },
 };
 
 const andGate = {
@@ -67,21 +70,26 @@ const andGate = {
   y: 270,
   gateInputs: 2,
   gateOutputs: 1,
+  truthTable: {
+    '00': '0',
+    '01': '0',
+    10: '0',
+    11: '1',
+  },
 };
 
 function setup() {
-  // createCanvas(1366, 768).parent('sketch-holder');
   createCanvas(800, 600).parent('sketch-holder');
   resetSketch();
-  // DEBUG();
 }
 
 function resetSketch() {
-  // board = new Board(width, height, 2, 2);
-  // board.makeNewGate(notGate, board, 0);
+  board = new Board(width, height, 2, 2);
+  board.makeNewGate(notGate, board, 0);
   // board.makeNewGate(notGate, board, 1);
   // board.gates[1].y = 300;
-  // board.makeNewGate(andGate, board, 2);
+  board.makeNewGate(andGate, board, 2);
+
   DEBUG_SETUPS(2);
 }
 
@@ -126,7 +134,7 @@ function DEBUG_SETUPS(n) {
     a[5].next = a[2];
     a[2].prev = a[5];
 
-    a[1].next = a[6];
+    a[2].next = a[6];
     a[6].prev = a[1];
 
     a[7].next = a[3];

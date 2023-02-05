@@ -22,11 +22,12 @@ class Board {
   // Setup object to help with board state to gate
   startBoardStater() {
     // Create boardstate object to help encapsulate?
-    this.bs = new BoardStater(this);
-    console.log(this.bs.start());
+    // this.bs = new BoardStater(this);
+    // console.log(this.bs.start());
 
-    // let truthTable = BoardStaterObj.start(this);
-    // console.log(BoardStaterObj);
+    this.gates.forEach((g) => {
+      g.applyLogic();
+    });
   }
 
   init() {
@@ -38,7 +39,7 @@ class Board {
       this.inputs.push(new InputNode(this, 'INPUT', x, y, this.idCounter(), i));
 
       // Power Button
-      let button = {
+      const button = {
         x: x - 50,
         y: y,
         attachedNode: this.inputs[i],
@@ -103,7 +104,7 @@ class Board {
     // Show Gates
     this.gates.forEach((g) => {
       g.show();
-      g.checkLogic();
+      g.applyLogic();
     });
 
     // Drag gates
@@ -134,10 +135,8 @@ class Board {
   handleIO() {
     // Draw power buttons
     this.powerButtons.forEach((pb) => pb.show());
-    // Draw Inputs
-    this.inputs.forEach((p) => p.show());
-    // Draw board output
-    this.outputs.forEach((o) => o.show());
+    // Draw Inputs/Outputs
+    this.allNodes.forEach((n) => n.show());
   }
 
   mouseDown() {
@@ -179,8 +178,7 @@ class Board {
       g.gateOutputs.forEach((o) => (o.drawingToMouse = false));
     });
     //Stop drawing lines from INPUTS and OUTPUTS
-    this.inputs.forEach((p) => (p.drawingToMouse = false));
-    this.outputs.forEach((o) => (o.drawingToMouse = false));
+    this.allNodes.forEach((n) => (n.drawingToMouse = false));
   }
 
   // This function accounts for what order you connect nodes in, so that power is always

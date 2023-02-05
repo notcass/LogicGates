@@ -6,8 +6,8 @@ class BoardStater {
   }
 
   start() {
-    const truthTable = [];
     const perms = this.generatePermutations();
+    const tTable = {};
 
     // For each input permutation
     perms.forEach((p) => {
@@ -23,10 +23,11 @@ class BoardStater {
         // Add outupts to the end of the perm string and insert into truth table
         outString += o.power ? '1' : '0';
       });
-      truthTable.push(p + outString);
+      tTable[p] = outString;
     });
 
-    return truthTable;
+    // console.log(tTable);
+    return tTable;
   }
   setNodesToPerm(permutation) {
     const inps = this.board.inputs;
@@ -39,7 +40,7 @@ class BoardStater {
 
   computeOutputs() {
     this.board.gates.forEach((g) => {
-      g.checkLogic();
+      g.applyLogic();
     });
     this.evalNodePower();
   }

@@ -8,35 +8,36 @@ class Gate {
     this.cSize = 20;
     this.parent = _parent;
     this.id = _id;
-
+    this.truthTable = _args.truthTable;
     this.gateInputs = new Array(_args.gateInputs);
     this.gateOutputs = new Array(_args.gateOutputs);
     this.init();
   }
 
-  // Determines gate OUTPUT based on the gates INPUTS
-  checkLogic() {
-    if (this.getInputsFull() && this.getOutputsFull()) {
-      // NOT gate logic
-      if (this.label === 'NOT') {
-        this.gateOutputs[0].power = !this.gateInputs[0].power;
-      }
+  // Compute gate logic from truth table
+  applyLogic() {
+    // Only check if all the nodes are occupied
+    if (this.areInputsFull() && this.areOutputsFull()) {
+      // Create string representation of current inputs
+      let inputPermutation = '';
+      this.gateInputs.forEach((inp) => {
+        inputPermutation += inp.power ? '1' : '0';
+      });
 
-      // AND gate logic
-      if (this.label === 'AND') {
-        this.gateOutputs[0].power =
-          this.gateInputs[0].power && this.gateInputs[1].power;
-      }
-    } else {
-      this.gateOutputs.forEach((output) => (output.power = false));
+      // Access corresponding output value from this gates truth table
+      let output = this.truthTable[inputPermutation];
+      // Set outputs to correct values
+      this.gateOutputs.forEach((out, index) => {
+        out.power = output.charAt(index) === '1';
+      });
     }
   }
 
-  getInputsFull() {
+  areInputsFull() {
     return this.gateInputs.every((input) => input.prev);
   }
 
-  getOutputsFull() {
+  areOutputsFull() {
     return this.gateOutputs.every((output) => output.next);
   }
 
