@@ -82,6 +82,7 @@ class Board {
     strokeWeight(2);
     stroke(155);
     fill(40);
+    // fill(14, 15, 40);
     rect(this.x, this.y, this.w, this.h);
 
     // Gates

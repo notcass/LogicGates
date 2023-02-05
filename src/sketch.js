@@ -7,6 +7,7 @@
  *
  *  TODO:
  *    STRUCTURE:
+ *
  *      DONE --Dynamic placement of nodes onto gates for when we have custom gates
  *
  *      DONE --Add incrementing ID numbers to gates and nodes for easier debugging/identifying
@@ -39,19 +40,24 @@
  *      --Add text input area to name new gates
  *
  *    RANDOM:
- *      --Go back in commit history and find the bug that leaves burn-in on my laptop screen for a minute or so
- *        when a node flashes red and white on the same frame somehow 🤔
+ *      --Go back in commit history and find the bug that leaves burn-in on my laptop
+ *        screen for a minute or so when a node flashes red and white on the same frame somehow 🤔
  *
  *  FIXME:
  *      --Add gates always being drawn on top when dragging them
  *
  *
  *  CLEAN:
+ *      --Use global constants for color variables for easier changes to style.
+ *        fill(COLORS.DARK_BLUE) or something instead of fill(5,6,50) everywhere
  *
  *
  */
 
 let board;
+const buttons = [];
+
+//prettier-ignore
 const notGate = {
   label: 'NOT',
   x: 200,
@@ -59,11 +65,12 @@ const notGate = {
   gateInputs: 1,
   gateOutputs: 1,
   truthTable: {
-    0: '1',
-    1: '0',
+    '0': '1',
+    '1': '0',
   },
 };
 
+//prettier-ignore
 const andGate = {
   label: 'AND',
   x: 500,
@@ -73,13 +80,28 @@ const andGate = {
   truthTable: {
     '00': '0',
     '01': '0',
-    10: '0',
-    11: '1',
+    '10': '0',
+    '11': '1',
   },
 };
 
+const COLORS = {};
+
+let can, apple;
+
 function setup() {
   createCanvas(800, 600).parent('sketch-holder');
+  can = document.querySelector('#sketch-holder');
+  apple = document.querySelector('#button-holder');
+  let input = document.querySelector('#input');
+  can.insertAdjacentElement('beforeend', apple);
+
+  COLORS['WHITE'] = color(255);
+  COLORS['BLACK'] = color(0);
+  COLORS['DARK_BLUE'] = color(14, 15, 60);
+  COLORS['DARKER_BLUE'] = color(14, 15, 35);
+  COLORS['ON_RED'] = color(255, 50, 0);
+
   resetSketch();
 }
 
@@ -94,7 +116,7 @@ function resetSketch() {
 }
 
 function draw() {
-  background(100);
+  background(COLORS.DARKER_BLUE);
   board.runApp();
 }
 

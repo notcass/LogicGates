@@ -11,8 +11,6 @@ class Node {
     this.next = null; // Next Node
     this.prev = null; // Prev Node
     this.power = false;
-    this.onColor = color(255, 50, 0);
-    this.offColor = color(255);
   }
 
   setPower(bool) {
@@ -34,7 +32,7 @@ class Node {
   show() {
     //======== DEBUG ========
     noStroke();
-    fill(255);
+    fill(COLORS.WHITE);
     textSize(12);
     text(`${this.type}`, this.x - 20, this.y - 50);
     text(`${this.id}`, this.x - 20, this.y - 65);
@@ -55,9 +53,15 @@ class Node {
   }
 
   setColors() {
-    strokeWeight(3);
-    this.power ? stroke(this.onColor) : stroke(this.offColor);
-    this.power ? fill(this.onColor) : fill(this.offColor);
+    strokeWeight(2);
+    // this.power ? stroke(COLORS.ON_RED) : stroke(COLORS.WHITE);
+    // this.power ? fill(COLORS.ON_RED) : fill(COLORS.WHITE);
+    // TESTING COLORS
+    let r = getRangeVal(0);
+    let g = getRangeVal(1);
+    let b = getRangeVal(2);
+    this.power ? stroke(r, g, b) : stroke(COLORS.WHITE);
+    this.power ? fill(COLORS.ON_RED) : fill(COLORS.WHITE);
   }
 
   mouseHovering(mouseX, mouseY) {

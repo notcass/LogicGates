@@ -11,6 +11,7 @@ class Gate {
     this.truthTable = _args.truthTable;
     this.gateInputs = new Array(_args.gateInputs);
     this.gateOutputs = new Array(_args.gateOutputs);
+    this.colortest = color(140, 0, 50);
     this.init();
   }
 
@@ -30,6 +31,8 @@ class Gate {
       this.gateOutputs.forEach((out, index) => {
         out.power = output.charAt(index) === '1';
       });
+    } else {
+      this.gateOutputs.forEach((output) => (output.power = false));
     }
   }
 
@@ -72,10 +75,13 @@ class Gate {
   }
 
   show() {
+    // Box
     stroke(255);
     strokeWeight(1);
-    // Box
-    fill(48);
+    fill(COLORS.DARK_BLUE);
+
+    rect(this.x, this.y, this.w, this.h);
+
     rect(this.x, this.y, this.w, this.h);
 
     // Text

@@ -1,3 +1,5 @@
+//TODO: Rename this to something more accurate?
+// TruthTabler? TruthTableMaker? TrutherTabler?
 class BoardStater {
   constructor(parent) {
     this.board = parent;
