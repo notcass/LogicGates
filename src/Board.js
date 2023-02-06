@@ -21,18 +21,22 @@ class Board {
 
   createGateFromState() {
     this.maker = new GateFromBoardMaker(this);
-    const newTable = this.maker.returnTable();
-    console.debug(newTable);
+    if (this.maker.inpCount > 0) {
+      const newTable = this.maker.returnTable();
+      console.debug(newTable);
 
-    const newGate = {
-      label: 'Test',
-      x: random(this.x, this.x + this.w),
-      y: random(this.y, this.y + this.h),
-      truthTable: newTable,
-      gateInputs: this.maker.inpCount,
-      gateOutputs: this.maker.outCount,
-    };
-    this.makeNewGate(newGate, this, this.idCounter());
+      const newGate = {
+        label: 'Test',
+        x: random(this.x, this.x + this.w),
+        y: random(this.y, this.y + this.h),
+        truthTable: newTable,
+        gateInputs: this.maker.inpCount,
+        gateOutputs: this.maker.outCount,
+      };
+      this.makeNewGate(newGate, this, this.idCounter());
+    } else {
+      console.debug('No valid inputs to make a new gate from.');
+    }
   }
 
   init() {

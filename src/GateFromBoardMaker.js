@@ -21,9 +21,12 @@ class GateFromBoardMaker {
 
       // Then examine the outputs
       let outString = '';
-      this.board.outputs.forEach((o) => {
+      // console.log(this.connectedNodes.outputs[0].power);
+
+      this.connectedNodes.outputs.forEach((o) => {
         // Add outupts to the end of the perm string and insert into truth table
-        outString += o.power ? '1' : '0';
+        outString += o.power == true ? '1' : '0';
+        console.log(o.power);
       });
       tTable[p] = outString;
     });
@@ -34,7 +37,7 @@ class GateFromBoardMaker {
 
   // Set the state of the board's nodes to the permutation argument
   setNodesToPerm(permutation) {
-    const inps = this.board.inputs;
+    const inps = this.connectedNodes.inputs;
 
     for (let i = 0; i < this.inpCount; i++) {
       inps[i].power = permutation.charAt(i) === '1' ? true : false;
@@ -85,36 +88,6 @@ class GateFromBoardMaker {
     return permsStrings;
   }
 
-  /**
-   *
-   *  Abusing the fact that sets can only contain unique values. 😎
-   *
-   * Generate a random permutation
-   * set.add(randomPerm)
-   * repeat enough times that we totally 100% for sure 😉 have all permutations
-   *
-   */
-  generatePermutationsWACKY(w) {
-    const set = new Set();
-    const width = w ?? 1;
-
-    // Just a big loop
-    for (let i = 0; i < width * 10; i++) {
-      let str = '';
-
-      // Generate random permutation
-      for (let i = 0; i < width; i++) {
-        let digit = Math.random() > 0.5 ? '1' : '0';
-        str += digit;
-      }
-
-      // Try to add to set
-      set.add(str);
-    }
-
-    console.log(set);
-  }
-
   // Which of the board's inputs are connected to an output?
   // We want to ignore ones that aren't connected.
   findConnections() {
@@ -147,6 +120,37 @@ class GateFromBoardMaker {
       }
     });
 
+    console.log(fullConnections);
     return fullConnections;
+  }
+
+  /**
+   *
+   *  Abusing the fact that sets can only contain unique values. 😎
+   *
+   * Generate a random permutation
+   * set.add(randomPerm)
+   * repeat enough times that we totally 100% for sure 😉 have all permutations
+   *
+   */
+  generatePermutationsWACKY(w) {
+    const set = new Set();
+    const width = w ?? 1;
+
+    // Just a big loop
+    for (let i = 0; i < width * 10; i++) {
+      let str = '';
+
+      // Generate random permutation
+      for (let i = 0; i < width; i++) {
+        let digit = Math.random() > 0.5 ? '1' : '0';
+        str += digit;
+      }
+
+      // Try to add to set
+      set.add(str);
+    }
+
+    console.log(set);
   }
 }
