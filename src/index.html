@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>Logic Gates</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="style.css" />
@@ -17,20 +18,26 @@
   <body>
     <a href="..">UP</a>
     <div id="sketch-holder">
-      <!-- <input id="input" type="text" /> -->
+      <div id="create-gate-holder">
+        <input id="create-gate-input" type="text"/>
+        <button id="button-create" class="button" type="button">
+          <span >CREATE</span>
+        </button>
+      </div>
     </div>
     <div id="button-holder">
-      <button class="button-64" id="button-create" type="button">CREATE</button>
-      <button class="button-64" id="button-AND" type="button">AND</button>
-      <button class="button-64" id="button-NOT" type="button">NOT</button>
-    </div>
-    <!-- HTML !-->
-    <button class="button-64" role="button">
-      <span class="text">Button 64</span>
+      <button class="button" id="button-AND" type="button">
+        <span class="text">AND</span>
+      </button>
+      <button class="button" id="button-NOT" type="button">
+        <span class="text">NOT</span>
+      </button>
     </button>
+    </div>
 
-        <!-- prettier-ignore -->
-    <div id="ranges">
+    <!--================ RANGES FOR TESTING COLORS =========================-->
+    <!-- prettier-ignore -->
+    <!-- <div id="ranges">
       <input class="range" id="range-0" type="range" min="1" max="100" step="1" value="32" />
       <span id="val-0">0</span>
       <br />
@@ -62,6 +69,7 @@
         }
         // SETUP VARIABLES HERE
         setRangeProps(0,255,1);
-      </script>
+      </script> -->
+    <!--================ END TEST RANGES =========================-->
   </body>
 </html>
