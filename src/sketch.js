@@ -28,6 +28,16 @@
  *      --Choose type of function declaration/expression thing for BoardStater
  *
  *
+ *    NEXT STEPS:
+ *      --Create a new gate from the board state
+ *
+ *      --Create a new gate using the CREATE button
+ *
+ *      --Get the new gates name from the input field
+ *
+ *      --Add the new gate's button to the list of buttons at the bottom
+ *
+ *
  *
  *
  *    FEATURES:
@@ -101,7 +111,8 @@ function setup() {
   COLORS['DARK_BLUE'] = color(14, 15, 60);
   COLORS['DARKER_BLUE'] = color(14, 15, 35);
   COLORS['ON_RED'] = color(255, 50, 0);
-
+  COLORS['DARKER_GREY'] = color(18);
+  COLORS['DARK_GREY'] = color(45);
   resetSketch();
 }
 
@@ -116,8 +127,8 @@ function resetSketch() {
 }
 
 function draw() {
-  background(COLORS.DARKER_BLUE);
   board.runApp();
+  board.DEBUG_showNodeInfo();
 }
 
 function keyPressed() {
@@ -126,8 +137,8 @@ function keyPressed() {
   // DEBUGGING
   if (key === '1') DEBUG_SETUPS(1);
   if (key === '2') DEBUG_SETUPS(2);
-  if (key === '3') board.startBoardStater();
-  if (key === '4') board.findConnections();
+  // if (key === '3')
+  // if (key === '4')
   if (key === 'a') console.log(frameRate());
   if (key === 'r') resetSketch();
   if (key === 'm') console.log(mouseX, mouseY);

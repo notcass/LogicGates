@@ -16,19 +16,25 @@ body {
   margin: 4px;
 }
 
-.button {
+button {
   width: 100px;
   height: 45px;
   font-size: 20px;
   background-color: #0e103c;
+  /* background-color: black; */
   color: white;
   border: 1px solid white;
   border-radius: 7px;
   cursor: pointer;
 }
 
-.button:active {
+button:active {
   transform: scale(0.95);
+}
+
+button:hover {
+  background-color: white;
+  color: black;
 }
 
 #create-gate-holder {
@@ -45,6 +51,9 @@ body {
 #create-gate-holder > button {
   height: 32px;
   transform: translateY(2px);
+}
+#create-gate-holder > button:active {
+  transform: scale(0.95);
 }
 
 #create-gate-input {

@@ -19,17 +19,6 @@ class Board {
     this.bs;
   }
 
-  // Setup object to help with board state to gate
-  startBoardStater() {
-    // Create boardstate object to help encapsulate?
-    // this.bs = new BoardStater(this);
-    // console.log(this.bs.start());
-
-    this.gates.forEach((g) => {
-      g.applyLogic();
-    });
-  }
-
   init() {
     // Input Nodes
     let divider = height / (this.inputCount + 1);
@@ -40,7 +29,7 @@ class Board {
 
       // Power Button
       const button = {
-        x: x - 50,
+        x: x - 43,
         y: y,
         attachedNode: this.inputs[i],
         radius: 13,
@@ -78,6 +67,8 @@ class Board {
   }
 
   runApp() {
+    background(COLORS.DARKER_GREY);
+
     // Show borders
     strokeWeight(2);
     stroke(155);
@@ -258,7 +249,6 @@ class Board {
     }
   }
 
-  //TODO: See TODO at top of sketch.js
   // Returns TRUE as soon as we find a node that IS being drawn from
   isDrawingToMouse() {
     return !this.allNodes.every((n) => !n.drawingToMouse);
@@ -266,5 +256,15 @@ class Board {
 
   idCounter() {
     return this.nodeIdCounter++;
+  }
+
+  DEBUG_showNodeInfo() {
+    this.allNodes.forEach((n) => {
+      noStroke();
+      fill(COLORS.WHITE);
+      textSize(12);
+      text(`${n.type}`, n.x - 20, n.y - 50);
+      text(`${n.id}`, n.x - 20, n.y - 65);
+    });
   }
 }

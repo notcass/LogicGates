@@ -30,22 +30,16 @@ class Node {
   }
 
   show() {
-    //======== DEBUG ========
-    noStroke();
-    fill(COLORS.WHITE);
-    textSize(12);
-    text(`${this.type}`, this.x - 20, this.y - 50);
-    text(`${this.id}`, this.x - 20, this.y - 65);
-    //=============== =======
-
     this.setColors();
     circle(this.x, this.y, this.size);
 
+    // Line from node to mouse
     if (this.drawingToMouse) {
       this.setColors();
       line(this.x, this.y, mouseX, mouseY);
     }
 
+    // Line from node to node
     if (this.next != null) {
       this.setColors();
       line(this.x, this.y, this.next.x, this.next.y);
@@ -53,14 +47,8 @@ class Node {
   }
 
   setColors() {
-    strokeWeight(2);
-    // this.power ? stroke(COLORS.ON_RED) : stroke(COLORS.WHITE);
-    // this.power ? fill(COLORS.ON_RED) : fill(COLORS.WHITE);
-    // TESTING COLORS
-    let r = getRangeVal(0);
-    let g = getRangeVal(1);
-    let b = getRangeVal(2);
-    this.power ? stroke(r, g, b) : stroke(COLORS.WHITE);
+    strokeWeight(4);
+    this.power ? stroke(COLORS.ON_RED) : stroke(COLORS.WHITE);
     this.power ? fill(COLORS.ON_RED) : fill(COLORS.WHITE);
   }
 
@@ -71,22 +59,23 @@ class Node {
 
   returnNext() {
     if (this.type === 'INPUT' || this.type === 'GATE_OUTPUT') {
-      // console.log(this.next);
       return this.next;
     } else if (this.type === 'GATE_INPUT') {
-      // console.log(this.parent.gateOutputs[0]);
       return this.parent.gateOutputs[0];
     }
   }
 }
+
+// Right now these subclasses are mainly for clearer console logging
+// but might find some better use in the future
 class InputNode extends Node {
-  constructor(_parent, _type, _x, _y, _id, _index) {
-    super(_parent, _type, _x, _y, _id, _index);
+  constructor(parent, type, x, y, id, index) {
+    super(parent, type, x, y, id, index);
   }
 }
 
 class OutputNode extends Node {
-  constructor(_parent, _type, _x, _y, _id, _index) {
-    super(_parent, _type, _x, _y, _id, _index);
+  constructor(parent, type, x, y, id, index) {
+    super(parent, type, x, y, id, index);
   }
 }
