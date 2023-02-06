@@ -16,7 +16,23 @@ class Board {
     this.allNodes = []; // All nodes on all gates in one array
     this.init();
     // DEBUG
-    this.bs;
+    this.maker;
+  }
+
+  createGateFromState() {
+    this.maker = new GateFromBoardMaker(this);
+    const newTable = this.maker.returnTable();
+    console.debug(newTable);
+
+    const newGate = {
+      label: 'Test',
+      x: random(this.x, this.x + this.w),
+      y: random(this.y, this.y + this.h),
+      truthTable: newTable,
+      gateInputs: this.maker.inpCount,
+      gateOutputs: this.maker.outCount,
+    };
+    this.makeNewGate(newGate, this, this.idCounter());
   }
 
   init() {
@@ -29,10 +45,10 @@ class Board {
 
       // Power Button
       const button = {
-        x: x - 43,
+        x: x - 47,
         y: y,
         attachedNode: this.inputs[i],
-        radius: 13,
+        radius: 16,
         show: function () {
           fill(45);
           stroke(155);

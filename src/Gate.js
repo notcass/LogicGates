@@ -79,7 +79,7 @@ class Gate {
     // fill(18);
     fill(14, 16, 60);
     strokeWeight(1);
-    rect(this.x, this.y, this.w, this.h);
+    rect(this.x, this.y, this.w, this.h, 8);
 
     // Text
     fill(255);

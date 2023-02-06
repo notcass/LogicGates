@@ -1,13 +1,13 @@
-//TODO: Rename this to something more accurate?
-// TruthTabler? TruthTableMaker? TrutherTabler?
-class BoardStater {
+class GateFromBoardMaker {
   constructor(parent) {
     this.board = parent;
     this.connectedNodes = this.findConnections();
     this.inpCount = this.connectedNodes.inputs.length;
+    this.outCount = this.connectedNodes.outputs.length;
   }
 
-  start() {
+  // Setup possible permutations, create truth table
+  returnTable() {
     const perms = this.generatePermutations();
     const tTable = {};
 
@@ -31,6 +31,8 @@ class BoardStater {
     // console.log(tTable);
     return tTable;
   }
+
+  // Set the state of the board's nodes to the permutation argument
   setNodesToPerm(permutation) {
     const inps = this.board.inputs;
 
@@ -40,6 +42,7 @@ class BoardStater {
     this.evalNodePower();
   }
 
+  // Propagate power from board's Inputs
   computeOutputs() {
     this.board.gates.forEach((g) => {
       g.applyLogic();
@@ -112,6 +115,8 @@ class BoardStater {
     console.log(set);
   }
 
+  // Which of the board's inputs are connected to an output?
+  // We want to ignore ones that aren't connected.
   findConnections() {
     // Array of indexes that have a connection to an output
     const fullConnections = {

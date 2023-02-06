@@ -37,6 +37,11 @@
  *
  *      --Add the new gate's button to the list of buttons at the bottom
  *
+ *      --Move buttons positions to the bottom border of our canvas
+ *
+ *      --Set nodes back to original power state after creating truth table
+ *
+ *
  *
  *
  *
@@ -100,7 +105,8 @@ const COLORS = {};
 let can, apple;
 
 function setup() {
-  createCanvas(800, 600).parent('sketch-holder');
+  createCanvas(1366, 768).parent('sketch-holder');
+  // createCanvas(800, 600).parent('sketch-holder');
   can = document.querySelector('#sketch-holder');
   apple = document.querySelector('#button-holder');
   let input = document.querySelector('#input');
@@ -137,7 +143,7 @@ function keyPressed() {
   // DEBUGGING
   if (key === '1') DEBUG_SETUPS(1);
   if (key === '2') DEBUG_SETUPS(2);
-  // if (key === '3')
+  if (key === '3') board.createGateFromState();
   // if (key === '4')
   if (key === 'a') console.log(frameRate());
   if (key === 'r') resetSketch();
