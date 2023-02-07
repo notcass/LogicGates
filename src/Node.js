@@ -58,6 +58,7 @@ class Node {
     return d < this.size / 2;
   }
 
+  // Returns the next node in the chain, hops over gates.
   returnNext() {
     if (this.type === 'INPUT' || this.type === 'GATE_OUTPUT') {
       return this.next;

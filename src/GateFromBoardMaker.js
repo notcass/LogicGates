@@ -65,6 +65,23 @@ class GateFromBoardMaker {
     this.evalNodePower();
   }
 
+  newComputeOutputs() {
+    // CORRECT GATE TRAVERSAL ORDER TESTING
+    let gateSet = new Set();
+    inps = this.connectedNodes.inputs;
+    inps.forEach((inp) => {
+      while (inp.returnNext()) {
+        if (inp.parent.constructor.name == 'Gate') {
+          // console.log(inp.parent);
+          gateSet.add(inp.parent);
+        }
+        // console.log(inp);
+        inp = inp.returnNext();
+      }
+    });
+    // console.log(gateSet);
+  }
+
   evalNodePower() {
     this.board.allNodes.forEach((n) => n.evalPower());
   }

@@ -1,76 +1,15 @@
-// / <reference path="../libraries/p5.global-mode.d.ts" />
+5; // <reference path="../libraries/p5.global-mode.d.ts" />
+
 /**
  *                 A clone of the program in the youtube video
  *             "Exploring How Computers Work", by Sebastian Lague.
  *                      https://youtu.be/QZwneRb-zqA
  *
- *
- *  TODO:
- *    STRUCTURE:
- *
- *      DONE --Dynamic placement of nodes onto gates for when we have custom gates
- *
- *      DONE --Add incrementing ID numbers to gates and nodes for easier debugging/identifying
- *            -Bonus: Create automatic incrementing value without a global var
- *
- *      DONE --Generate a truth table from the board state
- *         Only consider inputs that connect all the way to the output
- *         Use this to create a new gate from the board state?
- *
- *      --Dynamic text sizing on gate labels
- *
- *      --Change the way we draw to the mouse.
- *         Instead of node objects having a drawingToMouse boolean,
- *         put that property onto the board object as an integer. The int
- *         corresponds to the node that we are drawing to's ID. If
- *         we aren't drawing, maybe it's -1? See "Add ID's" todo above.
- *
- *      --Choose type of function declaration/expression thing for BoardStater
- *
- *
- *    NEXT STEPS:
- *      --Create a new gate from the board state
- *
- *      --Create a new gate using the CREATE button
- *
- *      --Get the new gates name from the input field
- *
- *      --Add the new gate's button to the list of buttons at the bottom
- *
- *      --Move buttons positions to the bottom border of our canvas
- *
- *      --Set nodes back to original power state after creating truth table
- *
- *
- *
- *
- *
- *    FEATURES:
- *      --Draw smooth/curved lines (😳😩) between nodes, like in the reference video
- *      --Add side panels to hold power sources, buttons, etc
- *      --Add Buttons "Create", "AND", "NOT"
- *          -Create: Creates a gate from the board state
- *          -AND:    Spawns an AND gate
- *          -NOT:    Spawns a NOT gate
- *      --Add text input area to name new gates
- *
- *    RANDOM:
- *      --Go back in commit history and find the bug that leaves burn-in on my laptop
- *        screen for a minute or so when a node flashes red and white on the same frame somehow 🤔
- *
- *  FIXME:
- *      --Add gates always being drawn on top when dragging them
- *
- *
- *  CLEAN:
- *      --Use global constants for color variables for easier changes to style.
- *        fill(COLORS.DARK_BLUE) or something instead of fill(5,6,50) everywhere
- *
- *
  */
 
 let board;
 let DEBUG;
+let gm; // TESTING GATE MAKER
 const buttons = [];
 const COLORS = {};
 let can, apple;
@@ -111,7 +50,6 @@ function setup() {
   apple = document.querySelector('#button-holder');
   let input = document.querySelector('#input');
   can.insertAdjacentElement('beforeend', apple);
-  DEBUG = new Debug();
 
   COLORS['WHITE'] = color(255);
   COLORS['BLACK'] = color(0);
@@ -123,12 +61,20 @@ function setup() {
   resetSketch();
 }
 
-function resetSketch() {
-  board = new Board(width, height, 2, 2);
-  board.makeNewGate(notGate, board, 0);
-  board.makeNewGate(andGate, board, 2);
+let inps;
 
-  DEBUG.LOAD_SETUP(3);
+function resetSketch() {
+  // board = new Board(width, height, 2, 2);
+  // board.makeNewGate(notGate, board, 0);
+  // board.makeNewGate(andGate, board, 2);
+
+  //========== DEBUGGING/TESTING ==========
+  DEBUG = new Debug();
+  DEBUG.LOAD_SETUP(7);
+
+  gm = new GateFromBoardMaker(board);
+
+  gm.newComputeOutputs();
 }
 
 function draw() {
@@ -144,6 +90,9 @@ function keyPressed() {
   if (key === '2') DEBUG.LOAD_SETUP(2);
   if (key === '3') DEBUG.LOAD_SETUP(3);
   if (key === '4') DEBUG.LOAD_SETUP(4);
+  if (key === '5') DEBUG.LOAD_SETUP(5);
+  if (key === '6') DEBUG.LOAD_SETUP(6);
+  if (key === '7') DEBUG.LOAD_SETUP(7);
   if (key === 'c') DEBUG.CREATE_SETUP_FROM_BOARD_STATE();
   if (key === 't') board.createGateFromState();
   // if (key === '4')

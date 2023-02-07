@@ -10,6 +10,7 @@ class Board {
     this.outCount = outputs;
     this.outputs = [];
     this.gates = []; // All gates on the board
+    this.gateIdCounter = 0;
     this.nodeIdCounter = 0;
     this.draggingGate = null; // Boolean
     this.sourceNode = null; // Node we are drawing from
@@ -33,7 +34,7 @@ class Board {
         gateInputs: this.maker.inpCount,
         gateOutputs: this.maker.outCount,
       };
-      this.makeNewGate(newGate, this, this.idCounter());
+      this.makeNewGate(newGate);
     } else {
       console.debug('No valid inputs to make a new gate from.');
     }
@@ -45,7 +46,9 @@ class Board {
     for (let i = 0; i < this.inpCount; i++) {
       let x = this.x + 30;
       let y = divider + i * divider;
-      this.inputs.push(new InputNode(this, 'INPUT', x, y, this.idCounter(), i));
+      this.inputs.push(
+        new InputNode(this, 'INPUT', x, y, this.getNextNodeId(), i)
+      );
 
       // Power Button
       const button = {
@@ -79,7 +82,7 @@ class Board {
       let x = this.x + this.w;
       let y = divider + i * divider;
       this.outputs.push(
-        new OutputNode(this, 'OUTPUT', x, y, this.idCounter(), i)
+        new OutputNode(this, 'OUTPUT', x, y, this.getNextNodeId(), i)
       );
     }
 
@@ -106,8 +109,8 @@ class Board {
     });
   }
 
-  makeNewGate(gateObj, x, y) {
-    let newGate = new Gate(gateObj, x, y);
+  makeNewGate(gateObj) {
+    let newGate = new Gate(gateObj, this, this.getNextGateId());
     this.gates.push(newGate);
     this.allNodes.push(...newGate.gateInputs, ...newGate.gateOutputs);
   }
@@ -274,7 +277,11 @@ class Board {
     return !this.allNodes.every((n) => !n.drawingToMouse);
   }
 
-  idCounter() {
+  getNextNodeId() {
     return this.nodeIdCounter++;
+  }
+
+  getNextGateId() {
+    return this.gateIdCounter++;
   }
 }

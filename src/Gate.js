@@ -55,7 +55,7 @@ class Gate {
         'GATE_INPUT',
         null,
         null,
-        this.parent.idCounter(),
+        this.parent.getNextNodeId(),
         i
       );
     }
@@ -67,7 +67,7 @@ class Gate {
         'GATE_OUTPUT',
         null,
         null,
-        this.parent.idCounter(),
+        this.parent.getNextNodeId(),
         i
       );
     }
