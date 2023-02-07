@@ -47,18 +47,18 @@ class GateFromBoardMaker {
     this.evalNodePower();
   }
 
-  // FIXME: LEFT OFF HERE
+  // FIXME:
   // It seems when we chain 2 gates together and try to make a new gate from the board,
   // we run into problems with getting the wrong output in the truth table
   // Im guessing the problem is somewhere in the way we compute or evaluate power states
   //
   // Found BUG: When we loop through all the gates here, we loop through in the order they were created, but
   // we need to access them in LEFT to RIGHT on the screen, since that is the direction our power flows.
+  //
+  // NOTE: Currently working on the ordering, starting with returnNext() and returnPrev() in Node.js
 
   // Propagate power from board's Inputs
   computeOutputs() {
-    console.log(this);
-
     // this.board.gates.forEach((g) => {
     //   g.applyLogic();
     // });
@@ -79,7 +79,52 @@ class GateFromBoardMaker {
         inp = inp.returnNext();
       }
     });
-    // console.log(gateSet);
+
+    // this.checkGateLayers(gateSet);
+
+    let firstGate = [...gateSet][1];
+    this.traverseGates(firstGate);
+  }
+
+  traverseGates(gate, count) {
+    if (gate.constructor.name == 'Board') {
+      return count;
+    } else {
+      count++;
+      console.log(gate);
+      // gate.gateInputs.forEach((inp) => {
+      //   console.log(inp);
+      // });
+    }
+  }
+
+  checkGateLayers(gateSet) {
+    console.log(gateSet);
+    console.log('checkGateLayers()');
+    console.log('List of gate inputs');
+
+    // For each gate
+    for (const g of gateSet) {
+      let highest = 0;
+      // For each input on each gate
+      for (const inp of g.gateInputs) {
+        // For each gate we land on this goes up
+        let gatesHit = 0;
+        // We move the head down the chain to examine wthout modifying the inp
+        let examinerHead = inp;
+
+        // Traverse left, count GATES until INPUT NODE
+        console.log(`Traversing input ${inp.id}`);
+        // console.log(inp.prev.parent.constructor.name != 'Board');
+        // console.log(inp.prev.parent);
+
+        // while(examinerHead.prev.parent.constructor.name != 'Board') {
+        // console.log('gatesHit going up!');
+        // gatesHit++;
+        // examinerHead = examinerHead.prev.parent;
+        // }
+      }
+    }
   }
 
   evalNodePower() {

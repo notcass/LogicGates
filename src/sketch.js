@@ -1,4 +1,4 @@
-5; // <reference path="../libraries/p5.global-mode.d.ts" />
+// <reference path="../libraries/p5.global-mode.d.ts" />
 
 /**
  *                 A clone of the program in the youtube video
@@ -80,6 +80,7 @@ function resetSketch() {
 function draw() {
   board.runApp();
   DEBUG.SHOW_NODE_INFO();
+  DEBUG.SHOW_GATE_INFO();
 }
 
 function keyPressed() {

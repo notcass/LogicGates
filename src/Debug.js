@@ -10,8 +10,6 @@ class Debug {
     const validGates = board.gates.filter(
       (g) => g.areInputsFull() && g.areOutputsFull()
     );
-    console.log(validGates);
-    console.log(board.inputs);
 
     // Reset ID's on board nodes
     let count = 0;
@@ -291,6 +289,14 @@ class Debug {
       textSize(12);
       text(`${n.type}`, n.x - 20, n.y - 50);
       text(`${n.id}`, n.x - 20, n.y - 65);
+    });
+  }
+
+  SHOW_GATE_INFO() {
+    board.gates.forEach((g) => {
+      fill(255);
+      textSize(14);
+      text(`${g.id}`, g.x + 45, g.y + 75);
     });
   }
 }

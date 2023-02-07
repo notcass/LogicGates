@@ -58,12 +58,31 @@ class Node {
     return d < this.size / 2;
   }
 
+  // TODO: LEFT OFF HERE, need to fix the returnNext/Prev to consider multiple inputs/outputs
+  // before we can create the layers for gate ordering.
+
+  // FIXME: This is going to get really fucky with nodes having multiple outputs
+  // same with returnPrev below
+  // FIX: the only time we'll have multiple
   // Returns the next node in the chain, hops over gates.
   returnNext() {
     if (this.type === 'INPUT' || this.type === 'GATE_OUTPUT') {
       return this.next;
     } else if (this.type === 'GATE_INPUT') {
       return this.parent.gateOutputs[0];
+    }
+  }
+
+  // Returns the previous node in the chain, hops over gates.
+  returnPrev() {
+    if (this.type === 'OUTPUT' || this.type === 'GATE_INPUT') {
+      return this.prev;
+    } else if (this.type === 'GATE_OUTPUT') {
+      const nodes = [];
+      for (const i of this.parent.gateInputs) {
+        nodes.push(i);
+        console.log(i);
+      }
     }
   }
 }
