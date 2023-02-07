@@ -4,10 +4,10 @@ class Board {
     this.y = h / 13;
     this.w = w - this.x * 2;
     this.h = h - this.y * 2;
-    this.inputCount = inputs;
+    this.inpCount = inputs;
     this.inputs = [];
     this.powerButtons = [];
-    this.outputCount = outputs;
+    this.outCount = outputs;
     this.outputs = [];
     this.gates = []; // All gates on the board
     this.nodeIdCounter = 0;
@@ -22,11 +22,11 @@ class Board {
   createGateFromState() {
     this.maker = new GateFromBoardMaker(this);
     if (this.maker.inpCount > 0) {
-      const newTable = this.maker.returnTable();
-      console.debug(newTable);
+      const newTable = this.maker.makeTable();
+      console.log(newTable);
 
       const newGate = {
-        label: 'Test',
+        label: 'NOT',
         x: random(this.x, this.x + this.w),
         y: random(this.y, this.y + this.h),
         truthTable: newTable,
@@ -41,8 +41,8 @@ class Board {
 
   init() {
     // Input Nodes
-    let divider = height / (this.inputCount + 1);
-    for (let i = 0; i < this.inputCount; i++) {
+    let divider = height / (this.inpCount + 1);
+    for (let i = 0; i < this.inpCount; i++) {
       let x = this.x + 30;
       let y = divider + i * divider;
       this.inputs.push(new InputNode(this, 'INPUT', x, y, this.idCounter(), i));
@@ -74,8 +74,8 @@ class Board {
     }
 
     // Output Nodes
-    divider = height / (this.outputCount + 1);
-    for (let i = 0; i < this.outputCount; i++) {
+    divider = height / (this.outCount + 1);
+    for (let i = 0; i < this.outCount; i++) {
       let x = this.x + this.w;
       let y = divider + i * divider;
       this.outputs.push(
@@ -276,15 +276,5 @@ class Board {
 
   idCounter() {
     return this.nodeIdCounter++;
-  }
-
-  DEBUG_showNodeInfo() {
-    this.allNodes.forEach((n) => {
-      noStroke();
-      fill(COLORS.WHITE);
-      textSize(12);
-      text(`${n.type}`, n.x - 20, n.y - 50);
-      text(`${n.id}`, n.x - 20, n.y - 65);
-    });
   }
 }

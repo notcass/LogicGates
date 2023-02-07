@@ -25,10 +25,10 @@ class Gate {
       });
 
       // Access corresponding output value from this gates truth table
-      let output = this.truthTable[inputPermutation];
+      let outputStr = this.truthTable[inputPermutation];
       // Set outputs to correct values
       this.gateOutputs.forEach((out, index) => {
-        out.power = output.charAt(index) === '1';
+        out.power = outputStr.charAt(index) === '1';
       });
     } else {
       this.gateOutputs.forEach((output) => (output.power = false));

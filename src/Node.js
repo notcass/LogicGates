@@ -22,6 +22,7 @@ class Node {
   }
 
   evalPower() {
+    this.show();
     if (this.type == 'INPUT' || this.type == 'GATE_OUTPUT') {
       if (this.next) {
         this.next.power = this.power;

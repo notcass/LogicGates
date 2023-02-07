@@ -1,4 +1,4 @@
-/// <reference path="../libraries/p5.global-mode.d.ts" />
+// / <reference path="../libraries/p5.global-mode.d.ts" />
 /**
  *                 A clone of the program in the youtube video
  *             "Exploring How Computers Work", by Sebastian Lague.
@@ -70,8 +70,12 @@
  */
 
 let board;
+let DEBUG;
 const buttons = [];
+const COLORS = {};
+let can, apple;
 
+// TODO: Move these gate object literals to board?
 //prettier-ignore
 const notGate = {
   label: 'NOT',
@@ -100,17 +104,14 @@ const andGate = {
   },
 };
 
-const COLORS = {};
-
-let can, apple;
-
 function setup() {
-  createCanvas(1366, 768).parent('sketch-holder');
-  // createCanvas(800, 600).parent('sketch-holder');
+  // createCanvas(1366, 768).parent('sketch-holder');
+  createCanvas(800, 600).parent('sketch-holder');
   can = document.querySelector('#sketch-holder');
   apple = document.querySelector('#button-holder');
   let input = document.querySelector('#input');
   can.insertAdjacentElement('beforeend', apple);
+  DEBUG = new Debug();
 
   COLORS['WHITE'] = color(255);
   COLORS['BLACK'] = color(0);
@@ -125,25 +126,26 @@ function setup() {
 function resetSketch() {
   board = new Board(width, height, 2, 2);
   board.makeNewGate(notGate, board, 0);
-  // board.makeNewGate(notGate, board, 1);
-  // board.gates[1].y = 300;
   board.makeNewGate(andGate, board, 2);
 
-  DEBUG_SETUPS(2);
+  DEBUG.LOAD_SETUP(3);
 }
 
 function draw() {
   board.runApp();
-  board.DEBUG_showNodeInfo();
+  DEBUG.SHOW_NODE_INFO();
 }
 
 function keyPressed() {
   if (key === 'q') isLooping() ? noLoop() : loop();
   if (key === 'w') redraw();
   // DEBUGGING
-  if (key === '1') DEBUG_SETUPS(1);
-  if (key === '2') DEBUG_SETUPS(2);
-  if (key === '3') board.createGateFromState();
+  if (key === '1') DEBUG.LOAD_SETUP(1);
+  if (key === '2') DEBUG.LOAD_SETUP(2);
+  if (key === '3') DEBUG.LOAD_SETUP(3);
+  if (key === '4') DEBUG.LOAD_SETUP(4);
+  if (key === 'c') DEBUG.CREATE_SETUP_FROM_BOARD_STATE();
+  if (key === 't') board.createGateFromState();
   // if (key === '4')
   if (key === 'a') console.log(frameRate());
   if (key === 'r') resetSketch();
@@ -156,53 +158,4 @@ function mousePressed() {
 
 function mouseReleased() {
   board.mouseUp();
-}
-
-function DEBUG_SETUPS(n) {
-  if (n === 1) {
-    board = new Board(width, height, 2, 2);
-    const a = board.allNodes;
-    board.makeNewGate(notGate, board, 0);
-    board.makeNewGate(notGate, board, 1);
-    board.gates[1].y = 350;
-
-    // Two AND gates
-    a[0].next = a[4];
-    a[4].prev = a[2];
-
-    a[5].next = a[2];
-    a[2].prev = a[5];
-
-    a[2].next = a[6];
-    a[6].prev = a[1];
-
-    a[7].next = a[3];
-    a[3].prev = a[7];
-  }
-
-  if (n === 2) {
-    board = new Board(width, height, 3, 2);
-    const a = board.allNodes;
-    board.makeNewGate(notGate, board, 0);
-    board.makeNewGate(andGate, board, 1);
-    board.gates[1].x = 200;
-    board.gates[1].y = 350;
-
-    // 3 inputs
-    // One NOT and one AND gate
-    a[0].next = a[5];
-    a[5].prev = a[0];
-
-    a[6].next = a[3];
-    a[3].prev = a[6];
-
-    a[1].next = a[7];
-    a[7].prev = a[1];
-
-    a[9].next = a[4];
-    a[4].prev = a[9];
-
-    a[2].next = a[8];
-    a[8].prev = a[2];
-  }
 }

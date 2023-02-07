@@ -7,7 +7,7 @@ class GateFromBoardMaker {
   }
 
   // Setup possible permutations, create truth table
-  returnTable() {
+  makeTable() {
     const perms = this.generatePermutations();
     const tTable = {};
 
@@ -21,12 +21,14 @@ class GateFromBoardMaker {
 
       // Then examine the outputs
       let outString = '';
-      // console.log(this.connectedNodes.outputs[0].power);
+
+      // DEBUGGER HELP
+      let inputs = this.connectedNodes.inputs;
+      let outputs = this.connectedNodes.outputs;
 
       this.connectedNodes.outputs.forEach((o) => {
         // Add outupts to the end of the perm string and insert into truth table
         outString += o.power == true ? '1' : '0';
-        console.log(o.power);
       });
       tTable[p] = outString;
     });
@@ -45,11 +47,21 @@ class GateFromBoardMaker {
     this.evalNodePower();
   }
 
+  // FIXME: LEFT OFF HERE
+  // It seems when we chain 2 gates together and try to make a new gate from the board,
+  // we run into problems with getting the wrong output in the truth table
+  // Im guessing the problem is somewhere in the way we compute or evaluate power states
+  //
+  // Found BUG: When we loop through all the gates here, we loop through in the order they were created, but
+  // we need to access them in LEFT to RIGHT on the screen, since that is the direction our power flows.
+
   // Propagate power from board's Inputs
   computeOutputs() {
-    this.board.gates.forEach((g) => {
-      g.applyLogic();
-    });
+    console.log(this);
+
+    // this.board.gates.forEach((g) => {
+    //   g.applyLogic();
+    // });
     this.evalNodePower();
   }
 
@@ -120,7 +132,7 @@ class GateFromBoardMaker {
       }
     });
 
-    console.log(fullConnections);
+    // console.log(fullConnections);
     return fullConnections;
   }
 
