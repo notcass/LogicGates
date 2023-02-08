@@ -22,11 +22,6 @@ class GateFromBoardMaker {
 
       // Then examine the outputs
       let outString = '';
-
-      // DEBUGGER HELP
-      let inputs = this.connectedNodes.inputs;
-      let outputs = this.connectedNodes.outputs;
-
       this.connectedNodes.outputs.forEach((o) => {
         // Add outupts to the end of the perm string and insert into truth table
         outString += o.power == true ? '1' : '0';
@@ -34,7 +29,7 @@ class GateFromBoardMaker {
       tTable[p] = outString;
     });
 
-    // DEBUG.msg(tTable);
+    DEBUG.msg(tTable);
     return tTable;
   }
 
@@ -45,7 +40,7 @@ class GateFromBoardMaker {
     for (let i = 0; i < this.inpCount; i++) {
       inps[i].power = permutation.charAt(i) === '1' ? true : false;
     }
-    this.evalNodePower();
+    this.evalAllNodePower();
   }
 
   // Propagate power from board's Inputs in the correct order
@@ -69,16 +64,18 @@ class GateFromBoardMaker {
       g.setLayer();
     });
 
-    // Sort gates by layer, low -> high, then evaluate
+    // Sort gates by layer, low -> high, then evaluate each gate in correct order
     this.connectedGates.sort((a, b) => a.layer - b.layer);
-    //TODO:REPLACE CONSOLE.LOG
     DEBUG.msg('%c========== Gates Sorted by Layer ==========', 'color: #0f3');
     DEBUG.msg(this.connectedGates);
     DEBUG.msg('%c===========================================', 'color: #0f3');
-    this.connectedGates.forEach((g) => g.applyLogic());
+    this.connectedGates.forEach((gate) => {
+      gate.evaluateLogic();
+      this.evalAllNodePower();
+    });
   }
 
-  evalNodePower() {
+  evalAllNodePower() {
     this.board.allNodes.forEach((n) => n.evalPower());
   }
 

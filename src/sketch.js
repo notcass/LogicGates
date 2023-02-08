@@ -45,8 +45,8 @@ const andGate = {
 };
 
 function setup() {
-  // createCanvas(1366, 768).parent('sketch-holder');
-  createCanvas(800, 600).parent('sketch-holder');
+  createCanvas(1366, 768).parent('sketch-holder');
+  // createCanvas(800, 600).parent('sketch-holder');
   can = document.querySelector('#sketch-holder');
   apple = document.querySelector('#button-holder');
   let input = document.querySelector('#input');
@@ -66,40 +66,38 @@ let inps;
 
 function resetSketch() {
   board = new Board(width, height, 2, 2);
-  board.makeNewGate(notGate, board, 0);
-  board.makeNewGate(andGate, board, 2);
+  board.createGate('NOT', board, 0);
+  board.createGate('AND', board, 2);
 
   //========== DEBUGGING/TESTING ==========
   DEBUG = new Debug();
   // DEBUG.LOAD_SETUP(7);
-
-  gm = new GateFromBoardMaker(board);
-
-  gm.computeOutputs();
 }
 
 function draw() {
   board.runApp();
-  DEBUG.SHOW_NODE_INFO();
-  DEBUG.SHOW_GATE_INFO();
+  // DEBUG.SHOW_NODE_INFO();
+  // DEBUG.SHOW_GATE_INFO();
 }
 
 function keyPressed() {
-  if (key === 'q') isLooping() ? noLoop() : loop();
-  if (key === 'w') redraw();
-  // DEBUGGING
-  if (key === '1') DEBUG.LOAD_SETUP(1);
-  if (key === '2') DEBUG.LOAD_SETUP(2);
-  if (key === '3') DEBUG.LOAD_SETUP(3);
-  if (key === '4') DEBUG.LOAD_SETUP(4);
-  if (key === '5') DEBUG.LOAD_SETUP(5);
-  if (key === '6') DEBUG.LOAD_SETUP(6);
-  if (key === '7') DEBUG.LOAD_SETUP(7);
-  if (key === 'c') DEBUG.CREATE_SETUP_FROM_BOARD_STATE();
-  if (key === 't') board.createGateFromState();
-  if (key === 'a') console.log(frameRate());
-  if (key === 'r') resetSketch();
-  if (key === 'm') console.log(mouseX, mouseY);
+  // if (key === 'q') isLooping() ? noLoop() : loop();
+  // if (key === 'w') redraw();
+
+  //DEBUGGING
+  if (key === '!') DEBUG.LOAD_SETUP(1);
+  if (key === '@') DEBUG.LOAD_SETUP(2);
+  if (key === '#') DEBUG.LOAD_SETUP(3);
+  if (key === '$') DEBUG.LOAD_SETUP(4);
+  if (key === '%') DEBUG.LOAD_SETUP(5);
+  if (key === '^') DEBUG.LOAD_SETUP(6);
+  if (key === '&') DEBUG.LOAD_SETUP(7);
+
+  // if (key === 'k') DEBUG.CREATE_SETUP_FROM_BOARD_STATE();
+  // if (key === 't') board.createGateFromState();
+  // if (key === 'a') console.log(frameRate());
+  // if (key === 'r') resetSketch();
+  // if (key === 'm') console.log(mouseX, mouseY);
 }
 
 function mousePressed() {

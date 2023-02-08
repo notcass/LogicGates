@@ -48,7 +48,7 @@ class Gate {
   }
 
   // Compute gate logic from truth table
-  applyLogic() {
+  evaluateLogic() {
     // Only check if all the nodes are occupied
     if (this.areInputsFull() && this.areOutputsFull()) {
       // Create string representation of current inputs

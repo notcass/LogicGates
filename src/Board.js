@@ -1,4 +1,5 @@
 class Board {
+  //prettier-ignore
   constructor(w, h, inputs, outputs) {
     this.x = w / 25;
     this.y = h / 13;
@@ -15,29 +16,20 @@ class Board {
     this.draggingGate = null; // Boolean
     this.sourceNode = null; // Node we are drawing from
     this.allNodes = []; // All nodes on all gates in one array
-    this.init();
-    // DEBUG
     this.maker;
-  }
-
-  createGateFromState() {
-    this.maker = new GateFromBoardMaker(this);
-    if (this.maker.inpCount > 0) {
-      const newTable = this.maker.makeTable();
-      DEBUG.msg(newTable);
-
-      const newGate = {
-        label: 'NOT',
-        x: random(this.x, this.x + this.w),
-        y: random(this.y, this.y + this.h),
-        truthTable: newTable,
-        gateInputs: this.maker.inpCount,
-        gateOutputs: this.maker.outCount,
-      };
-      this.makeNewGate(newGate);
-    } else {
-      DEBUG.msg('No valid inputs to make a new gate from.');
-    }
+    this.NOT_GATE = {
+      label: 'NOT',
+      x: mouseX,
+      y: mouseY,
+      gateInputs: 1,
+      gateOutputs: 1,
+      truthTable: {
+        '0': '1',
+        '1': '0',
+      },
+    };
+    this.setupEventListeners();
+    this.init();
   }
 
   init() {
@@ -109,8 +101,60 @@ class Board {
     });
   }
 
-  makeNewGate(gateObj) {
-    let newGate = new Gate(gateObj, this, this.getNextGateId());
+  createGateFromState(label) {
+    if (label.length > 0) {
+      this.maker = new GateFromBoardMaker(this);
+      if (this.maker.inpCount > 0) {
+        const newTable = this.maker.makeTable();
+        DEBUG.msg(newTable);
+
+        const newGate = {
+          label: label.toUpperCase(),
+          x: width / 2,
+          y: height / 2,
+          truthTable: newTable,
+          gateInputs: this.maker.inpCount,
+          gateOutputs: this.maker.outCount,
+        };
+        this.createGate(newGate);
+      } else {
+        DEBUG.msg('No valid inputs to make a new gate from.');
+      }
+    }
+  }
+
+  createGate(gate) {
+    //prettier-ignore
+    const defaults = {
+      'NOT': {
+        label: 'NOT',
+        x: 200,
+        y: 200,
+        gateInputs: 1,
+        gateOutputs: 1,
+        truthTable: {
+          '0': '1',
+          '1': '0',
+        },
+      },
+      'AND': {
+        label: 'AND',
+        x: 500,
+        y: 270,
+        gateInputs: 2,
+        gateOutputs: 1,
+        truthTable: {
+          '00': '0',
+          '01': '0',
+          '10': '0',
+          '11': '1',
+        },
+      },
+    };
+    if (gate === 'NOT' || gate === 'AND') {
+      gate = defaults[gate];
+    }
+    let newGate = new Gate(gate, this, this.getNextGateId());
     this.gates.push(newGate);
     this.allNodes.push(...newGate.gateInputs, ...newGate.gateOutputs);
   }
@@ -119,7 +163,7 @@ class Board {
     // Show Gates
     this.gates.forEach((g) => {
       g.show();
-      g.applyLogic();
+      g.evaluateLogic();
     });
 
     // Drag gates
@@ -270,6 +314,31 @@ class Board {
       nodeA.prev.next = null;
       nodeA.prev = null;
     }
+  }
+
+  setupEventListeners() {
+    const createText = document.querySelector('#create-gate-input');
+    createText.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        this.createGateFromState(createText.value);
+        createText.value = '';
+      }
+    });
+
+    const btnCreate = document.querySelector('#button-create');
+    btnCreate.addEventListener('click', (e) => {
+      console.log(createText.value);
+      this.createGateFromState(createText.value);
+    });
+
+    const btnAND = document.querySelector('#button-AND');
+    const btnNOT = document.querySelector('#button-NOT');
+    btnNOT.addEventListener('click', (e) => {
+      this.createGate('NOT');
+    });
+    btnAND.addEventListener('click', (e) => {
+      this.createGate('AND');
+    });
   }
 
   // Returns TRUE as soon as we find a node that IS being drawn from
