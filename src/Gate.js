@@ -105,4 +105,7 @@ class Gate {
       gO.show();
     });
   }
+
+
+  traverseLeft()
 }

@@ -4,6 +4,9 @@ class GateFromBoardMaker {
     this.connectedNodes = this.findConnections();
     this.inpCount = this.connectedNodes.inputs.length;
     this.outCount = this.connectedNodes.outputs.length;
+    this.gateSet = new Set();
+    this.TEST_COUNTER = 0;
+    this.TEST_COUNTER_HOLDER = {};
   }
 
   // Setup possible permutations, create truth table
@@ -55,74 +58,69 @@ class GateFromBoardMaker {
   // Found BUG: When we loop through all the gates here, we loop through in the order they were created, but
   // we need to access them in LEFT to RIGHT on the screen, since that is the direction our power flows.
   //
-  // NOTE: Currently working on the ordering, starting with returnNext() and returnPrev() in Node.js
 
   // Propagate power from board's Inputs
-  computeOutputs() {
-    // this.board.gates.forEach((g) => {
-    //   g.applyLogic();
-    // });
-    this.evalNodePower();
-  }
-
   newComputeOutputs() {
-    // CORRECT GATE TRAVERSAL ORDER TESTING
-    let gateSet = new Set();
+    // Create a set of gates that are fully connected
     inps = this.connectedNodes.inputs;
     inps.forEach((inp) => {
       while (inp.returnNext()) {
         if (inp.parent.constructor.name == 'Gate') {
           // console.log(inp.parent);
-          gateSet.add(inp.parent);
+          this.gateSet.add(inp.parent);
         }
         // console.log(inp);
         inp = inp.returnNext();
       }
     });
 
-    // this.checkGateLayers(gateSet);
-
-    let firstGate = [...gateSet][1];
-    this.traverseGates(firstGate);
+    // For each gate in the set, figure out which layer it occupies.
+    console.log(this.gateSet);
+    let exampleGate = [...this.gateSet][2];
+    this.traverseNodesFromGate(exampleGate);
   }
 
-  traverseGates(gate, count) {
-    if (gate.constructor.name == 'Board') {
-      return count;
+  traverseNodesFromGate(gate) {
+    console.log('%c======================', 'color: #d44');
+    console.log(`%cSTARTING GATE: ${gate.label} ${gate.id}`, `color: #3f0`);
+    this.TEST_COUNTER_HOLDER[gate] = [];
+    console.log(gate);
+
+    gate.gateInputs.forEach((inpNode) => {
+      console.log(`%cNODE: ${inpNode.id}`, `color: #a3e`);
+
+      this.goDownNodeChain(inpNode, gate);
+      console.log('%c======================', 'color: deepskyblue');
+    });
+  }
+
+  goDownNodeChain(node, startGate) {
+    console.log(`Head is at node ${node.id}`);
+
+    const prev = node.prev;
+    const prevType = prev.constructor.name;
+
+    if (prevType === 'InputNode') {
+      console.log('PrevType is InputNode');
+      // STORE THE COUNTER GLOBALLY HERE
+      console.log(`Storing counter ${this.TEST_COUNTER}`);
+
+      this.TEST_COUNTER_HOLDER[startGate].push(this.TEST_COUNTER);
+      console.log(`Pushing ${this.TEST_COUNTER}`);
+
+      this.TEST_COUNTER = 0;
     } else {
-      count++;
-      console.log(gate);
-      // gate.gateInputs.forEach((inp) => {
-      //   console.log(inp);
-      // });
-    }
-  }
+      console.log(`Going to move head to ${prev.id}`);
+      if (prev.type === 'GATE_OUTPUT') {
+        // INCREASE THE COUNTER HERE
+        this.TEST_COUNTER++;
+        prev.parent.gateInputs.forEach((inp) => {
+          this.goDownNodeChain(inp, startGate);
+        });
+      }
 
-  checkGateLayers(gateSet) {
-    console.log(gateSet);
-    console.log('checkGateLayers()');
-    console.log('List of gate inputs');
-
-    // For each gate
-    for (const g of gateSet) {
-      let highest = 0;
-      // For each input on each gate
-      for (const inp of g.gateInputs) {
-        // For each gate we land on this goes up
-        let gatesHit = 0;
-        // We move the head down the chain to examine wthout modifying the inp
-        let examinerHead = inp;
-
-        // Traverse left, count GATES until INPUT NODE
-        console.log(`Traversing input ${inp.id}`);
-        // console.log(inp.prev.parent.constructor.name != 'Board');
-        // console.log(inp.prev.parent);
-
-        // while(examinerHead.prev.parent.constructor.name != 'Board') {
-        // console.log('gatesHit going up!');
-        // gatesHit++;
-        // examinerHead = examinerHead.prev.parent;
-        // }
+      if (prev.type === 'GATE_INPUT') {
+        this.goDownNodeChain(prev.prev, startGate);
       }
     }
   }
