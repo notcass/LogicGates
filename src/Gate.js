@@ -115,29 +115,57 @@ class Gate {
 
     this.gateInputs.forEach((inpNode) => {
       console.log(`%cNODE: ${inpNode.id}`, `color: #a3e`);
+      this.gatesToTheLeftCounts[inpNode.id] = 0;
+      console.log(this.gatesToTheLeftCounts);
 
-      this.goDownNodeChain(inpNode, this, inpNode);
+      this.goDownNodeChain2(inpNode, this, inpNode);
       console.log('%c======================', 'color: deepskyblue');
     });
     console.log(this.gatesToTheLeftCounts);
+  }
+
+  goDownNodeChain2(node, startGate, startNode) {
+    console.log(`Head is at node ${node.id}`);
+    if (node.type === 'INPUT') {
+      console.log(`%cnode.type is ${node.type}`, `color: red`);
+
+      console.log(
+        `%clogging Node:${startNode.id} with counter: ${this.TEST_COUNTER}`,
+        `color: pink`
+      );
+      if (this.TEST_COUNTER > this.gatesToTheLeftCounts[startNode.id]) {
+        this.gatesToTheLeftCounts[startNode.id] = this.TEST_COUNTER;
+      }
+      this.TEST_COUNTER = 0;
+      //=======================================
+    } else if (node.type === 'GATE_OUTPUT') {
+      console.log(`%cnode.type is ${node.type}`, `color: blue`);
+      this.TEST_COUNTER++;
+      node.parent.gateInputs.forEach((inp) => {
+        this.goDownNodeChain2(inp, startGate, startNode);
+      });
+      //======================================
+    } else if (node.type === 'GATE_INPUT') {
+      console.log(`%cnode.type is ${node.type}`, `color: green`);
+      this.goDownNodeChain2(node.prev, startGate, startNode);
+    }
   }
 
   goDownNodeChain(node, startGate, startNode) {
     console.log(`Head is at node ${node.id}`);
 
     const prev = node.prev;
-    console.log('prev.type ' + prev.type);
-
     if (prev.type === 'INPUT') {
-      console.log('%cprev.type is INPUT', 'color:red');
-      this.TEST_COUNTER++; // Increment one last time?
+      console.log(`%cprev.type is ${prev.type}`, 'color:red');
+
+      // this.TEST_COUNTER++; // Increment one last time?
       this.gatesToTheLeftCounts[startNode.id] = this.TEST_COUNTER;
       this.TEST_COUNTER = 0;
     } else if (prev.type === 'GATE_OUTPUT') {
-      // INCREASE THE COUNTER HERE
-      this.TEST_COUNTER++;
-      console.log(prev.parent);
+      console.log(`%cprev.type is ${prev.type}`, `color: blue`);
 
+      this.TEST_COUNTER++;
+      // Go
       prev.parent.gateInputs.forEach((inp) => {
         this.goDownNodeChain(inp, startGate, startNode);
       });
