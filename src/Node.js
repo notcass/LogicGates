@@ -81,7 +81,7 @@ class Node {
       const nodes = [];
       for (const i of this.parent.gateInputs) {
         nodes.push(i);
-        console.log(i);
+        DEBUG.msg(i);
       }
     }
   }

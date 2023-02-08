@@ -36,7 +36,7 @@ class GateFromBoardMaker {
       tTable[p] = outString;
     });
 
-    // console.log(tTable);
+    // DEBUG.msg(tTable);
     return tTable;
   }
 
@@ -66,16 +66,16 @@ class GateFromBoardMaker {
     inps.forEach((inp) => {
       while (inp.returnNext()) {
         if (inp.parent.constructor.name == 'Gate') {
-          // console.log(inp.parent);
+          // DEBUG.msg(inp.parent);
           this.gateSet.add(inp.parent);
         }
-        // console.log(inp);
+        // DEBUG.msg(inp);
         inp = inp.returnNext();
       }
     });
 
     // For each gate in the set, figure out which layer it occupies.
-    console.log(this.gateSet);
+    DEBUG.msg(this.gateSet);
     let exampleGate = [...this.gateSet][2];
     // this.traverseNodesFromGate(exampleGate);
     exampleGate.traverseLeft();
@@ -148,7 +148,7 @@ class GateFromBoardMaker {
       }
     });
 
-    // console.log(fullConnections);
+    // DEBUG.msg(fullConnections);
     return fullConnections;
   }
 
@@ -179,6 +179,6 @@ class GateFromBoardMaker {
       set.add(str);
     }
 
-    console.log(set);
+    DEBUG.msg(set);
   }
 }

@@ -1,6 +1,12 @@
 class Debug {
   constructor() {
-    this.test = 'hi';
+    this.logging = true;
+  }
+
+  msg(...msg) {
+    if (this.logging) {
+      console.log(...msg);
+    }
   }
 
   // Bound to 'c' on keyboard

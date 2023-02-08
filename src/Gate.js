@@ -109,27 +109,29 @@ class Gate {
   }
 
   traverseLeft() {
-    console.log('%c======================', 'color: #d44');
-    console.log(`%cSTARTING GATE: ${this.label} ${this.id}`, `color: #3f0`);
-    console.log(this);
+    DEBUG.msg('%c======================', 'color: #d44');
+    DEBUG.msg(`%cSTARTING GATE: ${this.label} ${this.id}`, `color: #3f0`);
+    DEBUG.msg(this);
 
     this.gateInputs.forEach((inpNode) => {
-      console.log(`%cNODE: ${inpNode.id}`, `color: #a3e`);
+      DEBUG.msg(`%cNODE: ${inpNode.id}`, `color: #a3e`);
       this.gatesToTheLeftCounts[inpNode.id] = 0;
-      console.log(this.gatesToTheLeftCounts);
+      DEBUG.msg(this.gatesToTheLeftCounts);
 
-      this.goDownNodeChain2(inpNode, this, inpNode);
-      console.log('%c======================', 'color: deepskyblue');
+      this.goDownNodeChain(inpNode, this, inpNode);
+      DEBUG.msg('%c======================', 'color: deepskyblue');
     });
-    console.log(this.gatesToTheLeftCounts);
+    DEBUG.msg(this.gatesToTheLeftCounts);
   }
 
-  goDownNodeChain2(node, startGate, startNode) {
-    console.log(`Head is at node ${node.id}`);
-    if (node.type === 'INPUT') {
-      console.log(`%cnode.type is ${node.type}`, `color: red`);
+  goDownNodeChain(node, startGate, startNode) {
+    DEBUG.msg(`Head is at node ${node.id}`);
 
-      console.log(
+    // BASE CASE - If we've reached an INPUT node, aka a POWER SOURCE
+    if (node.type === 'INPUT') {
+      DEBUG.msg(`%cnode.type is ${node.type}`, `color: red`);
+
+      DEBUG.msg(
         `%clogging Node:${startNode.id} with counter: ${this.TEST_COUNTER}`,
         `color: pink`
       );
@@ -137,43 +139,18 @@ class Gate {
         this.gatesToTheLeftCounts[startNode.id] = this.TEST_COUNTER;
       }
       this.TEST_COUNTER = 0;
-      //=======================================
+
+      // If we're on the right side of a gate aka a GATE_OUTPUT
     } else if (node.type === 'GATE_OUTPUT') {
-      console.log(`%cnode.type is ${node.type}`, `color: blue`);
+      DEBUG.msg(`%cnode.type is ${node.type}`, `color: blue`);
       this.TEST_COUNTER++;
       node.parent.gateInputs.forEach((inp) => {
-        this.goDownNodeChain2(inp, startGate, startNode);
+        this.goDownNodeChain(inp, startGate, startNode);
       });
       //======================================
     } else if (node.type === 'GATE_INPUT') {
-      console.log(`%cnode.type is ${node.type}`, `color: green`);
-      this.goDownNodeChain2(node.prev, startGate, startNode);
-    }
-  }
-
-  goDownNodeChain(node, startGate, startNode) {
-    console.log(`Head is at node ${node.id}`);
-
-    const prev = node.prev;
-    if (prev.type === 'INPUT') {
-      console.log(`%cprev.type is ${prev.type}`, 'color:red');
-
-      // this.TEST_COUNTER++; // Increment one last time?
-      this.gatesToTheLeftCounts[startNode.id] = this.TEST_COUNTER;
-      this.TEST_COUNTER = 0;
-    } else if (prev.type === 'GATE_OUTPUT') {
-      console.log(`%cprev.type is ${prev.type}`, `color: blue`);
-
-      this.TEST_COUNTER++;
-      // Go
-      prev.parent.gateInputs.forEach((inp) => {
-        this.goDownNodeChain(inp, startGate, startNode);
-      });
-    } else if (prev.type === 'GATE_INPUT') {
-      this.TEST_COUNTER++;
-      console.log('HERE!!!!!!!!!!!');
-
-      this.goDownNodeChain(prev.prev, startGate, startNode);
+      DEBUG.msg(`%cnode.type is ${node.type}`, `color: green`);
+      this.goDownNodeChain(node.prev, startGate, startNode);
     }
   }
 }

@@ -24,7 +24,7 @@ class Board {
     this.maker = new GateFromBoardMaker(this);
     if (this.maker.inpCount > 0) {
       const newTable = this.maker.makeTable();
-      console.log(newTable);
+      DEBUG.msg(newTable);
 
       const newGate = {
         label: 'NOT',
@@ -36,7 +36,7 @@ class Board {
       };
       this.makeNewGate(newGate);
     } else {
-      console.debug('No valid inputs to make a new gate from.');
+      DEBUG.msg('No valid inputs to make a new gate from.');
     }
   }
 
