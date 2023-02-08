@@ -77,52 +77,8 @@ class GateFromBoardMaker {
     // For each gate in the set, figure out which layer it occupies.
     console.log(this.gateSet);
     let exampleGate = [...this.gateSet][2];
-    this.traverseNodesFromGate(exampleGate);
-  }
-
-  traverseNodesFromGate(gate) {
-    console.log('%c======================', 'color: #d44');
-    console.log(`%cSTARTING GATE: ${gate.label} ${gate.id}`, `color: #3f0`);
-    this.TEST_COUNTER_HOLDER[gate] = [];
-    console.log(gate);
-
-    gate.gateInputs.forEach((inpNode) => {
-      console.log(`%cNODE: ${inpNode.id}`, `color: #a3e`);
-
-      this.goDownNodeChain(inpNode, gate);
-      console.log('%c======================', 'color: deepskyblue');
-    });
-  }
-
-  goDownNodeChain(node, startGate) {
-    console.log(`Head is at node ${node.id}`);
-
-    const prev = node.prev;
-    const prevType = prev.constructor.name;
-
-    if (prevType === 'InputNode') {
-      console.log('PrevType is InputNode');
-      // STORE THE COUNTER GLOBALLY HERE
-      console.log(`Storing counter ${this.TEST_COUNTER}`);
-
-      this.TEST_COUNTER_HOLDER[startGate].push(this.TEST_COUNTER);
-      console.log(`Pushing ${this.TEST_COUNTER}`);
-
-      this.TEST_COUNTER = 0;
-    } else {
-      console.log(`Going to move head to ${prev.id}`);
-      if (prev.type === 'GATE_OUTPUT') {
-        // INCREASE THE COUNTER HERE
-        this.TEST_COUNTER++;
-        prev.parent.gateInputs.forEach((inp) => {
-          this.goDownNodeChain(inp, startGate);
-        });
-      }
-
-      if (prev.type === 'GATE_INPUT') {
-        this.goDownNodeChain(prev.prev, startGate);
-      }
-    }
+    // this.traverseNodesFromGate(exampleGate);
+    exampleGate.traverseLeft();
   }
 
   evalNodePower() {

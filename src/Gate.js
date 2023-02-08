@@ -11,6 +11,8 @@ class Gate {
     this.truthTable = _args.truthTable;
     this.gateInputs = new Array(_args.gateInputs);
     this.gateOutputs = new Array(_args.gateOutputs);
+    this.gatesToTheLeftCounts = {};
+    this.TEST_COUNTER = 0;
     this.init();
   }
 
@@ -106,6 +108,44 @@ class Gate {
     });
   }
 
+  traverseLeft() {
+    console.log('%c======================', 'color: #d44');
+    console.log(`%cSTARTING GATE: ${this.label} ${this.id}`, `color: #3f0`);
+    console.log(this);
 
-  traverseLeft()
+    this.gateInputs.forEach((inpNode) => {
+      console.log(`%cNODE: ${inpNode.id}`, `color: #a3e`);
+
+      this.goDownNodeChain(inpNode, this, inpNode);
+      console.log('%c======================', 'color: deepskyblue');
+    });
+    console.log(this.gatesToTheLeftCounts);
+  }
+
+  goDownNodeChain(node, startGate, startNode) {
+    console.log(`Head is at node ${node.id}`);
+
+    const prev = node.prev;
+    console.log('prev.type ' + prev.type);
+
+    if (prev.type === 'INPUT') {
+      console.log('%cprev.type is INPUT', 'color:red');
+      this.TEST_COUNTER++; // Increment one last time?
+      this.gatesToTheLeftCounts[startNode.id] = this.TEST_COUNTER;
+      this.TEST_COUNTER = 0;
+    } else if (prev.type === 'GATE_OUTPUT') {
+      // INCREASE THE COUNTER HERE
+      this.TEST_COUNTER++;
+      console.log(prev.parent);
+
+      prev.parent.gateInputs.forEach((inp) => {
+        this.goDownNodeChain(inp, startGate, startNode);
+      });
+    } else if (prev.type === 'GATE_INPUT') {
+      this.TEST_COUNTER++;
+      console.log('HERE!!!!!!!!!!!');
+
+      this.goDownNodeChain(prev.prev, startGate, startNode);
+    }
+  }
 }

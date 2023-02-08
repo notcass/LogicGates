@@ -95,7 +95,7 @@ function keyPressed() {
   if (key === '6') DEBUG.LOAD_SETUP(6);
   if (key === '7') DEBUG.LOAD_SETUP(7);
   if (key === 'c') DEBUG.CREATE_SETUP_FROM_BOARD_STATE();
-  if (key === 't') board.createGateFromState();
+  if (key === 't') gm.newComputeOutputs();
   // if (key === '4')
   if (key === 'a') console.log(frameRate());
   if (key === 'r') resetSketch();
