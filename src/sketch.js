@@ -10,6 +10,7 @@
 let board;
 let DEBUG;
 let gm; // TESTING GATE MAKER
+let GLOB;
 const buttons = [];
 const COLORS = {};
 let can, apple;
@@ -64,17 +65,17 @@ function setup() {
 let inps;
 
 function resetSketch() {
-  // board = new Board(width, height, 2, 2);
-  // board.makeNewGate(notGate, board, 0);
-  // board.makeNewGate(andGate, board, 2);
+  board = new Board(width, height, 2, 2);
+  board.makeNewGate(notGate, board, 0);
+  board.makeNewGate(andGate, board, 2);
 
   //========== DEBUGGING/TESTING ==========
   DEBUG = new Debug();
-  DEBUG.LOAD_SETUP(7);
+  // DEBUG.LOAD_SETUP(7);
 
   gm = new GateFromBoardMaker(board);
 
-  gm.newComputeOutputs();
+  gm.computeOutputs();
 }
 
 function draw() {
@@ -95,8 +96,7 @@ function keyPressed() {
   if (key === '6') DEBUG.LOAD_SETUP(6);
   if (key === '7') DEBUG.LOAD_SETUP(7);
   if (key === 'c') DEBUG.CREATE_SETUP_FROM_BOARD_STATE();
-  if (key === 't') gm.newComputeOutputs();
-  // if (key === '4')
+  if (key === 't') board.createGateFromState();
   if (key === 'a') console.log(frameRate());
   if (key === 'r') resetSketch();
   if (key === 'm') console.log(mouseX, mouseY);

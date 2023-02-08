@@ -28,6 +28,10 @@ button {
   cursor: pointer;
 }
 
+.delete-LATER {
+  background-color: #ff8000;
+}
+
 button:active {
   transform: scale(0.95);
 }

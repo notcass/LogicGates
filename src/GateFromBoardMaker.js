@@ -4,9 +4,7 @@ class GateFromBoardMaker {
     this.connectedNodes = this.findConnections();
     this.inpCount = this.connectedNodes.inputs.length;
     this.outCount = this.connectedNodes.outputs.length;
-    this.gateSet = new Set();
-    this.TEST_COUNTER = 0;
-    this.TEST_COUNTER_HOLDER = {};
+    this.connectedGates = [];
   }
 
   // Setup possible permutations, create truth table
@@ -50,35 +48,34 @@ class GateFromBoardMaker {
     this.evalNodePower();
   }
 
-  // FIXME:
-  // It seems when we chain 2 gates together and try to make a new gate from the board,
-  // we run into problems with getting the wrong output in the truth table
-  // Im guessing the problem is somewhere in the way we compute or evaluate power states
-  //
-  // Found BUG: When we loop through all the gates here, we loop through in the order they were created, but
-  // we need to access them in LEFT to RIGHT on the screen, since that is the direction our power flows.
-  //
-
-  // Propagate power from board's Inputs
-  newComputeOutputs() {
-    // Create a set of gates that are fully connected
-    inps = this.connectedNodes.inputs;
+  // Propagate power from board's Inputs in the correct order
+  computeOutputs() {
+    // Store array of unique, connected gates in this.connectedGates
+    const inps = this.connectedNodes.inputs;
     inps.forEach((inp) => {
       while (inp.returnNext()) {
-        if (inp.parent.constructor.name == 'Gate') {
-          // DEBUG.msg(inp.parent);
-          this.gateSet.add(inp.parent);
+        if (inp.parent.constructor.name === 'Gate') {
+          if (this.connectedGates.indexOf(inp.parent) == -1) {
+            this.connectedGates.push(inp.parent);
+          }
         }
-        // DEBUG.msg(inp);
         inp = inp.returnNext();
       }
     });
 
-    // For each gate in the set, figure out which layer it occupies.
-    DEBUG.msg(this.gateSet);
-    let exampleGate = [...this.gateSet][2];
-    // this.traverseNodesFromGate(exampleGate);
-    exampleGate.traverseLeft();
+    // For each gate in the array, calculate which layer it
+    // occupies so we can evaluate them in the correct order
+    this.connectedGates.forEach((g) => {
+      g.setLayer();
+    });
+
+    // Sort gates by layer, low -> high, then evaluate
+    this.connectedGates.sort((a, b) => a.layer - b.layer);
+    //TODO:REPLACE CONSOLE.LOG
+    DEBUG.msg('%c========== Gates Sorted by Layer ==========', 'color: #0f3');
+    DEBUG.msg(this.connectedGates);
+    DEBUG.msg('%c===========================================', 'color: #0f3');
+    this.connectedGates.forEach((g) => g.applyLogic());
   }
 
   evalNodePower() {

@@ -11,38 +11,10 @@ class Gate {
     this.truthTable = _args.truthTable;
     this.gateInputs = new Array(_args.gateInputs);
     this.gateOutputs = new Array(_args.gateOutputs);
+    this.layer = -1;
     this.gatesToTheLeftCounts = {};
-    this.TEST_COUNTER = 0;
+    this.gateCounter = 0;
     this.init();
-  }
-
-  // Compute gate logic from truth table
-  applyLogic() {
-    // Only check if all the nodes are occupied
-    if (this.areInputsFull() && this.areOutputsFull()) {
-      // Create string representation of current inputs
-      let inputPermutation = '';
-      this.gateInputs.forEach((inp) => {
-        inputPermutation += inp.power ? '1' : '0';
-      });
-
-      // Access corresponding output value from this gates truth table
-      let outputStr = this.truthTable[inputPermutation];
-      // Set outputs to correct values
-      this.gateOutputs.forEach((out, index) => {
-        out.power = outputStr.charAt(index) === '1';
-      });
-    } else {
-      this.gateOutputs.forEach((output) => (output.power = false));
-    }
-  }
-
-  areInputsFull() {
-    return this.gateInputs.every((input) => input.prev);
-  }
-
-  areOutputsFull() {
-    return this.gateOutputs.every((output) => output.next);
   }
 
   init() {
@@ -73,6 +45,35 @@ class Gate {
         i
       );
     }
+  }
+
+  // Compute gate logic from truth table
+  applyLogic() {
+    // Only check if all the nodes are occupied
+    if (this.areInputsFull() && this.areOutputsFull()) {
+      // Create string representation of current inputs
+      let inputPermutation = '';
+      this.gateInputs.forEach((inp) => {
+        inputPermutation += inp.power ? '1' : '0';
+      });
+
+      // Access corresponding output value from this gates truth table
+      let outputStr = this.truthTable[inputPermutation];
+      // Set outputs to correct values
+      this.gateOutputs.forEach((out, index) => {
+        out.power = outputStr.charAt(index) === '1';
+      });
+    } else {
+      this.gateOutputs.forEach((output) => (output.power = false));
+    }
+  }
+
+  areInputsFull() {
+    return this.gateInputs.every((input) => input.prev);
+  }
+
+  areOutputsFull() {
+    return this.gateOutputs.every((output) => output.next);
   }
 
   show() {
@@ -108,48 +109,62 @@ class Gate {
     });
   }
 
-  traverseLeft() {
-    DEBUG.msg('%c======================', 'color: #d44');
-    DEBUG.msg(`%cSTARTING GATE: ${this.label} ${this.id}`, `color: #3f0`);
-    DEBUG.msg(this);
+  setLayer() {
+    DEBUG.msg(
+      '%c============ COUNTING GATES TO THE LEFT ============',
+      'color: #d44'
+    );
+    DEBUG.msg(
+      `%c========== STARTING GATE:%c ${this.label} ${this.id} %c========== `,
+      `color: #f80`,
+      'color: #fff',
+      'color: #f80'
+    );
+    // DEBUG.msg(this);
 
+    // Count gates to the start for each input node on this gate
     this.gateInputs.forEach((inpNode) => {
-      DEBUG.msg(`%cNODE: ${inpNode.id}`, `color: #a3e`);
+      DEBUG.msg(
+        `%c========== STARTING NODE: ${inpNode.id} ==========`,
+        `color: #a3e`
+      );
       this.gatesToTheLeftCounts[inpNode.id] = 0;
-      DEBUG.msg(this.gatesToTheLeftCounts);
 
       this.goDownNodeChain(inpNode, this, inpNode);
-      DEBUG.msg('%c======================', 'color: deepskyblue');
     });
-    DEBUG.msg(this.gatesToTheLeftCounts);
+
+    DEBUG.msg(
+      '%c====================================================',
+      'color: #d44'
+    );
+    // Set layer property to the amount of gates through the LONGEST path to our INPUTS
+    this.layer = Math.max(...Object.values(this.gatesToTheLeftCounts));
   }
 
   goDownNodeChain(node, startGate, startNode) {
-    DEBUG.msg(`Head is at node ${node.id}`);
+    DEBUG.msg(
+      `%cHead is at node ${node.id}. Type is ${node.type}`,
+      'color: #09f'
+    );
 
     // BASE CASE - If we've reached an INPUT node, aka a POWER SOURCE
     if (node.type === 'INPUT') {
-      DEBUG.msg(`%cnode.type is ${node.type}`, `color: red`);
+      DEBUG.msg('REACHED THE START!');
 
-      DEBUG.msg(
-        `%clogging Node:${startNode.id} with counter: ${this.TEST_COUNTER}`,
-        `color: pink`
-      );
-      if (this.TEST_COUNTER > this.gatesToTheLeftCounts[startNode.id]) {
-        this.gatesToTheLeftCounts[startNode.id] = this.TEST_COUNTER;
+      if (this.gateCounter > this.gatesToTheLeftCounts[startNode.id]) {
+        this.gatesToTheLeftCounts[startNode.id] = this.gateCounter;
       }
-      this.TEST_COUNTER = 0;
+      this.gateCounter = 0;
 
       // If we're on the right side of a gate aka a GATE_OUTPUT
     } else if (node.type === 'GATE_OUTPUT') {
-      DEBUG.msg(`%cnode.type is ${node.type}`, `color: blue`);
-      this.TEST_COUNTER++;
+      this.gateCounter++;
       node.parent.gateInputs.forEach((inp) => {
         this.goDownNodeChain(inp, startGate, startNode);
       });
-      //======================================
+
+      // If we're on the left side of a gate aka a GATE_INPUT
     } else if (node.type === 'GATE_INPUT') {
-      DEBUG.msg(`%cnode.type is ${node.type}`, `color: green`);
       this.goDownNodeChain(node.prev, startGate, startNode);
     }
   }
