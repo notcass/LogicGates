@@ -30,8 +30,8 @@ function setup() {
 
 function resetSketch() {
   board = new Board(width, height, 3, 1);
-  board.createGate('NOT');
-  board.createGate('AND');
+  // board.createGate('NOT');
+  // board.createGate('AND');
 
   //========== DEBUGGING/TESTING ==========
   DEBUG = new Debug();
@@ -60,7 +60,7 @@ function keyPressed() {
   // if (key === 'k') DEBUG.CREATE_SETUP_FROM_BOARD_STATE();
   // if (key === 't') board.createGateFromState();
   // if (key === 'a') console.log(frameRate());
-  // if (key === 'r') resetSketch();
+  // if (key === 'r') board.init();
   // if (key === 'm') console.log(mouseX, mouseY);
 }
 

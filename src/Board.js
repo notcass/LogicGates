@@ -49,6 +49,13 @@ class Board {
   }
 
   init() {
+    this.gateIdCounter = 0;
+    this.nodeIdCounter = 0;
+    this.inputs = [];
+    this.outputs = [];
+    this.gates = [];
+    this.allNodes = [];
+    this.sourceNode = null;
     // Input Nodes
     let divider = height / (this.inpCount + 1);
     for (let i = 0; i < this.inpCount; i++) {
@@ -127,8 +134,9 @@ class Board {
 
         const newGate = {
           label: label,
-          x: width / 2,
-          y: height / 2,
+          //TODO: Currently spawning offscreen as a bandaid fix
+          x: width,
+          y: height,
           truthTable: newTable,
           gateInputs: this.maker.inpCount,
           gateOutputs: this.maker.outCount,
@@ -140,11 +148,16 @@ class Board {
         const newBtn = document.createElement('button');
 
         newBtn.innerText = label;
+        // const labelWidth = textWidth(newGate.label);
+        newBtn.style = `width:${textWidth(newGate.label) + 50}px;`;
         newBtn.classList.add('button');
-        newBtn.addEventListener('click', (e) => {
+        newBtn.addEventListener('mousedown', (e) => {
           this.createGate(label, true);
         });
         btnHolder.insertAdjacentElement('beforeend', newBtn);
+
+        // Clear Board after making new gate
+        this.init();
       } else {
         DEBUG.msg('No valid inputs to make a new gate from.');
       }
