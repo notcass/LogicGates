@@ -61,7 +61,7 @@ function keyPressed() {
   // if (key === 't') board.createGateFromState();
   // if (key === 'a') console.log(frameRate());
   // if (key === 'r') board.init();
-  // if (key === 'm') console.log(mouseX, mouseY);
+  if (key === 'm') console.log(mouseX, mouseY);
 }
 
 function mousePressed() {

@@ -65,6 +65,7 @@ class Gate {
     if (this.stickingToMouse) {
       this.stickToMouse();
     }
+
     // Box
     stroke(255);
     // fill(18);

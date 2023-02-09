@@ -215,6 +215,10 @@ class Board {
     this.powerButtons.forEach((pb) => pb.show());
     // Draw Inputs/Outputs
     this.allNodes.forEach((n) => n.show());
+    // Draw trash square
+    stroke(255, 125, 0, 50);
+    fill(255, 125, 0, 50);
+    rect(this.x + this.w - 100, this.y, 100, 100);
   }
 
   mouseDown() {
@@ -246,6 +250,37 @@ class Board {
     // If we're currently drawing a line from a source node to mouse
     if (this.sourceNode) {
       this.connectNodes();
+    }
+
+    // Check for any gates in the trash square
+    let x = this.x + this.w - 100;
+    let y = this.y;
+    let delIndex = -1;
+    this.gates.forEach((g, index) => {
+      if (
+        g.x + g.w / 2 > x &&
+        g.x - g.w / 2 < x + 100 &&
+        g.y + g.h / 2 > y &&
+        g.y - g.h / 2 < y + 100
+      ) {
+        delIndex = index;
+      }
+    });
+
+    this.pruneGate(delIndex);
+  }
+
+  pruneGate(index) {
+    let gate = this.gates[index];
+    if (gate) {
+      // Stop drawing anything to that gate
+      [...gate.gateInputs, ...gate.gateOutputs].forEach((n) => {
+        this.removeConnections(n);
+      });
+
+      // Removing gate/node objects from relevant arrays
+      this.allNodes = this.allNodes.filter((n) => n.parent.id !== gate.id);
+      this.gates = this.gates.filter((g, i) => index !== i);
     }
   }
 
