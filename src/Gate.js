@@ -3,9 +3,9 @@ class Gate {
     this.label = _args.label;
     this.x = _args.x;
     this.y = _args.y;
-    this.w = 100;
-    this.h = 70;
-    this.cSize = 20;
+    this.w = 150; // 150;
+    this.h = 100; //90;
+    this.cSize = 29;
     this.parent = _parent;
     this.id = _id;
     this.truthTable = _args.truthTable;
@@ -14,13 +14,27 @@ class Gate {
     this.layer = -1;
     this.gatesToTheLeftCounts = {};
     this.gateCounter = 0;
+    this.stickingToMouse = false;
     this.init();
   }
 
+  areInputsFull() {
+    return this.gateInputs.every((input) => input.prev);
+  }
+
+  areOutputsFull() {
+    return this.gateOutputs.every((output) => output.next);
+  }
+
   init() {
-    // Setup Gate I/O
     const input_count = this.gateInputs.length;
     const output_count = this.gateOutputs.length;
+    const max_nodes = input_count > output_count ? input_count : output_count;
+
+    // Setup variable gate Sizing
+    textSize(30);
+    this.h = 50 + (max_nodes - 1) * 30; // max_nodes * 40;
+    this.w = textWidth(this.label) + 55;
 
     // Inputs
     for (let i = 0; i < input_count; i++) {
@@ -47,6 +61,55 @@ class Gate {
     }
   }
 
+  show() {
+    if (this.stickingToMouse) {
+      this.stickToMouse();
+    }
+    // Box
+    stroke(255);
+    // fill(18);
+    fill(14, 16, 60);
+    strokeWeight(1);
+    rect(this.x, this.y, this.w, this.h, 8);
+
+    // Text
+    fill(255);
+    textAlign(CENTER, CENTER);
+    // textSize(30);
+
+    text(this.label, this.x + this.w / 2, this.y + this.h / 2);
+
+    // Setup gate's input and output positions
+    const input_count = this.gateInputs.length;
+    const output_count = this.gateOutputs.length;
+    const inDivider = this.h / (input_count + 1);
+    const outDivider = this.h / (output_count + 1);
+
+    this.gateInputs.forEach((gI, index) => {
+      gI.x = this.x;
+      gI.y = this.y + inDivider + index * inDivider;
+      gI.show();
+    });
+
+    this.gateOutputs.forEach((gO, index) => {
+      gO.x = this.x + this.w;
+      gO.y = this.y + outDivider + index * outDivider;
+      gO.show();
+    });
+  }
+
+  stickToMouse() {
+    const x = mouseX > this.parent.x && mouseX < this.parent.x + this.parent.w;
+    const y = mouseY > this.parent.y && mouseY < this.parent.y + this.parent.h;
+
+    if (mouseIsPressed || (!x && !y)) {
+      this.x = mouseX - this.w / 2;
+      this.y = mouseY - this.h / 2;
+    } else {
+      this.stickingToMouse = false;
+    }
+  }
+
   // Compute gate logic from truth table
   evaluateLogic() {
     // Only check if all the nodes are occupied
@@ -68,47 +131,6 @@ class Gate {
     }
   }
 
-  areInputsFull() {
-    return this.gateInputs.every((input) => input.prev);
-  }
-
-  areOutputsFull() {
-    return this.gateOutputs.every((output) => output.next);
-  }
-
-  show() {
-    // Box
-    stroke(255);
-    // fill(18);
-    fill(14, 16, 60);
-    strokeWeight(1);
-    rect(this.x, this.y, this.w, this.h, 8);
-
-    // Text
-    fill(255);
-    textAlign(LEFT, TOP);
-    textSize(26);
-    text(this.label, this.x + 22, this.y + 23);
-
-    // Setup gate's input and output positions
-    const input_count = this.gateInputs.length;
-    const output_count = this.gateOutputs.length;
-    const inDivider = this.h / (input_count + 1);
-    const outDivider = this.h / (output_count + 1);
-
-    this.gateInputs.forEach((gI, index) => {
-      gI.x = this.x;
-      gI.y = this.y + inDivider + index * inDivider;
-      gI.show();
-    });
-
-    this.gateOutputs.forEach((gO, index) => {
-      gO.x = this.x + this.w;
-      gO.y = this.y + outDivider + index * outDivider;
-      gO.show();
-    });
-  }
-
   setLayer() {
     DEBUG.msg(
       '%c============ COUNTING GATES TO THE LEFT ============',
@@ -120,7 +142,6 @@ class Gate {
       'color: #fff',
       'color: #f80'
     );
-    // DEBUG.msg(this);
 
     // Count gates to the start for each input node on this gate
     this.gateInputs.forEach((inpNode) => {

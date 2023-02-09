@@ -9,15 +9,13 @@
 
 let board;
 let DEBUG;
-const buttons = [];
 const COLORS = {};
-let can, apple;
 
 function setup() {
   createCanvas(1366, 768).parent('sketch-holder');
-  can = document.querySelector('#sketch-holder');
-  apple = document.querySelector('#button-holder');
-  can.insertAdjacentElement('beforeend', apple);
+  const sketch = document.querySelector('#sketch-holder');
+  const buttons = document.querySelector('#button-holder');
+  sketch.insertAdjacentElement('beforeend', buttons);
 
   COLORS['WHITE'] = color(255);
   COLORS['BLACK'] = color(0);
@@ -26,13 +24,14 @@ function setup() {
   COLORS['ON_RED'] = color(255, 50, 0);
   COLORS['DARKER_GREY'] = color(18);
   COLORS['DARK_GREY'] = color(45);
+  COLORS['LIGHT_GREY'] = color(130);
   resetSketch();
 }
 
 function resetSketch() {
-  board = new Board(width, height, 2, 2);
-  board.createGate('NOT', board, 0);
-  board.createGate('AND', board, 2);
+  board = new Board(width, height, 3, 1);
+  board.createGate('NOT');
+  board.createGate('AND');
 
   //========== DEBUGGING/TESTING ==========
   DEBUG = new Debug();
@@ -46,8 +45,8 @@ function draw() {
 }
 
 function keyPressed() {
-  // if (key === 'q') isLooping() ? noLoop() : loop();
-  // if (key === 'w') redraw();
+  if (key === 'q') isLooping() ? noLoop() : loop();
+  if (key === 'w') redraw();
 
   //DEBUGGING
   if (key === '!') DEBUG.LOAD_SETUP(1);

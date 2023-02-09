@@ -45,7 +45,7 @@ class Debug {
     console.log(`const a = board.allNodes`);
     validGates.forEach((g) => {
       // Create object
-      console.log(`board.createGate(${g.label.toLowerCase()}Gate, board)`);
+      console.log(`board.createGate(${g.label})`);
     });
 
     validGates.forEach((g, index) => {
@@ -76,8 +76,8 @@ class Debug {
     if (n === 1) {
       board = new Board(width, height, 2, 2);
       const a = board.allNodes;
-      board.createGate(notGate, board, 0);
-      board.createGate(notGate, board, 1);
+      board.createGate('NOT');
+      board.createGate('NOT');
       board.gates[1].y = 350;
 
       // Two AND gates
@@ -96,8 +96,8 @@ class Debug {
     if (n === 2) {
       board = new Board(width, height, 3, 2);
       const a = board.allNodes;
-      board.createGate(notGate, board, 0);
-      board.createGate(andGate, board, 1);
+      board.createGate('NOT');
+      board.createGate('AND');
       board.gates[1].x = 200;
       board.gates[1].y = 350;
 
@@ -122,8 +122,8 @@ class Debug {
       board = new Board(width, height, 3, 2);
       const a = board.allNodes;
 
-      board.createGate(notGate, board, 0);
-      board.createGate(andGate, board, 1);
+      board.createGate('NOT');
+      board.createGate('AND');
       board.gates[1].x = 200;
       board.gates[1].y = 350;
       board.gates[0].x = 600;
@@ -148,10 +148,10 @@ class Debug {
       board = new Board(width, height, 3, 2);
       const a = board.allNodes;
 
-      board.createGate(notGate, board, 0);
+      board.createGate('NOT');
       board.gates[0].x = 564;
       board.gates[0].y = 205;
-      board.createGate(andGate, board, 1);
+      board.createGate('AND');
       board.gates[1].x = 200;
       board.gates[1].y = 350;
       a[0].next = a[5];
@@ -168,11 +168,11 @@ class Debug {
     if (n === 5) {
       board = new Board(width, height, 3, 2);
       const a = board.allNodes;
-      board.createGate(notGate, board);
-      board.createGate(andGate, board);
-      board.createGate(notGate, board);
-      board.createGate(notGate, board);
-      board.createGate(notGate, board);
+      board.createGate('NOT');
+      board.createGate('AND');
+      board.createGate('NOT');
+      board.createGate('NOT');
+      board.createGate('NOT');
       board.gates[0].x = 352;
       board.gates[0].y = 401;
       board.gates[1].x = 176;
@@ -210,11 +210,11 @@ class Debug {
       board = new Board(width, height, 3, 2);
       const a = board.allNodes;
 
-      board.createGate(notGate, board);
-      board.createGate(andGate, board);
-      board.createGate(notGate, board);
-      board.createGate(notGate, board);
-      board.createGate(andGate, board);
+      board.createGate('NOT');
+      board.createGate('AND');
+      board.createGate('NOT');
+      board.createGate('NOT');
+      board.createGate('AND');
       board.gates[0].x = 352;
       board.gates[0].y = 401;
       board.gates[1].x = 176;
@@ -253,10 +253,10 @@ class Debug {
     if (n === 7) {
       board = new Board(width, height, 3, 2);
       const a = board.allNodes;
-      board.createGate(andGate, board);
-      board.createGate(notGate, board);
-      board.createGate(notGate, board);
-      board.createGate(andGate, board);
+      board.createGate('AND');
+      board.createGate('NOT');
+      board.createGate('NOT');
+      board.createGate('AND');
       board.gates[0].x = 176;
       board.gates[0].y = 345;
       board.gates[1].x = 364;

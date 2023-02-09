@@ -17,6 +17,12 @@ class Node {
     this.power = bool;
   }
 
+  setColors() {
+    strokeWeight(6);
+    this.power ? stroke(COLORS.ON_RED) : stroke(COLORS.LIGHT_GREY);
+    this.power ? fill(COLORS.ON_RED) : fill(COLORS.WHITE);
+  }
+
   switchState() {
     this.power = !this.power;
   }
@@ -32,6 +38,7 @@ class Node {
 
   show() {
     this.setColors();
+    noStroke();
     circle(this.x, this.y, this.size);
 
     // Line from node to mouse
@@ -45,12 +52,6 @@ class Node {
       this.setColors();
       line(this.x, this.y, this.next.x, this.next.y);
     }
-  }
-
-  setColors() {
-    strokeWeight(4);
-    this.power ? stroke(COLORS.ON_RED) : stroke(COLORS.WHITE);
-    this.power ? fill(COLORS.ON_RED) : fill(COLORS.WHITE);
   }
 
   mouseHovering(mouseX, mouseY) {

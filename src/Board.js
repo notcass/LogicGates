@@ -142,7 +142,7 @@ class Board {
         newBtn.innerText = label;
         newBtn.classList.add('button');
         newBtn.addEventListener('click', (e) => {
-          this.createGate(label);
+          this.createGate(label, true);
         });
         btnHolder.insertAdjacentElement('beforeend', newBtn);
       } else {
@@ -151,7 +151,7 @@ class Board {
     }
   }
 
-  createGate(gate) {
+  createGate(gate, sticky) {
     if (this.gateTemplates[gate]) {
       // Found gate in templates
       gate = this.gateTemplates[gate];
@@ -160,6 +160,7 @@ class Board {
       this.gateTemplates[gate.label] = gate;
     }
     let newGate = new Gate(gate, this, this.getNextGateId());
+    if (sticky) newGate.stickingToMouse = true;
     this.gates.push(newGate);
     this.allNodes.push(...newGate.gateInputs, ...newGate.gateOutputs);
   }
@@ -338,11 +339,11 @@ class Board {
 
     const btnAND = document.querySelector('#button-AND');
     const btnNOT = document.querySelector('#button-NOT');
-    btnNOT.addEventListener('click', (e) => {
-      this.createGate('NOT');
+    btnNOT.addEventListener('mousedown', (e) => {
+      this.createGate('NOT', true);
     });
-    btnAND.addEventListener('click', (e) => {
-      this.createGate('AND');
+    btnAND.addEventListener('mousedown', (e) => {
+      this.createGate('AND', true);
     });
   }
 
