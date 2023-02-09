@@ -17,15 +17,31 @@ class Board {
     this.sourceNode = null; // Node we are drawing from
     this.allNodes = []; // All nodes on all gates in one array
     this.maker;
-    this.NOT_GATE = {
-      label: 'NOT',
-      x: mouseX,
-      y: mouseY,
-      gateInputs: 1,
-      gateOutputs: 1,
-      truthTable: {
-        '0': '1',
-        '1': '0',
+    this.gateTemplates = {
+
+      'NOT': {
+        label: 'NOT',
+        x: 200,
+        y: 200,
+        gateInputs: 1,
+        gateOutputs: 1,
+        truthTable: {
+          '0': '1',
+          '1': '0',
+        },
+      },
+      'AND': {
+        label: 'AND',
+        x: 500,
+        y: 270,
+        gateInputs: 2,
+        gateOutputs: 1,
+        truthTable: {
+          '00': '0',
+          '01': '0',
+          '10': '0',
+          '11': '1',
+        },
       },
     };
     this.setupEventListeners();
@@ -102,6 +118,7 @@ class Board {
   }
 
   createGateFromState(label) {
+    label = label.toUpperCase();
     if (label.length > 0) {
       this.maker = new GateFromBoardMaker(this);
       if (this.maker.inpCount > 0) {
@@ -109,7 +126,7 @@ class Board {
         DEBUG.msg(newTable);
 
         const newGate = {
-          label: label.toUpperCase(),
+          label: label,
           x: width / 2,
           y: height / 2,
           truthTable: newTable,
@@ -117,6 +134,17 @@ class Board {
           gateOutputs: this.maker.outCount,
         };
         this.createGate(newGate);
+
+        // ADD NEW BUTTON TO BOTTOM OF BOARD
+        const btnHolder = document.querySelector('#button-holder');
+        const newBtn = document.createElement('button');
+
+        newBtn.innerText = label;
+        newBtn.classList.add('button');
+        newBtn.addEventListener('click', (e) => {
+          this.createGate(label);
+        });
+        btnHolder.insertAdjacentElement('beforeend', newBtn);
       } else {
         DEBUG.msg('No valid inputs to make a new gate from.');
       }
@@ -124,35 +152,12 @@ class Board {
   }
 
   createGate(gate) {
-    //prettier-ignore
-    const defaults = {
-      'NOT': {
-        label: 'NOT',
-        x: 200,
-        y: 200,
-        gateInputs: 1,
-        gateOutputs: 1,
-        truthTable: {
-          '0': '1',
-          '1': '0',
-        },
-      },
-      'AND': {
-        label: 'AND',
-        x: 500,
-        y: 270,
-        gateInputs: 2,
-        gateOutputs: 1,
-        truthTable: {
-          '00': '0',
-          '01': '0',
-          '10': '0',
-          '11': '1',
-        },
-      },
-    };
-    if (gate === 'NOT' || gate === 'AND') {
-      gate = defaults[gate];
+    if (this.gateTemplates[gate]) {
+      // Found gate in templates
+      gate = this.gateTemplates[gate];
+    } else {
+      // Add gate to templates
+      this.gateTemplates[gate.label] = gate;
     }
     let newGate = new Gate(gate, this, this.getNextGateId());
     this.gates.push(newGate);

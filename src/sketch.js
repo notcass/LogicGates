@@ -9,47 +9,14 @@
 
 let board;
 let DEBUG;
-let gm; // TESTING GATE MAKER
-let GLOB;
 const buttons = [];
 const COLORS = {};
 let can, apple;
 
-// TODO: Move these gate object literals to board?
-//prettier-ignore
-const notGate = {
-  label: 'NOT',
-  x: 200,
-  y: 200,
-  gateInputs: 1,
-  gateOutputs: 1,
-  truthTable: {
-    '0': '1',
-    '1': '0',
-  },
-};
-
-//prettier-ignore
-const andGate = {
-  label: 'AND',
-  x: 500,
-  y: 270,
-  gateInputs: 2,
-  gateOutputs: 1,
-  truthTable: {
-    '00': '0',
-    '01': '0',
-    '10': '0',
-    '11': '1',
-  },
-};
-
 function setup() {
   createCanvas(1366, 768).parent('sketch-holder');
-  // createCanvas(800, 600).parent('sketch-holder');
   can = document.querySelector('#sketch-holder');
   apple = document.querySelector('#button-holder');
-  let input = document.querySelector('#input');
   can.insertAdjacentElement('beforeend', apple);
 
   COLORS['WHITE'] = color(255);
@@ -61,8 +28,6 @@ function setup() {
   COLORS['DARK_GREY'] = color(45);
   resetSketch();
 }
-
-let inps;
 
 function resetSketch() {
   board = new Board(width, height, 2, 2);
