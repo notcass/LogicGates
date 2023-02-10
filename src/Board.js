@@ -17,6 +17,7 @@ class Board {
     this.sourceNode = null; // Node we are drawing from
     this.allNodes = []; // All nodes on all gates in one array
     this.maker;
+    this.lastMouseClick = 0;
     this.gateTemplates = {
 
       'NOT': {
@@ -114,13 +115,13 @@ class Board {
     // fill(14, 15, 40);
     rect(this.x, this.y, this.w, this.h);
 
-    // Gates
-    this.handleGates();
     //Power
     this.handleIO();
+    // Gates
+    this.handleGates();
     // Connections
-    this.allNodes.forEach((n) => {
-      n.evalPower();
+    this.allNodes.forEach((node) => {
+      node.evalPower();
     });
   }
 
@@ -221,17 +222,27 @@ class Board {
     rect(this.x + this.w - 100, this.y, 100, 100);
   }
 
+  // FIXME:
   mouseDown() {
     // For each node
     for (const node of this.allNodes) {
       // If we are hovering one
       if (node.mouseHovering(mouseX, mouseY)) {
-        // Clear any other lines to or from the node
-        this.removeConnections(node);
+        // If node is a GATE_INPUT or OUTPUT or we Double Clicked
+        const doubleClicked = frameCount - this.lastMouseClick < 20;
+        if (
+          node.type === 'GATE_INPUT' ||
+          node.type === 'OUTPUT' ||
+          doubleClicked
+        ) {
+          console.log('Removing connections from clicked node');
+          this.removeConnections(node);
+        }
 
         // Set drawing flag
         node.drawingToMouse = true;
         this.sourceNode = node;
+        this.lastMouseClick = frameCount;
         break;
       }
     }
@@ -268,18 +279,27 @@ class Board {
     });
 
     this.pruneGate(delIndex);
+
+    // Evaluate logic on mouseup instead of every frame,
+    // since it only ever changes when we interact with the mouse
+    // console.log('Evaluating Gates');
+    // this.gates.forEach((g) => {
+    //   g.evaluateLogic();
+    // });
   }
 
   pruneGate(index) {
     let gate = this.gates[index];
     if (gate) {
       // Stop drawing anything to that gate
-      [...gate.gateInputs, ...gate.gateOutputs].forEach((n) => {
-        this.removeConnections(n);
+      [...gate.gateInputs, ...gate.gateOutputs].forEach((node) => {
+        this.removeConnections(node);
       });
 
       // Removing gate/node objects from relevant arrays
-      this.allNodes = this.allNodes.filter((n) => n.parent.id !== gate.id);
+      this.allNodes = this.allNodes.filter(
+        (node) => node.parent.id !== gate.id
+      );
       this.gates = this.gates.filter((g, i) => index !== i);
     }
   }
@@ -287,13 +307,14 @@ class Board {
   stopDrawingToMouse() {
     // Stop drawing lines from GATE_INPUTS and GATE_OUTPUTS
     this.gates.forEach((g) => {
-      g.gateInputs.forEach((i) => (i.drawingToMouse = false));
-      g.gateOutputs.forEach((o) => (o.drawingToMouse = false));
+      g.gateInputs.forEach((inpNode) => (inpNode.drawingToMouse = false));
+      g.gateOutputs.forEach((outNode) => (outNode.drawingToMouse = false));
     });
     //Stop drawing lines from INPUTS and OUTPUTS
-    this.allNodes.forEach((n) => (n.drawingToMouse = false));
+    this.allNodes.forEach((node) => (node.drawingToMouse = false));
   }
 
+  // FIXME: DONE: we now Array.push() the desired Node onto the other's Node.next array
   // This function accounts for what order you connect nodes in, so that power is always
   // flowing from output -> input
   connectNodes() {
@@ -307,6 +328,7 @@ class Board {
     }
 
     // If target node isn't null, isn't on the same gate, and isn't same type
+
     if (targetNode) {
       const sourceType = this.sourceNode.type;
       const targetType = targetNode.type;
@@ -335,38 +357,45 @@ class Board {
 
       if (validTypes && diffParent) {
         // Stop drawing to this node so we can overwrite it with the new connection
-        this.removeConnections(targetNode);
+
+        if (targetType === 'GATE_INPUT' || targetType === 'OUTPUT') {
+          this.removeConnections(targetNode);
+        }
 
         // If the sourceNode isn't an INPUT or GATE_INPUT, make the sourceNode
         // the first in the chain. This way power always flows right.
         // (aka node.next is always valid)
         if (sourceType === 'INPUT' || sourceType === 'GATE_OUTPUT') {
           // Drawing connection from the 'left'
-          this.sourceNode.next = targetNode;
+          this.sourceNode.next.push(targetNode);
           targetNode.prev = this.sourceNode;
         } else {
           // Drawing connection from the 'right'
           this.sourceNode.prev = targetNode;
-          targetNode.next = this.sourceNode;
+          targetNode.next.push(this.sourceNode);
         }
       }
     }
   }
 
+  // FIXME:
   // Clear any lines coming from node
-  removeConnections(nodeA) {
-    if (nodeA.next) {
-      if (nodeA.next.type !== 'INPUT') nodeA.next.power = false;
-      if (nodeA.type !== 'INPUT') nodeA.power = false;
-      nodeA.next.prev = null;
-      nodeA.next = null;
+  removeConnections(node) {
+    if (node.next.length > 0) {
+      node.next.forEach((connectedNode) => {
+        connectedNode.prev = null;
+      });
+      node.next = [];
     }
 
-    if (nodeA.prev) {
-      if (nodeA.prev.type !== 'INPUT') nodeA.prev.power = false;
-      if (nodeA.type !== 'INPUT') nodeA.power = false;
-      nodeA.prev.next = null;
-      nodeA.prev = null;
+    if (node.prev) {
+      if (node.prev.type !== 'INPUT') node.prev.setPower(false);
+      if (node.type !== 'INPUT') node.setPower(false);
+      // nodeA.prev.next = null;
+      node.prev.next = node.prev.next.filter(
+        (connectedNode) => connectedNode !== node
+      );
+      node.prev = null;
     }
   }
 
@@ -397,7 +426,7 @@ class Board {
 
   // Returns TRUE as soon as we find a node that IS being drawn from
   isDrawingToMouse() {
-    return !this.allNodes.every((n) => !n.drawingToMouse);
+    return !this.allNodes.every((node) => !node.drawingToMouse);
   }
 
   getNextNodeId() {

@@ -8,37 +8,49 @@ class Node {
     this.y = _y ?? 0;
     this.index = _index; // The nodes index in it's board's relavent holder array
     this.drawingToMouse = false;
-    this.next = null; // Next Node
+    this.next = []; // Next Node  // FIXME: DONE
     this.prev = null; // Prev Node
     this.power = false;
   }
 
   setPower(bool) {
     this.power = bool;
-  }
-
-  setColors() {
-    strokeWeight(6);
-    this.power ? stroke(COLORS.ON_RED) : stroke(COLORS.LIGHT_GREY);
-    this.power ? fill(COLORS.ON_RED) : fill(COLORS.WHITE);
+    // console.log(`Node ${this.id} power set to ${bool}`);
+    // console.trace();
   }
 
   switchState() {
     this.power = !this.power;
   }
 
+  setColors() {
+    strokeWeight(6);
+    this.power ? stroke(COLORS.ON_RED) : stroke(COLORS.WHITE);
+    this.power ? fill(COLORS.ON_RED) : fill(COLORS.WHITE);
+  }
+
+  // FIXME:
   evalPower() {
-    this.show();
-    if (this.type == 'INPUT' || this.type == 'GATE_OUTPUT') {
-      if (this.next) {
-        this.next.power = this.power;
+    if (this.type === 'INPUT' || this.type === 'GATE_OUTPUT') {
+      if (this.next.length > 0) {
+        this.next.forEach((connectionNode) => {
+          if (connectionNode.power !== this.power) {
+            // console.log(
+            // `Node ${this.id} setting neighbor ${connectionNode.id} to ${this.power}`
+            // );
+
+            connectionNode.setPower(this.power);
+          }
+        });
       }
     }
+    this.show();
   }
 
   show() {
     this.setColors();
     noStroke();
+    // fill(255, 0, 255);
     circle(this.x, this.y, this.size);
 
     // Line from node to mouse
@@ -47,10 +59,13 @@ class Node {
       line(this.x, this.y, mouseX, mouseY);
     }
 
+    // FIXME: DONE
     // Line from node to node
-    if (this.next != null) {
+    if (this.next.length > 0) {
       this.setColors();
-      line(this.x, this.y, this.next.x, this.next.y);
+      this.next.forEach((nextNode) => {
+        line(this.x, this.y, nextNode.x, nextNode.y);
+      });
     }
   }
 
@@ -59,31 +74,21 @@ class Node {
     return d < this.size / 2;
   }
 
-  // TODO: LEFT OFF HERE, need to fix the returnNext/Prev to consider multiple inputs/outputs
-  // before we can create the layers for gate ordering.
-
-  // FIXME: This is going to get really fucky with nodes having multiple outputs
-  // same with returnPrev below
-  // FIX: the only time we'll have multiple
-  // Returns the next node in the chain, hops over gates.
+  // FIXME: DONE: Returns an array if returning GATE_OUTPUTS
   returnNext() {
     if (this.type === 'INPUT' || this.type === 'GATE_OUTPUT') {
       return this.next;
     } else if (this.type === 'GATE_INPUT') {
-      return this.parent.gateOutputs[0];
+      return this.parent.gateOutputs;
     }
   }
 
-  // Returns the previous node in the chain, hops over gates.
+  // FIXME: DONE: Returns an array if returning GATE_INPUTs
   returnPrev() {
     if (this.type === 'OUTPUT' || this.type === 'GATE_INPUT') {
       return this.prev;
     } else if (this.type === 'GATE_OUTPUT') {
-      const nodes = [];
-      for (const i of this.parent.gateInputs) {
-        nodes.push(i);
-        DEBUG.msg(i);
-      }
+      return this.parent.gateInputs;
     }
   }
 }

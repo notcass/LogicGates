@@ -24,7 +24,7 @@ class GateFromBoardMaker {
       let outString = '';
       this.connectedNodes.outputs.forEach((o) => {
         // Add outupts to the end of the perm string and insert into truth table
-        outString += o.power == true ? '1' : '0';
+        outString += o.power ? '1' : '0';
       });
       tTable[p] = outString;
     });
@@ -38,7 +38,7 @@ class GateFromBoardMaker {
     const inps = this.connectedNodes.inputs;
 
     for (let i = 0; i < this.inpCount; i++) {
-      inps[i].power = permutation.charAt(i) === '1' ? true : false;
+      inps[i].setPower(permutation.charAt(i) === '1' ? true : false);
     }
     this.evalAllNodePower();
   }

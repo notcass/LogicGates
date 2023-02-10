@@ -35,13 +35,13 @@ function resetSketch() {
 
   //========== DEBUGGING/TESTING ==========
   DEBUG = new Debug();
-  // DEBUG.LOAD_SETUP(7);
+  DEBUG.LOAD_SETUP(11);
 }
 
 function draw() {
   board.runApp();
-  // DEBUG.SHOW_NODE_INFO();
-  // DEBUG.SHOW_GATE_INFO();
+  DEBUG.SHOW_NODE_INFO();
+  DEBUG.SHOW_GATE_INFO();
 }
 
 function keyPressed() {

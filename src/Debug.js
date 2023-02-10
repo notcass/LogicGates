@@ -286,6 +286,35 @@ class Debug {
       a[14].next = a[3];
       a[3].prev = a[14];
     }
+    if (n === 11) {
+      board = new Board(width, height, 3, 2);
+      const a = board.allNodes;
+      board.createGate('AND');
+      a[0].next[0] = a[5];
+      a[5].prev = a[0];
+      a[1].next[1] = a[6];
+      a[6].prev = a[1];
+      a[3].prev = a[7];
+      a[7].next[0] = a[3];
+    }
+  }
+
+  SHOW_NODE_INFO() {
+    board.allNodes.forEach((n) => {
+      noStroke();
+      fill(COLORS.WHITE);
+      textSize(12);
+      text(`${n.type}`, n.x - 20, n.y - 50);
+      text(`${n.id}`, n.x - 20, n.y - 65);
+    });
+  }
+
+  SHOW_GATE_INFO() {
+    board.gates.forEach((g) => {
+      fill(255);
+      textSize(14);
+      text(`${g.id}`, g.x + 45, g.y + 75);
+    });
   }
 
   SHOW_NODE_INFO() {
