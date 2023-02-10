@@ -1,4 +1,4 @@
-class GateFromBoardMaker {
+class GateCreator {
   constructor(parent) {
     this.board = parent;
     this.connectedNodes = this.findConnections();

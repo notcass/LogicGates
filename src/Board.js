@@ -128,7 +128,7 @@ class Board {
   createGateFromState(label) {
     label = label.toUpperCase();
     if (label.length > 0) {
-      this.maker = new GateFromBoardMaker(this);
+      this.maker = new GateCreator(this);
       if (this.maker.inpCount > 0) {
         const newTable = this.maker.makeTable();
         DEBUG.msg(newTable);
@@ -410,7 +410,6 @@ class Board {
 
     const btnCreate = document.querySelector('#button-create');
     btnCreate.addEventListener('click', (e) => {
-      console.log(createText.value);
       this.createGateFromState(createText.value);
     });
 
