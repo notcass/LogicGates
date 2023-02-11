@@ -183,7 +183,10 @@ class Board {
     // Show Gates
     this.gates.forEach((g) => {
       g.show();
-      g.evaluateLogic();
+      // Only evaluate gate logic when mouse is pressed
+      if (mouseIsPressed) {
+        g.evaluateLogic();
+      }
     });
 
     // Drag gates
@@ -222,7 +225,6 @@ class Board {
     rect(this.x + this.w - 100, this.y, 100, 100);
   }
 
-  // FIXME:
   mouseDown() {
     // For each node
     for (const node of this.allNodes) {
@@ -279,14 +281,12 @@ class Board {
     });
 
     this.pruneGate(delIndex);
-
-    // Evaluate logic on mouseup instead of every frame,
-    // since it only ever changes when we interact with the mouse
-    // console.log('Evaluating Gates');
-    // this.gates.forEach((g) => {
-    //   g.evaluateLogic();
-    // });
+    this.gates.forEach((g) => {
+      g.evaluateLogic();
+    });
   }
+
+  mouseMoved() {}
 
   pruneGate(index) {
     let gate = this.gates[index];
@@ -314,9 +314,6 @@ class Board {
     this.allNodes.forEach((node) => (node.drawingToMouse = false));
   }
 
-  // FIXME: DONE: we now Array.push() the desired Node onto the other's Node.next array
-  // This function accounts for what order you connect nodes in, so that power is always
-  // flowing from output -> input
   connectNodes() {
     // Get the node that is under the cursor and set it to target
     let targetNode;
@@ -378,8 +375,6 @@ class Board {
     }
   }
 
-  // FIXME:
-  // Clear any lines coming from node
   removeConnections(node) {
     if (node.next.length > 0) {
       node.next.forEach((connectedNode) => {

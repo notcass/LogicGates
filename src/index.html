@@ -11,7 +11,7 @@
     <script src="Board.js"></script>
     <script src="Gate.js"></script>
     <script src="Node.js"></script>
-    <script src="GateFromBoardMaker.js"></script>
+    <script src="GateCreator.js"></script>
     <script src="Debug.js"></script>
     <!-- <script src="BoardStaterObj.js"></script> -->
   </head>
@@ -20,10 +20,16 @@
     <a href="..">UP</a>
     <div id="sketch-holder">
       <div id="create-gate-holder">
-        <label for="input" style="display:none">Name of new Gate</label>
-        <input id="create-gate-input" type="text" maxlength="15"/>
+        <!-- <label for="input" style="display:none">Name of new Gate</label> -->
+        <input
+          id="create-gate-input"
+          type="text"
+          maxlength="15"
+          placeholder="New Gate Name..."
+          value="test"
+        />
         <button id="button-create" class="button" type="button">
-          <span >CREATE</span>
+          <span>CREATE</span>
         </button>
       </div>
     </div>
@@ -34,9 +40,7 @@
       <button class="button" id="button-NOT" type="button">
         <span class="text">NOT</span>
       </button>
-    </button>
     </div>
-
 
     <!--================ RANGES FOR TESTING COLORS =========================-->
     <!-- prettier-ignore -->

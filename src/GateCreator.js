@@ -1,10 +1,61 @@
 class GateCreator {
   constructor(parent) {
     this.board = parent;
-    this.connectedNodes = this.findConnections();
-    this.inpCount = this.connectedNodes.inputs.length;
-    this.outCount = this.connectedNodes.outputs.length;
+    this.paths = {
+      inputs: [],
+      outputs: [],
+    };
+    this.findConnections();
+    this.inpCount = this.paths.inputs.length;
+    this.outCount = this.paths.outputs.length;
     this.connectedGates = [];
+  }
+
+  goLeftR(node, startNode) {
+    if (!startNode) {
+      startNode = node;
+    }
+
+    // BASE CASE
+    if (node.type === 'INPUT') {
+      // QUIT and push input/output to storage object
+      const pO = this.paths.outputs;
+      const pI = this.paths.inputs;
+      pO.indexOf(startNode.id) === -1
+        ? pO.push(startNode.id)
+        : DEBUG.msg('Output exists in paths');
+      pI.indexOf(node.id) === -1
+        ? pI.push(node.id)
+        : DEBUG.msg('Input exists in paths');
+
+      return true;
+    }
+
+    let prevNodes = node.returnPrev();
+    if (prevNodes) {
+      const isArr = Array.isArray(prevNodes);
+      if (isArr) {
+        prevNodes.forEach((connectedNode) => {
+          this.goLeftR(connectedNode, startNode);
+        });
+      } else {
+        this.goLeftR(prevNodes, startNode);
+      }
+    } else {
+      DEBUG.msg('prevNodes is null');
+      return false;
+    }
+  }
+
+  findConnections() {
+    // Reset paths object
+    this.paths = {
+      inputs: [],
+      outputs: [],
+    };
+    this.board.outputs.forEach((outNode) => {
+      this.goLeftR(outNode);
+    });
   }
 
   // Setup possible permutations, create truth table
@@ -22,7 +73,7 @@ class GateCreator {
 
       // Then examine the outputs
       let outString = '';
-      this.connectedNodes.outputs.forEach((o) => {
+      this.paths.outputs.forEach((o) => {
         // Add outupts to the end of the perm string and insert into truth table
         outString += o.power ? '1' : '0';
       });
@@ -35,7 +86,8 @@ class GateCreator {
 
   // Set the state of the board's nodes to the permutation argument
   setNodesToPerm(permutation) {
-    const inps = this.connectedNodes.inputs;
+    const inps = this.paths.inputs;
+    console.log(inps);
 
     for (let i = 0; i < this.inpCount; i++) {
       inps[i].setPower(permutation.charAt(i) === '1' ? true : false);
@@ -46,7 +98,7 @@ class GateCreator {
   // Propagate power from board's Inputs in the correct order
   computeOutputs() {
     // Store array of unique, connected gates in this.connectedGates
-    const inps = this.connectedNodes.inputs;
+    const inps = this.paths.inputs;
     inps.forEach((inp) => {
       while (inp.returnNext()) {
         if (inp.parent.constructor.name === 'Gate') {
@@ -108,42 +160,6 @@ class GateCreator {
     }
 
     return permsStrings;
-  }
-
-  // Which of the board's inputs are connected to an output?
-  // We want to ignore ones that aren't connected.
-  findConnections() {
-    // Array of indexes that have a connection to an output
-    const fullConnections = {
-      inputs: [],
-      outputs: [],
-    };
-    // For each input, traverse through the next item in the chain
-    this.board.inputs.forEach((startNode) => {
-      let node = startNode.returnNext();
-      if (node) {
-        while (node.returnNext()) {
-          node = node.returnNext();
-        }
-
-        // Examine last node in connection
-        if (node.type === 'OUTPUT') {
-          // Add connected inputs to return object
-          if (fullConnections.inputs.indexOf(startNode) === -1) {
-            fullConnections.inputs.push(startNode);
-          }
-
-          // Add connected outputs to return object
-          const output = this.board.outputs[node.index];
-          if (fullConnections.outputs.indexOf(output) === -1) {
-            fullConnections.outputs.push(output);
-          }
-        }
-      }
-    });
-
-    // DEBUG.msg(fullConnections);
-    return fullConnections;
   }
 
   /**

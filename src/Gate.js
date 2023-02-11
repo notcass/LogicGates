@@ -22,7 +22,6 @@ class Gate {
     return this.gateInputs.every((inpNode) => inpNode.prev);
   }
 
-  // FIXME: DONE: Return true if every output has an item in output.next
   areOutputsFull() {
     return this.gateOutputs.every((outNode) => outNode.next.length > 0);
   }
@@ -124,15 +123,9 @@ class Gate {
 
       // Access corresponding output value from this gates truth table
       let outputStr = this.truthTable[inputPermutation];
-      // console.log(`Gate ${this.label} power settings:`);
-
-      // FIXME: DONE: Now setting each connection per each output to the power state
-      // Set outputs to correct values
-      // console.log(this.gateOutputs);
 
       this.gateOutputs.forEach((outNode, index) => {
         let outputBool = outputStr.charAt(index) === '1';
-        // console.log(outputBool);
         // For each node connected to this GATE_OUTPUT
         outNode.setPower(outputBool);
         outNode.next.forEach((connectedNode) => {

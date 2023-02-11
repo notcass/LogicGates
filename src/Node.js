@@ -8,7 +8,7 @@ class Node {
     this.y = _y ?? 0;
     this.index = _index; // The nodes index in it's board's relavent holder array
     this.drawingToMouse = false;
-    this.next = []; // Next Node  // FIXME: DONE
+    this.next = []; // Next Node
     this.prev = null; // Prev Node
     this.power = false;
   }
@@ -29,16 +29,11 @@ class Node {
     this.power ? fill(COLORS.ON_RED) : fill(COLORS.WHITE);
   }
 
-  // FIXME:
   evalPower() {
     if (this.type === 'INPUT' || this.type === 'GATE_OUTPUT') {
       if (this.next.length > 0) {
         this.next.forEach((connectionNode) => {
           if (connectionNode.power !== this.power) {
-            // console.log(
-            // `Node ${this.id} setting neighbor ${connectionNode.id} to ${this.power}`
-            // );
-
             connectionNode.setPower(this.power);
           }
         });
@@ -59,7 +54,6 @@ class Node {
       line(this.x, this.y, mouseX, mouseY);
     }
 
-    // FIXME: DONE
     // Line from node to node
     if (this.next.length > 0) {
       this.setColors();

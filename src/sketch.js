@@ -10,6 +10,10 @@
 let board;
 let DEBUG;
 const COLORS = {};
+// Debug/Testing/Delete later
+let gm;
+let f;
+let a, b, c;
 
 function setup() {
   createCanvas(1366, 768).parent('sketch-holder');
@@ -26,16 +30,18 @@ function setup() {
   COLORS['DARK_GREY'] = color(45);
   COLORS['LIGHT_GREY'] = color(130);
   resetSketch();
+
+  gm = new GateCreator(board);
 }
 
 function resetSketch() {
-  board = new Board(width, height, 3, 1);
+  // board = new Board(width, height, 3, 1);
   // board.createGate('NOT');
   // board.createGate('AND');
 
   //========== DEBUGGING/TESTING ==========
   DEBUG = new Debug();
-  DEBUG.LOAD_SETUP(11);
+  DEBUG.LOAD_SETUP(12);
 }
 
 function draw() {
@@ -57,8 +63,15 @@ function keyPressed() {
   if (key === '^') DEBUG.LOAD_SETUP(6);
   if (key === '&') DEBUG.LOAD_SETUP(7);
 
+  if (key === 'r') {
+    const createText = document.querySelector('#create-gate-input');
+    board.createGateFromState(createText.value);
+  }
+  if (key === 't') {
+    gm.findConnections();
+    console.log(gm.paths);
+  }
   // if (key === 'k') DEBUG.CREATE_SETUP_FROM_BOARD_STATE();
-  // if (key === 't') board.createGateFromState();
   // if (key === 'a') console.log(frameRate());
   // if (key === 'r') board.init();
   if (key === 'm') console.log(mouseX, mouseY);
@@ -70,4 +83,8 @@ function mousePressed() {
 
 function mouseReleased() {
   board.mouseUp();
+}
+
+function mouseMoved() {
+  // board.mouseMoved();
 }
