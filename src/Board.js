@@ -1,10 +1,12 @@
 class Board {
   //prettier-ignore
   constructor(w, h, inputs, outputs) {
+    this.label = 'Board';
     this.x = w / 25;
     this.y = h / 13;
     this.w = w - this.x * 2;
     this.h = h - this.y * 2;
+    this.borderRadius = 8;
     this.inpCount = inputs;
     this.inputs = [];
     this.powerButtons = [];
@@ -17,6 +19,7 @@ class Board {
     this.sourceNode = null; // Node we are drawing from
     this.allNodes = []; // All nodes on all gates in one array
     this.maker;
+    this.lastMouseClick = 0;
     this.gateTemplates = {
 
       'NOT': {
@@ -73,8 +76,8 @@ class Board {
         radius: 16,
         show: function () {
           fill(45);
-          stroke(155);
           strokeWeight(3);
+          stroke(155);
           line(this.x, this.y, this.x + 40, this.y);
           stroke(155);
           fill(45);
@@ -109,25 +112,25 @@ class Board {
 
     // Show borders
     strokeWeight(2);
-    stroke(155);
+    stroke(205);
     fill(40);
     // fill(14, 15, 40);
-    rect(this.x, this.y, this.w, this.h);
+    rect(this.x, this.y, this.w, this.h, this.borderRadius);
 
-    // Gates
-    this.handleGates();
     //Power
     this.handleIO();
+    // Gates
+    this.handleGates();
     // Connections
-    this.allNodes.forEach((n) => {
-      n.evalPower();
+    this.allNodes.forEach((node) => {
+      node.evalPower();
     });
   }
 
   createGateFromState(label) {
     label = label.toUpperCase();
     if (label.length > 0) {
-      this.maker = new GateFromBoardMaker(this);
+      this.maker = new GateCreator(this);
       if (this.maker.inpCount > 0) {
         const newTable = this.maker.makeTable();
         DEBUG.msg(newTable);
@@ -182,7 +185,10 @@ class Board {
     // Show Gates
     this.gates.forEach((g) => {
       g.show();
-      g.evaluateLogic();
+      // Only evaluate gate logic when mouse is pressed
+      if (mouseIsPressed) {
+        g.evaluateLogic();
+      }
     });
 
     // Drag gates
@@ -216,9 +222,10 @@ class Board {
     // Draw Inputs/Outputs
     this.allNodes.forEach((n) => n.show());
     // Draw trash square
+    strokeWeight(10);
     stroke(255, 125, 0, 50);
     fill(255, 125, 0, 50);
-    rect(this.x + this.w - 100, this.y, 100, 100);
+    rect(this.x + this.w - 100, this.y + 4, 95, 100, this.borderRadius);
   }
 
   mouseDown() {
@@ -226,12 +233,21 @@ class Board {
     for (const node of this.allNodes) {
       // If we are hovering one
       if (node.mouseHovering(mouseX, mouseY)) {
-        // Clear any other lines to or from the node
-        this.removeConnections(node);
+        // If node is a GATE_INPUT or OUTPUT or we Double Clicked
+        const doubleClicked = frameCount - this.lastMouseClick < 20;
+        if (
+          node.type === 'GATE_INPUT' ||
+          node.type === 'OUTPUT' ||
+          doubleClicked
+        ) {
+          console.log('Removing connections from clicked node');
+          this.removeConnections(node);
+        }
 
         // Set drawing flag
         node.drawingToMouse = true;
         this.sourceNode = node;
+        this.lastMouseClick = frameCount;
         break;
       }
     }
@@ -253,33 +269,37 @@ class Board {
     }
 
     // Check for any gates in the trash square
-    let x = this.x + this.w - 100;
-    let y = this.y;
+    let x = this.x + this.w - 50;
+    let y = this.y + 50;
     let delIndex = -1;
     this.gates.forEach((g, index) => {
-      if (
-        g.x + g.w / 2 > x &&
-        g.x - g.w / 2 < x + 100 &&
-        g.y + g.h / 2 > y &&
-        g.y - g.h / 2 < y + 100
-      ) {
+      let gx = g.x + g.w / 2;
+      let gy = g.y + g.h / 2;
+      if (dist(x, y, gx, gy) < 60) {
         delIndex = index;
       }
     });
 
     this.pruneGate(delIndex);
+    this.gates.forEach((g) => {
+      g.evaluateLogic();
+    });
   }
+
+  mouseMoved() {}
 
   pruneGate(index) {
     let gate = this.gates[index];
     if (gate) {
       // Stop drawing anything to that gate
-      [...gate.gateInputs, ...gate.gateOutputs].forEach((n) => {
-        this.removeConnections(n);
+      [...gate.gateInputs, ...gate.gateOutputs].forEach((node) => {
+        this.removeConnections(node);
       });
 
       // Removing gate/node objects from relevant arrays
-      this.allNodes = this.allNodes.filter((n) => n.parent.id !== gate.id);
+      this.allNodes = this.allNodes.filter(
+        (node) => node.parent.id !== gate.id
+      );
       this.gates = this.gates.filter((g, i) => index !== i);
     }
   }
@@ -287,15 +307,13 @@ class Board {
   stopDrawingToMouse() {
     // Stop drawing lines from GATE_INPUTS and GATE_OUTPUTS
     this.gates.forEach((g) => {
-      g.gateInputs.forEach((i) => (i.drawingToMouse = false));
-      g.gateOutputs.forEach((o) => (o.drawingToMouse = false));
+      g.gateInputs.forEach((inpNode) => (inpNode.drawingToMouse = false));
+      g.gateOutputs.forEach((outNode) => (outNode.drawingToMouse = false));
     });
     //Stop drawing lines from INPUTS and OUTPUTS
-    this.allNodes.forEach((n) => (n.drawingToMouse = false));
+    this.allNodes.forEach((node) => (node.drawingToMouse = false));
   }
 
-  // This function accounts for what order you connect nodes in, so that power is always
-  // flowing from output -> input
   connectNodes() {
     // Get the node that is under the cursor and set it to target
     let targetNode;
@@ -307,6 +325,7 @@ class Board {
     }
 
     // If target node isn't null, isn't on the same gate, and isn't same type
+
     if (targetNode) {
       const sourceType = this.sourceNode.type;
       const targetType = targetNode.type;
@@ -335,38 +354,44 @@ class Board {
 
       if (validTypes && diffParent) {
         // Stop drawing to this node so we can overwrite it with the new connection
-        this.removeConnections(targetNode);
+
+        if (targetType === 'GATE_INPUT' || targetType === 'OUTPUT') {
+          this.removeConnections(targetNode);
+        }
 
         // If the sourceNode isn't an INPUT or GATE_INPUT, make the sourceNode
         // the first in the chain. This way power always flows right.
         // (aka node.next is always valid)
         if (sourceType === 'INPUT' || sourceType === 'GATE_OUTPUT') {
           // Drawing connection from the 'left'
-          this.sourceNode.next = targetNode;
+          this.sourceNode.next.push(targetNode);
           targetNode.prev = this.sourceNode;
         } else {
           // Drawing connection from the 'right'
           this.sourceNode.prev = targetNode;
-          targetNode.next = this.sourceNode;
+          targetNode.next.push(this.sourceNode);
         }
       }
     }
   }
 
-  // Clear any lines coming from node
-  removeConnections(nodeA) {
-    if (nodeA.next) {
-      if (nodeA.next.type !== 'INPUT') nodeA.next.power = false;
-      if (nodeA.type !== 'INPUT') nodeA.power = false;
-      nodeA.next.prev = null;
-      nodeA.next = null;
+  removeConnections(node) {
+    if (node.next.length > 0) {
+      node.next.forEach((connectedNode) => {
+        connectedNode.setPower(false);
+        connectedNode.prev = null;
+      });
+      node.next = [];
     }
 
-    if (nodeA.prev) {
-      if (nodeA.prev.type !== 'INPUT') nodeA.prev.power = false;
-      if (nodeA.type !== 'INPUT') nodeA.power = false;
-      nodeA.prev.next = null;
-      nodeA.prev = null;
+    if (node.prev) {
+      if (node.prev.type !== 'INPUT') node.prev.setPower(false);
+      if (node.type !== 'INPUT') node.setPower(false);
+      // nodeA.prev.next = null;
+      node.prev.next = node.prev.next.filter(
+        (connectedNode) => connectedNode !== node
+      );
+      node.prev = null;
     }
   }
 
@@ -381,7 +406,6 @@ class Board {
 
     const btnCreate = document.querySelector('#button-create');
     btnCreate.addEventListener('click', (e) => {
-      console.log(createText.value);
       this.createGateFromState(createText.value);
     });
 
@@ -397,7 +421,7 @@ class Board {
 
   // Returns TRUE as soon as we find a node that IS being drawn from
   isDrawingToMouse() {
-    return !this.allNodes.every((n) => !n.drawingToMouse);
+    return !this.allNodes.every((node) => !node.drawingToMouse);
   }
 
   getNextNodeId() {
