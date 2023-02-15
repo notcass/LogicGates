@@ -18,12 +18,16 @@ class Gate {
     this.init();
   }
 
+  areNodesFull() {
+    return this.areInputsFull() && this.areOutputsFull();
+  }
+
   areInputsFull() {
-    return this.gateInputs.every((input) => input.prev);
+    return this.gateInputs.every((inpNode) => inpNode.prev);
   }
 
   areOutputsFull() {
-    return this.gateOutputs.every((output) => output.next);
+    return this.gateOutputs.every((outNode) => outNode.next.length > 0);
   }
 
   init() {
@@ -76,7 +80,7 @@ class Gate {
     // Text
     fill(255);
     textAlign(CENTER, CENTER);
-    // textSize(30);
+    textSize(30);
 
     text(this.label, this.x + this.w / 2, this.y + this.h / 2);
 
@@ -86,16 +90,16 @@ class Gate {
     const inDivider = this.h / (input_count + 1);
     const outDivider = this.h / (output_count + 1);
 
-    this.gateInputs.forEach((gI, index) => {
-      gI.x = this.x;
-      gI.y = this.y + inDivider + index * inDivider;
-      gI.show();
+    this.gateInputs.forEach((inpNode, index) => {
+      inpNode.x = this.x;
+      inpNode.y = this.y + inDivider + index * inDivider;
+      inpNode.show();
     });
 
-    this.gateOutputs.forEach((gO, index) => {
-      gO.x = this.x + this.w;
-      gO.y = this.y + outDivider + index * outDivider;
-      gO.show();
+    this.gateOutputs.forEach((outNode, index) => {
+      outNode.x = this.x + this.w;
+      outNode.y = this.y + outDivider + index * outDivider;
+      outNode.show();
     });
   }
 
@@ -117,18 +121,29 @@ class Gate {
     if (this.areInputsFull() && this.areOutputsFull()) {
       // Create string representation of current inputs
       let inputPermutation = '';
-      this.gateInputs.forEach((inp) => {
-        inputPermutation += inp.power ? '1' : '0';
+      this.gateInputs.forEach((inpNode) => {
+        inputPermutation += inpNode.power ? '1' : '0';
       });
 
       // Access corresponding output value from this gates truth table
       let outputStr = this.truthTable[inputPermutation];
-      // Set outputs to correct values
-      this.gateOutputs.forEach((out, index) => {
-        out.power = outputStr.charAt(index) === '1';
+
+      this.gateOutputs.forEach((outNode, index) => {
+        let outputBool = outputStr.charAt(index) === '1';
+        // For each node connected to this GATE_OUTPUT
+        outNode.setPower(outputBool);
+        outNode.next.forEach((connectedNode) => {
+          // Propagate the power value
+
+          connectedNode.setPower(outputBool);
+        });
       });
     } else {
-      this.gateOutputs.forEach((output) => (output.power = false));
+      this.gateOutputs.forEach((outNode) => {
+        outNode.next.forEach((connectedNode) => {
+          connectedNode.setPower(false);
+        });
+      });
     }
   }
 
@@ -181,8 +196,8 @@ class Gate {
       // If we're on the right side of a gate aka a GATE_OUTPUT
     } else if (node.type === 'GATE_OUTPUT') {
       this.gateCounter++;
-      node.parent.gateInputs.forEach((inp) => {
-        this.goDownNodeChain(inp, startGate, startNode);
+      node.parent.gateInputs.forEach((inpNode) => {
+        this.goDownNodeChain(inpNode, startGate, startNode);
       });
 
       // If we're on the left side of a gate aka a GATE_INPUT

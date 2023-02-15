@@ -1,5 +1,4 @@
 // <reference path="../libraries/p5.global-mode.d.ts" />
-
 /**
  *                 A clone of the program in the youtube video
  *             "Exploring How Computers Work", by Sebastian Lague.
@@ -10,6 +9,8 @@
 let board;
 let DEBUG;
 const COLORS = {};
+// Debug/Testing/Delete later
+let gm;
 
 function setup() {
   createCanvas(1366, 768).parent('sketch-holder');
@@ -30,18 +31,18 @@ function setup() {
 
 function resetSketch() {
   board = new Board(width, height, 3, 1);
-  // board.createGate('NOT');
-  // board.createGate('AND');
+  board.createGate('NOT');
+  board.createGate('AND');
 
   //========== DEBUGGING/TESTING ==========
   DEBUG = new Debug();
-  // DEBUG.LOAD_SETUP(7);
+  //   DEBUG.LOAD_SETUP(12);
 }
 
 function draw() {
   board.runApp();
-  // DEBUG.SHOW_NODE_INFO();
-  // DEBUG.SHOW_GATE_INFO();
+  //   DEBUG.SHOW_NODE_INFO();
+  //   DEBUG.SHOW_GATE_INFO();
 }
 
 function keyPressed() {
@@ -57,10 +58,10 @@ function keyPressed() {
   if (key === '^') DEBUG.LOAD_SETUP(6);
   if (key === '&') DEBUG.LOAD_SETUP(7);
 
-  // if (key === 'k') DEBUG.CREATE_SETUP_FROM_BOARD_STATE();
-  // if (key === 't') board.createGateFromState();
-  // if (key === 'a') console.log(frameRate());
-  // if (key === 'r') board.init();
+  if (key === 'r') {
+  }
+  if (key === 't') {
+  }
   if (key === 'm') console.log(mouseX, mouseY);
 }
 
@@ -70,4 +71,8 @@ function mousePressed() {
 
 function mouseReleased() {
   board.mouseUp();
+}
+
+function mouseMoved() {
+  // board.mouseMoved();
 }

@@ -1,6 +1,7 @@
 class Debug {
   constructor() {
     this.logging = false;
+    // this.logging = true;
   }
 
   msg(...msg) {
@@ -8,7 +9,17 @@ class Debug {
       console.log(...msg);
     }
   }
-
+  // Working setup format
+  // if (n === 12) {
+  //       board = new Board(width, height, 1, 1);
+  //       const a = board.allNodes;
+  //       board.createGate('NOT');
+  //       a[0].next[0] = a[2];
+  //       a[2].prev = a[0];
+  //       a[3].next[0] = a[1];
+  //       a[1].prev = a[3];
+  //       a[0].setPower(true);
+  //     }
   // Bound to 'c' on keyboard
   // Copy and paste the console.logs into DEBUG_SETUPS to quickly make a new
   // board state for debugging
@@ -41,26 +52,37 @@ class Debug {
     console.log(
       `board = new Board(width, height, ${board.inpCount}, ${board.outCount})`
     );
-
     console.log(`const a = board.allNodes`);
+
     validGates.forEach((g) => {
-      // Create object
+      // Create gate object
       console.log(`board.createGate(${g.label})`);
     });
 
     validGates.forEach((g, index) => {
-      // Set object position
+      // Set gate object position
       console.log(`board.gates[${index}].x = ${floor(g.x)}`);
       console.log(`board.gates[${index}].y = ${floor(g.y)}`);
     });
 
+    // WORKING SETUP TEXT
+    //  board.createGate('NOT');
+    //       a[0].next[0] = a[2];
+    //       a[2].prev = a[0];
+    //       a[3].next[0] = a[1];
+    //       a[1].prev = a[3];
+    //       a[0].setPower(true);
     validGates.forEach((g) => {
       // Set next/previous nodes
       g.gateInputs.forEach((inp) => {
+        inp.next.forEach((connectedNode, index) => {
+          console.log(inp);
+          console.log(connectedNode);
+        });
+
         let x = inp.id;
         let y = inp.prev.id;
-        console.log(`a[${y}].next = a[${x}]`);
-        console.log(`a[${x}].prev = a[${y}]`);
+        // let str = `a[${y}].next[${index}] = `;
       });
 
       g.gateOutputs.forEach((out) => {
@@ -285,6 +307,36 @@ class Debug {
       a[13].prev = a[7];
       a[14].next = a[3];
       a[3].prev = a[14];
+    }
+    if (n === 11) {
+      board = new Board(width, height, 3, 2);
+      const a = board.allNodes;
+      board.createGate('AND');
+      a[0].next[0] = a[5];
+      a[5].prev = a[0];
+      a[1].next[1] = a[6];
+      a[6].prev = a[1];
+      a[3].prev = a[7];
+      a[7].next[0] = a[3];
+    }
+    if (n === 12) {
+      board = new Board(width, height, 3, 2);
+      const a = board.allNodes;
+      board.createGate('NOT');
+      board.createGate('AND');
+      a[0].next[0] = a[5];
+      a[5].prev = a[0];
+      a[6].next[0] = a[7];
+      a[7].prev = a[6];
+
+      a[9].next[0] = a[3];
+      a[9].next[1] = a[4];
+      a[3].prev = a[9];
+      a[4].prev = a[9];
+
+      a[1].next[0] = a[8];
+      a[8].prev = a[1];
+      a[0].setPower(true);
     }
   }
 
