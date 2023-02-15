@@ -1,10 +1,12 @@
 class Board {
   //prettier-ignore
   constructor(w, h, inputs, outputs) {
+    this.label = 'Board';
     this.x = w / 25;
     this.y = h / 13;
     this.w = w - this.x * 2;
     this.h = h - this.y * 2;
+    this.borderRadius = 8;
     this.inpCount = inputs;
     this.inputs = [];
     this.powerButtons = [];
@@ -74,8 +76,8 @@ class Board {
         radius: 16,
         show: function () {
           fill(45);
-          stroke(155);
           strokeWeight(3);
+          stroke(155);
           line(this.x, this.y, this.x + 40, this.y);
           stroke(155);
           fill(45);
@@ -110,10 +112,10 @@ class Board {
 
     // Show borders
     strokeWeight(2);
-    stroke(155);
+    stroke(205);
     fill(40);
     // fill(14, 15, 40);
-    rect(this.x, this.y, this.w, this.h);
+    rect(this.x, this.y, this.w, this.h, this.borderRadius);
 
     //Power
     this.handleIO();
@@ -220,9 +222,10 @@ class Board {
     // Draw Inputs/Outputs
     this.allNodes.forEach((n) => n.show());
     // Draw trash square
+    strokeWeight(10);
     stroke(255, 125, 0, 50);
     fill(255, 125, 0, 50);
-    rect(this.x + this.w - 100, this.y, 100, 100);
+    rect(this.x + this.w - 100, this.y + 4, 95, 100, this.borderRadius);
   }
 
   mouseDown() {
@@ -266,16 +269,13 @@ class Board {
     }
 
     // Check for any gates in the trash square
-    let x = this.x + this.w - 100;
-    let y = this.y;
+    let x = this.x + this.w - 50;
+    let y = this.y + 50;
     let delIndex = -1;
     this.gates.forEach((g, index) => {
-      if (
-        g.x + g.w / 2 > x &&
-        g.x - g.w / 2 < x + 100 &&
-        g.y + g.h / 2 > y &&
-        g.y - g.h / 2 < y + 100
-      ) {
+      let gx = g.x + g.w / 2;
+      let gy = g.y + g.h / 2;
+      if (dist(x, y, gx, gy) < 60) {
         delIndex = index;
       }
     });
@@ -378,6 +378,7 @@ class Board {
   removeConnections(node) {
     if (node.next.length > 0) {
       node.next.forEach((connectedNode) => {
+        connectedNode.setPower(false);
         connectedNode.prev = null;
       });
       node.next = [];
