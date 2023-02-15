@@ -68,7 +68,6 @@ class Node {
     return d < this.size / 2;
   }
 
-  // FIXME: DONE: Returns an array if returning GATE_OUTPUTS
   returnNext() {
     if (this.type === 'INPUT' || this.type === 'GATE_OUTPUT') {
       return this.next;
@@ -77,10 +76,13 @@ class Node {
     }
   }
 
-  // FIXME: DONE: Returns an array if returning GATE_INPUTs
   returnPrev() {
     if (this.type === 'OUTPUT' || this.type === 'GATE_INPUT') {
-      return this.prev;
+      if (this.prev != null) {
+        return [this.prev];
+      } else {
+        return null;
+      }
     } else if (this.type === 'GATE_OUTPUT') {
       return this.parent.gateInputs;
     }
