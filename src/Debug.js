@@ -1,6 +1,7 @@
 class Debug {
   constructor() {
     this.logging = false;
+    // this.logging = true;
   }
 
   msg(...msg) {

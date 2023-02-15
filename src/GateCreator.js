@@ -1,93 +1,95 @@
 class GateCreator {
   constructor(parent) {
     this.board = parent;
-    this.paths = {
+    this.connectedIO = {
       inputs: [],
       outputs: [],
     };
-    this.findConnections();
-    this.inpCount = this.paths.inputs.length;
-    this.outCount = this.paths.outputs.length;
+    this.findConnectedBoardIO();
+    this.inpCount = this.connectedIO.inputs.length;
+    this.outCount = this.connectedIO.outputs.length;
     this.connectedGates = [];
   }
 
-  goLeftR(node, startNode) {
-    if (!startNode) {
-      startNode = node;
-    }
-
-    // BASE CASE
-    if (node.type === 'INPUT') {
-      // QUIT and push input/output to storage object
-      const pO = this.paths.outputs;
-      const pI = this.paths.inputs;
-      pO.indexOf(startNode.id) === -1
-        ? pO.push(startNode.id)
-        : DEBUG.msg('Output exists in paths');
-      pI.indexOf(node.id) === -1
-        ? pI.push(node.id)
-        : DEBUG.msg('Input exists in paths');
-
-      return true;
-    }
-
-    let prevNodes = node.returnPrev();
-    if (prevNodes) {
-      const isArr = Array.isArray(prevNodes);
-      if (isArr) {
-        prevNodes.forEach((connectedNode) => {
-          this.goLeftR(connectedNode, startNode);
-        });
-      } else {
-        this.goLeftR(prevNodes, startNode);
-      }
-    } else {
-      DEBUG.msg('prevNodes is null');
-      return false;
-    }
-  }
-
-  findConnections() {
-    // Reset paths object
-    this.paths = {
-      inputs: [],
-      outputs: [],
-    };
-    this.board.outputs.forEach((outNode) => {
-      this.goLeftR(outNode);
-    });
-  }
-
-  // Setup possible permutations, create truth table
   makeTable() {
-    const perms = this.generatePermutations();
-    const tTable = {};
+    /* Generate Input Permutations */
+    const permStrings = this.generatePermutations();
+    let tTable = {};
 
-    // For each input permutation
-    perms.forEach((p) => {
-      // Set the board nodes to the permutation
-      this.setNodesToPerm(p);
+    /*
+        To figure out the correct output for each permutation, we
+        need to do the following:
+    */
 
-      // Propagate power to outputs
-      this.computeOutputs();
-
-      // Then examine the outputs
-      let outString = '';
-      this.paths.outputs.forEach((o) => {
-        // Add outupts to the end of the perm string and insert into truth table
-        outString += o.power ? '1' : '0';
-      });
-      tTable[p] = outString;
+    /* Figure out which gates are fully connected */
+    this.connectedGates = [];
+    this.connectedIO.inputs.forEach((inpNode) => {
+      this.setConnectedGates(inpNode);
     });
 
-    DEBUG.msg(tTable);
+    /* Set layers for each gate, then sort them */
+    //prettier-ignore
+    this.connectedGates.forEach((gate) => {
+        gate.setLayer();
+      });
+    this.connectedGates.sort((a, b) => a.layer - b.layer);
+
+    /* Compute output value for each permutation */
+    tTable = this.calcPermutationOutputs(permStrings);
+    console.log(tTable);
+
     return tTable;
   }
 
-  // Set the state of the board's nodes to the permutation argument
+  calcPermutationOutputs(permStrings) {
+    const tTable = {};
+    permStrings.forEach((p) => {
+      this.setNodesToPerm(p);
+      this.computeOutputsForCurrentInput();
+
+      let outString = '';
+      this.connectedIO.outputs.forEach((o) => {
+        outString += o.power ? '1' : '0';
+      });
+
+      tTable[p] = outString;
+    });
+    return tTable;
+  }
+
+  // STORE ANY GATES THAT ARE FULLY CONNECTED TO INPUT & OUTPUT IN THE ARRAY
+  setConnectedGates(input) {
+    const current = input;
+    const nextNodes = current.returnNext();
+    DEBUG.msg(`%c========================================`, 'color: #c3f');
+    DEBUG.msg(current);
+    DEBUG.msg(`ID: %c${current.id}`, 'color: #f80');
+    DEBUG.msg(`Parent: %c${current.parent.label}`, 'color: #0af');
+    DEBUG.msg(`Type: %c${current.constructor.name}`, 'color: #0af');
+    DEBUG.msg(nextNodes);
+
+    // IF WE FIND A GATE
+    if (current.parent instanceof Gate) {
+      // IF GATE NEW AND IS FULLY CONNECTED THEN ADD TO THE ARRAY
+      const gateIsNew = this.connectedGates.indexOf(current.parent) === -1;
+
+      const gateNodesFull = current.parent.areNodesFull();
+      if (gateIsNew && gateNodesFull) {
+        this.connectedGates.push(current.parent);
+      }
+    }
+
+    // IF INPUT.NEXT EXISTS, REPEAT RECURSIVELY
+    if (nextNodes) {
+      nextNodes.forEach((connectedNode) => {
+        this.setConnectedGates(connectedNode);
+      });
+    }
+  }
+
+  // SET THE STATE OF THE BOARD'S NODES TO THE PERMUTATION ARGUMENT
   setNodesToPerm(permutation) {
-    const inps = this.paths.inputs;
-    console.log(inps);
+    const inps = this.connectedIO.inputs;
 
     for (let i = 0; i < this.inpCount; i++) {
       inps[i].setPower(permutation.charAt(i) === '1' ? true : false);
@@ -95,100 +97,78 @@ class GateCreator {
     this.evalAllNodePower();
   }
 
-  // Propagate power from board's Inputs in the correct order
-  computeOutputs() {
-    // Store array of unique, connected gates in this.connectedGates
-    const inps = this.paths.inputs;
-    inps.forEach((inp) => {
-      while (inp.returnNext()) {
-        if (inp.parent.constructor.name === 'Gate') {
-          if (this.connectedGates.indexOf(inp.parent) == -1) {
-            this.connectedGates.push(inp.parent);
-          }
-        }
-        inp = inp.returnNext();
-      }
-    });
-
-    // For each gate in the array, calculate which layer it
-    // occupies so we can evaluate them in the correct order
-    this.connectedGates.forEach((g) => {
-      g.setLayer();
-    });
-
-    // Sort gates by layer, low -> high, then evaluate each gate in correct order
-    this.connectedGates.sort((a, b) => a.layer - b.layer);
-    DEBUG.msg('%c========== Gates Sorted by Layer ==========', 'color: #0f3');
-    DEBUG.msg(this.connectedGates);
-    DEBUG.msg('%c===========================================', 'color: #0f3');
+  // DETERMINE BOARD OUTPUT FOR THE CURRENT INPUTS
+  computeOutputsForCurrentInput() {
     this.connectedGates.forEach((gate) => {
       gate.evaluateLogic();
       this.evalAllNodePower();
     });
   }
 
+  // TRANSFER POWER DOWN THE CHAIN OF ALL NODES
   evalAllNodePower() {
     this.board.allNodes.forEach((n) => n.evalPower());
   }
 
-  /**
-   *  Cool as fuck decimal to binary trick to generate permutations for our inputs
-   *
-   * By counting up in decimal and converting the digits to binary
-   * we generate the needed permutations for which inputs are switched on
-   * Example:
-   * 4 inputs: 0000
-   * Possible ON/OFF arrangements is the same as counting up in binary
-   * 0000
-   * 0001
-   * 0010
-   * 0011
-   * etc...*
-   *
-   */
+  // FINDS THE INPUTS AND OUTPUTS THAT ARE CONNECTED
+  findConnectedBoardIO() {
+    DEBUG.logging = false;
+    const connectedIO = {
+      inputs: [],
+      outputs: [],
+    };
+
+    // RECURSIVE FUNCTION FOR NAVIGATING ALL BRANCHES OF CONNECTIONS STARTING FROM AN OUTPUT
+    function traverseLeft(nodes, startNode) {
+      if (startNode == null) startNode = nodes[0];
+
+      nodes.forEach((connectedNode) => {
+        DEBUG.msg(`Looking at ${connectedNode.id}`);
+
+        if (connectedNode.returnPrev()) {
+          let prev = connectedNode.returnPrev();
+          DEBUG.msg(`PREV:`);
+          DEBUG.msg(prev);
+
+          traverseLeft(prev, startNode);
+        } else {
+          // IF WE REACH THE START, STORE THE INPUT AND OUTPUT
+          if (connectedNode.type === 'INPUT') {
+            DEBUG.msg('Reached the start/end');
+
+            if (connectedIO.outputs.indexOf(startNode) === -1) {
+              connectedIO.outputs.push(startNode);
+            }
+            if (connectedIO.inputs.indexOf(connectedNode) === -1) {
+              connectedIO.inputs.push(connectedNode);
+            }
+          }
+        }
+      });
+    }
+
+    this.board.outputs.forEach((outNode) => {
+      traverseLeft([outNode]);
+    });
+
+    this.connectedIO = connectedIO;
+    DEBUG.msg(this.connectedIO);
+    DEBUG.logging = true;
+  }
+
   generatePermutations() {
     const permsCount = 2 ** this.inpCount;
     const permsStrings = [];
 
     for (let i = 0; i < permsCount; i++) {
-      // Convert decimal to binary string  5 => 101
+      // CONVERT DECIMAL TO BINARY STRING  5 => 101
       let val = i.toString(2);
-      // Add leading zeroes to match the amount of inputs
+      // ADD LEADING ZEROES TO MATCH THE AMOUNT OF INPUTS
       val = val.padStart(this.inpCount, '0');
-      // Add to array
+      // ADD TO ARRAY
       permsStrings.push(val);
     }
 
     return permsStrings;
-  }
-
-  /**
-   *
-   *  Abusing the fact that sets can only contain unique values. 😎
-   *
-   * Generate a random permutation
-   * set.add(randomPerm)
-   * repeat enough times that we totally 100% for sure 😉 have all permutations
-   *
-   */
-  generatePermutationsWACKY(w) {
-    const set = new Set();
-    const width = w ?? 1;
-
-    // Just a big loop
-    for (let i = 0; i < width * 10; i++) {
-      let str = '';
-
-      // Generate random permutation
-      for (let i = 0; i < width; i++) {
-        let digit = Math.random() > 0.5 ? '1' : '0';
-        str += digit;
-      }
-
-      // Try to add to set
-      set.add(str);
-    }
-
-    DEBUG.msg(set);
   }
 }

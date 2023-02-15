@@ -18,6 +18,10 @@ class Gate {
     this.init();
   }
 
+  areNodesFull() {
+    return this.areInputsFull() && this.areOutputsFull();
+  }
+
   areInputsFull() {
     return this.gateInputs.every((inpNode) => inpNode.prev);
   }
@@ -135,8 +139,6 @@ class Gate {
         });
       });
     } else {
-      // FIXME: DONE: Moved evaluateLogic() call from every frame to only when mouse is released,
-      // could do better I think, but just needed quick fix
       this.gateOutputs.forEach((outNode) => {
         outNode.next.forEach((connectedNode) => {
           connectedNode.setPower(false);
