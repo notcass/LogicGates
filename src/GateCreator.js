@@ -112,10 +112,6 @@ class GateCreator {
 
   // FINDS THE INPUTS AND OUTPUTS THAT ARE CONNECTED
   findConnectedBoardIO() {
-<<<<<<< HEAD
-    DEBUG.logging = false;
-=======
->>>>>>> master
     const connectedIO = {
       inputs: [],
       outputs: [],
@@ -156,10 +152,6 @@ class GateCreator {
 
     this.connectedIO = connectedIO;
     DEBUG.msg(this.connectedIO);
-<<<<<<< HEAD
-    DEBUG.logging = true;
-=======
->>>>>>> master
   }
 
   generatePermutations() {
