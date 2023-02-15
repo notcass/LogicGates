@@ -23,6 +23,10 @@ class Node {
     this.power = !this.power;
   }
 
+  switchState() {
+    this.power = !this.power;
+  }
+
   setColors() {
     strokeWeight(6);
     this.power ? stroke(COLORS.ON_RED) : stroke(COLORS.WHITE);
