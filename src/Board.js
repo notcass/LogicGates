@@ -247,8 +247,8 @@ class Board {
         this.allNodes.forEach((n) => n.show());
         // Draw trash square
         strokeWeight(10);
-        stroke(255, 125, 0, 50);
-        fill(255, 125, 0, 50);
+        stroke(255, 27, 39, 80);
+        fill(255, 27, 39, 80);
         rect(this.x + this.w - 100, this.y + 4, 95, 100, this.borderRadius);
     }
 
@@ -264,7 +264,6 @@ class Board {
                     node.type === 'OUTPUT' ||
                     doubleClicked
                 ) {
-                    console.log('Removing connections from clicked node');
                     this.removeConnections(node);
                 }
 
@@ -440,6 +439,15 @@ class Board {
         btnCreate.addEventListener('click', (e) => {
             this.createGateFromState(createText.value);
         });
+        const btnSave = document.querySelector('#button-save');
+        btnSave.addEventListener('click', (e) => {
+            this.saveTemplates();
+        });
+
+        const btnLoad = document.querySelector('#button-load');
+        btnLoad.addEventListener('click', (e) => {
+            this.loadTemplates();
+        });
 
         for (const gate in this.gateTemplates) {
             this.createButton(this.gateTemplates[gate].label);
@@ -472,5 +480,43 @@ class Board {
 
     getNextGateId() {
         return this.gateIdCounter++;
+    }
+
+    // TODO: Do this later as a bonus:
+    encodeTemplate() {
+        // Before I found out about using stringify to store objects into localStorage,
+        // I was going to encode the truth table and number of inputs and outputs into a string
+        // the first 2 digits would be inputs and outputs, then it would be the truth table laid out like to
+        // 21000010100111 would be an AND gate, 2 inputs, 1 output, then 00: 0, 01: 0, 10: 0, 11: 1
+        // localStorage.setItem('AND',  '21000010100111' );
+    }
+
+    // Saves templates to localStorage if they don't exist there yet
+    saveTemplates() {
+        console.log('Saving Templates...');
+        for (const t in this.gateTemplates) {
+            localStorage.setItem(t, JSON.stringify(this.gateTemplates[t]));
+        }
+    }
+
+    // Loads localStorage templates into current templates if they don't exist there yet
+    loadTemplates() {
+        console.log('Loading Templates...');
+
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const value = JSON.parse(localStorage[key]);
+
+            // If item in storage is a gate?
+            if (value.truthTable) {
+                // And it doesn't exist in templates
+                if (this.gateTemplates[key] == undefined) {
+                    // Add to templates
+                    this.gateTemplates[key] = value;
+                    // Setup button
+                    this.createButton(key);
+                }
+            }
+        }
     }
 }

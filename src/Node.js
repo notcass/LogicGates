@@ -29,7 +29,7 @@ class Node {
 
     setColors() {
         strokeWeight(6);
-        this.power ? stroke(COLORS.ON_RED) : stroke(COLORS.WHITE);
+        this.power ? stroke(COLORS.ON_RED) : stroke(COLORS.LIGHT_GREY);
         this.power ? fill(COLORS.ON_RED) : fill(COLORS.WHITE);
     }
 

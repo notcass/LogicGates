@@ -28,6 +28,10 @@ button {
     cursor: pointer;
 }
 
+.button.right {
+    float: right;
+}
+
 .delete-LATER {
     background-color: #ff8000;
 }
