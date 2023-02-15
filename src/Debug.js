@@ -96,24 +96,14 @@ class Debug {
 
     LOAD_SETUP(n) {
         if (n === 1) {
-            board = new Board(width, height, 2, 2);
+            board = new Board(width, height, 4, 1);
             const a = board.allNodes;
             board.createGate('NOT');
             board.createGate('NOT');
-            board.gates[1].y = 350;
-
-            // Two AND gates
-            a[0].next = a[4];
-            a[4].prev = a[0];
-
-            a[5].next = a[2];
-            a[2].prev = a[5];
-
-            a[1].next = a[6];
-            a[6].prev = a[1];
-
-            a[7].next = a[3];
-            a[3].prev = a[7];
+            board.gates[0].x = 300;
+            board.gates[0].y = 280;
+            board.gates[1].x = 300;
+            board.gates[1].y = 430;
         }
         if (n === 2) {
             board = new Board(width, height, 3, 2);

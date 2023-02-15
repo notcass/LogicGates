@@ -1,8 +1,8 @@
 class Gate {
     constructor(_args, _parent, _id) {
         this.label = _args.label;
-        this.x = _args.x;
-        this.y = _args.y;
+        this.x = _args.x ?? 0;
+        this.y = _args.y ?? 0;
         this.w = 150; // 150;
         this.h = 100; //90;
         this.cSize = 29;

@@ -30,13 +30,11 @@ function setup() {
 }
 
 function resetSketch() {
-    board = new Board(width, height, 3, 1);
-    board.createGate('NOT');
-    board.createGate('AND');
+    // board = new Board(width, height, 3, 1);
 
     //========== DEBUGGING/TESTING ==========
     DEBUG = new Debug();
-    //   DEBUG.LOAD_SETUP(12);
+    DEBUG.LOAD_SETUP(1);
 }
 
 function draw() {

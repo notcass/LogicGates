@@ -41,8 +41,6 @@ class Board {
         this.gateTemplates = {
             NOT: {
                 label: 'NOT',
-                x: 200,
-                y: 200,
                 gateInputs: 1,
                 gateOutputs: 1,
                 truthTable: {
@@ -52,8 +50,6 @@ class Board {
             },
             AND: {
                 label: 'AND',
-                x: 500,
-                y: 270,
                 gateInputs: 2,
                 gateOutputs: 1,
                 truthTable: {
@@ -63,6 +59,30 @@ class Board {
                     '11': '1',
                 },
             },
+            NAND: {
+                label: 'NAND',
+                gateInputs: 2,
+                gateOutputs: 1,
+                truthTable: {
+                    '00': '1',
+                    '01': '1',
+                    '10': '1',
+                    '11': '0',
+                },
+            },
+            OR: {
+                label: 'OR',
+                gateInputs: 2,
+                gateOutputs: 1,
+                truthTable: {
+                    '00': '0',
+                    '01': '1',
+                    '10': '1',
+                    '11': '1',
+                },
+            },
+
+
         };
         this.setupEventListeners();
         this.init();
@@ -154,9 +174,6 @@ class Board {
 
                 const newGate = {
                     label: label,
-                    //TODO: Currently spawning offscreen as a bandaid fix
-                    x: width,
-                    y: height,
                     truthTable: newTable,
                     gateInputs: this.maker.inpCount,
                     gateOutputs: this.maker.outCount,
@@ -164,17 +181,7 @@ class Board {
                 this.createGate(newGate);
 
                 // ADD NEW BUTTON TO BOTTOM OF BOARD
-                const btnHolder = document.querySelector('#button-holder');
-                const newBtn = document.createElement('button');
-
-                newBtn.innerText = label;
-                // const labelWidth = textWidth(newGate.label);
-                newBtn.style = `width:${textWidth(newGate.label) + 50}px;`;
-                newBtn.classList.add('button');
-                newBtn.addEventListener('mousedown', (e) => {
-                    this.createGate(label, true);
-                });
-                btnHolder.insertAdjacentElement('beforeend', newBtn);
+                this.createButton(newGate.label);
 
                 // Clear Board after making new gate
                 this.init();
@@ -434,13 +441,23 @@ class Board {
             this.createGateFromState(createText.value);
         });
 
-        const btnAND = document.querySelector('#button-AND');
-        const btnNOT = document.querySelector('#button-NOT');
-        btnNOT.addEventListener('mousedown', (e) => {
-            this.createGate('NOT', true);
-        });
-        btnAND.addEventListener('mousedown', (e) => {
-            this.createGate('AND', true);
+        for (const gate in this.gateTemplates) {
+            this.createButton(this.gateTemplates[gate].label);
+        }
+    }
+
+    createButton(label) {
+        const newBtn = document.createElement('div');
+        const str = `<button class="button" id="button-${label}" type="button">
+        <span class="text">${label}</span>
+        </button>`;
+        newBtn.innerHTML = str;
+
+        const btnHolder = document.querySelector('#button-holder');
+        btnHolder.insertAdjacentElement('beforeend', newBtn.firstChild);
+
+        btnHolder.lastChild.addEventListener('mousedown', (e) => {
+            this.createGate(label, true);
         });
     }
 

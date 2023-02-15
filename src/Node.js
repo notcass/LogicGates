@@ -4,8 +4,8 @@ class Node {
         this.type = _type; // INPUT, OUTPUT, GATE_INPUT, GATE_OUTPUT
         this.id = _id;
         this.size = _parent.cSize ?? 40;
-        this.x = _x ?? 0;
-        this.y = _y ?? 0;
+        this.x = _x ?? -500;
+        this.y = _y ?? -500;
         this.index = _index; // The nodes index in it's board's relavent holder array
         this.drawingToMouse = false;
         this.next = []; // Next Node
