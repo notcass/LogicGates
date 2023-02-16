@@ -1,23 +1,6 @@
 class Board {
-    /*
-
-    *** NOTE TO SELF: DON'T REMOVE THE PRETTIER-IGNORE ABOVE CONSTRUCTOR ***
-
-    Without it, the gateTemplate's truthTable's KEYS, will have their
-    quotations removed. Turning them from strings to numbers
-    before:
-        truthTable: {
-            '0': '1',
-            '1': '0',
-        },
-
-    after:
-        truthTable: {
-            0: '1',
-            1: '0',
-        },
-    */
-    //prettier-ignore
+    // Don't remove this prettier-ignore
+    // prettier-ignore
     constructor(w, h, inputs, outputs) {
         this.label = 'Board';
         this.x = w / 25;
@@ -105,6 +88,7 @@ class Board {
                 new InputNode(this, 'INPUT', x, y, this.getNextNodeId(), i)
             );
 
+            // CLEAN: add a createpowerbutton function
             // Power Button
             const button = {
                 x: x - 47,
@@ -282,8 +266,6 @@ class Board {
 
     // Stop any mouse movement animations
     mouseUp() {
-        this.draggingGate = null;
-
         this.stopDrawingToMouse();
 
         // If we're currently drawing a line from a source node to mouse
@@ -291,25 +273,20 @@ class Board {
             this.connectNodes();
         }
 
-        // Check for any gates in the trash square
+        // Trash square coords
         let x = this.x + this.w - 50;
         let y = this.y + 50;
-        let delIndex = -1;
-        this.gates.forEach((g, index) => {
-            let gx = g.x + g.w / 2;
-            let gy = g.y + g.h / 2;
-            if (dist(x, y, gx, gy) < 60) {
-                delIndex = index;
-            }
-        });
 
-        this.pruneGate(delIndex);
+        // If mouse is in the trash square, prune the dragging gate if there is one
+        if (dist(mouseX, mouseY, x, y) < 100) {
+            this.pruneGate(this.draggingGate);
+        }
+
+        this.draggingGate = null;
         this.gates.forEach((g) => {
             g.evaluateLogic();
         });
     }
-
-    mouseMoved() {}
 
     pruneGate(index) {
         let gate = this.gates[index];
@@ -480,6 +457,17 @@ class Board {
 
     getNextGateId() {
         return this.gateIdCounter++;
+    }
+
+    getNodeFromId(id) {
+        let a = null;
+        for (const n of this.allNodes) {
+            if (n.id === id) {
+                a = n;
+                break;
+            }
+        }
+        return a;
     }
 
     // TODO: Do this later as a bonus:

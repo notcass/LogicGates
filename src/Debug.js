@@ -314,6 +314,10 @@ class Debug {
             const a = board.allNodes;
             board.createGate('NOT');
             board.createGate('AND');
+            board.gates[0].x = 250;
+            board.gates[0].y = 200;
+            board.gates[1].x = 600;
+            board.gates[1].y = 330;
             a[0].next[0] = a[5];
             a[5].prev = a[0];
             a[6].next[0] = a[7];

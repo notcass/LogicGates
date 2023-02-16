@@ -14,9 +14,9 @@ class Node {
     }
 
     setPower(bool) {
-        this.power = bool;
-        // console.log(`Node ${this.id} power set to ${bool}`);
-        // console.trace();
+        if (bool != this.power) {
+            this.power = bool;
+        }
     }
 
     switchState() {

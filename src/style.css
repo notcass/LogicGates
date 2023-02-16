@@ -10,6 +10,10 @@ body {
     margin-top: 3%;
 }
 
+#button-holder {
+    margin-top: -60px;
+}
+
 #button-holder > .button {
     margin-top: 10px;
     float: right;

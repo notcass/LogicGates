@@ -30,17 +30,17 @@ function setup() {
 }
 
 function resetSketch() {
-    // board = new Board(width, height, 3, 1);
+    board = new Board(width, height, 8, 8);
 
     //========== DEBUGGING/TESTING ==========
     DEBUG = new Debug();
-    DEBUG.LOAD_SETUP(1);
+    // DEBUG.LOAD_SETUP(12);
 }
 
 function draw() {
     board.runApp();
-    //   DEBUG.SHOW_NODE_INFO();
-    //   DEBUG.SHOW_GATE_INFO();
+    // DEBUG.SHOW_NODE_INFO();
+    // DEBUG.SHOW_GATE_INFO();
 }
 
 function keyPressed() {
