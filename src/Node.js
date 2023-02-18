@@ -7,7 +7,6 @@ class Node {
         this.x = _x ?? -500;
         this.y = _y ?? -500;
         this.index = _index; // The nodes index in it's board's relavent holder array
-        this.drawingToMouse = false;
         this.next = []; // Next Node
         this.prev = null; // Prev Node
         this.power = false;
@@ -51,12 +50,6 @@ class Node {
         noStroke();
         // fill(255, 0, 255);
         circle(this.x, this.y, this.size);
-
-        // Line from node to mouse
-        if (this.drawingToMouse) {
-            this.setColors();
-            line(this.x, this.y, mouseX, mouseY);
-        }
 
         // Line from node to node
         if (this.next.length > 0) {

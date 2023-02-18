@@ -16,7 +16,7 @@ class Board {
         this.gates = []; // All gates on the board
         this.gateIdCounter = 0;
         this.nodeIdCounter = 0;
-        this.draggingGate = null; // Boolean
+        this.draggingGate = null; // Index of gate
         this.sourceNode = null; // Node we are drawing from
         this.allNodes = []; // All nodes on all gates in one array
         this.maker;
@@ -88,7 +88,7 @@ class Board {
                 new InputNode(this, 'INPUT', x, y, this.getNextNodeId(), i)
             );
 
-            // CLEAN: add a createpowerbutton function
+            // CLEAN: add a createpowerbutton function to reduce nesting here?
             // Power Button
             const button = {
                 x: x - 47,
@@ -146,7 +146,11 @@ class Board {
         this.allNodes.forEach((node) => {
             node.evalPower();
         });
+        // Draw connections to mouse
+        this.drawToMouse();
     }
+
+    drawToMouse() {}
 
     createGateFromState(label) {
         label = label.toUpperCase();
@@ -199,28 +203,26 @@ class Board {
             }
         });
 
-        // Drag gates
         if (!this.isDrawingToMouse()) {
-            if (this.draggingGate == null) {
-                if (mouseIsPressed) {
-                    this.gates.forEach((g, index) => {
-                        if (mouseX > g.x && mouseX < g.x + g.w) {
-                            if (mouseY > g.y && mouseY < g.y + g.h) {
-                                this.draggingGate = index;
-                            }
-                        }
-                    });
-                }
-            } else {
-                let gate = this.gates[this.draggingGate];
+            this.dragGate();
+        }
+    }
 
-                gate.x = mouseX - gate.w / 2;
-                gate.y = mouseY - gate.h / 2;
-                gate.x = constrain(gate.x, this.x, this.w + this.x - gate.w);
-                gate.y = constrain(gate.y, this.y, this.h + this.y - gate.h);
-
-                // gate.show(); // Ensure gate that is being moved is always drawn last (on top)
+    dragGate() {
+        // Drag gates
+        if (this.draggingGate == null) {
+            if (mouseIsPressed) {
+                this.gates.forEach((g, index) => {
+                    if (g.isMouseHovering()) this.draggingGate = index;
+                });
             }
+        } else {
+            const gate = this.gates[this.draggingGate];
+
+            gate.x = mouseX - gate.w / 2;
+            gate.y = mouseY - gate.h / 2;
+            gate.x = constrain(gate.x, this.x, this.w + this.x - gate.w);
+            gate.y = constrain(gate.y, this.y, this.h + this.y - gate.h);
         }
     }
 
@@ -234,6 +236,14 @@ class Board {
         stroke(255, 27, 39, 80);
         fill(255, 27, 39, 80);
         rect(this.x + this.w - 100, this.y + 4, 95, 100, this.borderRadius);
+        // Draw connections from node to mouse
+        if (this.sourceNode) {
+            strokeWeight(6);
+            this.sourceNode.power
+                ? stroke(COLORS.ON_RED)
+                : stroke(COLORS.LIGHT_GREY);
+            line(this.sourceNode.x, this.sourceNode.y, mouseX, mouseY);
+        }
     }
 
     mouseDown() {
@@ -251,8 +261,6 @@ class Board {
                     this.removeConnections(node);
                 }
 
-                // Set drawing flag
-                node.drawingToMouse = true;
                 this.sourceNode = node;
                 this.lastMouseClick = frameCount;
                 break;
@@ -266,12 +274,12 @@ class Board {
 
     // Stop any mouse movement animations
     mouseUp() {
-        this.stopDrawingToMouse();
-
         // If we're currently drawing a line from a source node to mouse
         if (this.sourceNode) {
             this.connectNodes();
         }
+
+        this.stopDrawingToMouse();
 
         // Trash square coords
         let x = this.x + this.w - 50;
@@ -305,15 +313,7 @@ class Board {
     }
 
     stopDrawingToMouse() {
-        // Stop drawing lines from GATE_INPUTS and GATE_OUTPUTS
-        this.gates.forEach((g) => {
-            g.gateInputs.forEach((inpNode) => (inpNode.drawingToMouse = false));
-            g.gateOutputs.forEach(
-                (outNode) => (outNode.drawingToMouse = false)
-            );
-        });
-        //Stop drawing lines from INPUTS and OUTPUTS
-        this.allNodes.forEach((node) => (node.drawingToMouse = false));
+        this.sourceNode = null;
     }
 
     connectNodes() {
@@ -426,8 +426,27 @@ class Board {
             this.loadTemplates();
         });
 
+        const btnClearSaved = document.querySelector('#button-clear-saved');
+        btnClearSaved.addEventListener('click', (e) => {
+            this.clearTemplates();
+        });
+
         for (const gate in this.gateTemplates) {
             this.createButton(this.gateTemplates[gate].label);
+        }
+    }
+
+    clearTemplates() {
+        // GET CONFIRMATION
+        const confirmDelete = confirm(
+            ' Are you sure you want to delete any saved gate templates?'
+        );
+
+        if (confirmDelete) {
+            console.log('Clearing templates');
+            window.localStorage.clear();
+        } else {
+            console.log('Aborting');
         }
     }
 
@@ -448,7 +467,7 @@ class Board {
 
     // Returns TRUE as soon as we find a node that IS being drawn from
     isDrawingToMouse() {
-        return !this.allNodes.every((node) => !node.drawingToMouse);
+        return this.sourceNode != null;
     }
 
     getNextNodeId() {

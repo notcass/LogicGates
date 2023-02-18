@@ -76,6 +76,11 @@ button:hover {
     border-radius: 5px;
     border: none;
 }
+
+#button-clear-saved {
+    width: 50px;
+    font-size: 10px;
+}
 a {
     color: blanchedalmond;
 }

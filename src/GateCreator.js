@@ -19,7 +19,7 @@ class GateCreator {
         /*
         To figure out the correct output for each permutation, we
         need to do the following:
-    */
+        */
 
         /* Figure out which gates are fully connected */
         this.connectedGates = [];
@@ -28,10 +28,9 @@ class GateCreator {
         });
 
         /* Set layers for each gate, then sort them */
-        //prettier-ignore
         this.connectedGates.forEach((gate) => {
-        gate.setLayer();
-      });
+            gate.setLayer();
+        });
         this.connectedGates.sort((a, b) => a.layer - b.layer);
 
         /* Compute output value for each permutation */

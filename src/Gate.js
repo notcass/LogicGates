@@ -30,6 +30,15 @@ class Gate {
         return this.gateOutputs.every((outNode) => outNode.next.length > 0);
     }
 
+    isMouseHovering() {
+        if (mouseX > this.x && mouseX < this.x + this.w) {
+            if (mouseY > this.y && mouseY < this.y + this.h) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     init() {
         const input_count = this.gateInputs.length;
         const output_count = this.gateOutputs.length;
