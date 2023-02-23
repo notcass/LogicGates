@@ -152,9 +152,7 @@ class Gate {
             });
         } else {
             this.gateOutputs.forEach((outNode) => {
-                outNode.next.forEach((connectedNode) => {
-                    connectedNode.setPower(false);
-                });
+                outNode.setPower(false);
             });
         }
     }
