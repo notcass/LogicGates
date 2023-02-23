@@ -12,7 +12,7 @@ class GateCreator {
     }
 
     makeTable() {
-        /* Generate Input Permutations */
+        // Generate Input Permutations
         const permStrings = this.generatePermutations();
         let tTable = {};
 
@@ -20,26 +20,46 @@ class GateCreator {
         To figure out the correct output for each permutation, we
         need to do the following:
         */
-
-        /* Figure out which gates are fully connected */
+        // Reset connected gates
         this.connectedGates = [];
+        // Figure out which gates are fully connected
         this.connectedIO.inputs.forEach((inpNode) => {
+            // Add all connected gates to the array
             this.setConnectedGates(inpNode);
         });
 
-        /* Set layers for each gate, then sort them */
+        // Set each gate to it's highest layer, then sort
         this.connectedGates.forEach((gate) => {
             gate.setLayer();
         });
         this.connectedGates.sort((a, b) => a.layer - b.layer);
 
-        /* Compute output value for each permutation */
+        // Compute output value for each permutation
         tTable = this.calcPermutationOutputs(permStrings);
         console.log(tTable);
 
+        // Return the truth table
         return tTable;
     }
 
+    generatePermutations() {
+        const permsCount = 2 ** this.inpCount;
+        const permsStrings = [];
+
+        // COUNT UP TO THE AMOUNT OF PERMUTATIONS
+        for (let i = 0; i < permsCount; i++) {
+            // CONVERT DECIMAL TO BINARY STRING  5 => 101
+            let val = i.toString(2);
+            // ADD LEADING ZEROES TO MATCH THE AMOUNT OF INPUTS
+            val = val.padStart(this.inpCount, '0');
+            // ADD TO ARRAY
+            permsStrings.push(val);
+        }
+
+        return permsStrings;
+    }
+
+    //
     calcPermutationOutputs(permStrings) {
         const tTable = {};
         permStrings.forEach((p) => {
@@ -57,8 +77,8 @@ class GateCreator {
     }
 
     // STORE ANY GATES THAT ARE FULLY CONNECTED TO INPUT & OUTPUT IN THE ARRAY
-    setConnectedGates(input) {
-        const current = input;
+    setConnectedGates(input_node) {
+        const current = input_node;
         const nextNodes = current.returnNext();
         DEBUG.msg(`%c========================================`, 'color: #c3f');
         DEBUG.msg(current);
@@ -152,21 +172,5 @@ class GateCreator {
 
         this.connectedIO = connectedIO;
         DEBUG.msg(this.connectedIO);
-    }
-
-    generatePermutations() {
-        const permsCount = 2 ** this.inpCount;
-        const permsStrings = [];
-
-        for (let i = 0; i < permsCount; i++) {
-            // CONVERT DECIMAL TO BINARY STRING  5 => 101
-            let val = i.toString(2);
-            // ADD LEADING ZEROES TO MATCH THE AMOUNT OF INPUTS
-            val = val.padStart(this.inpCount, '0');
-            // ADD TO ARRAY
-            permsStrings.push(val);
-        }
-
-        return permsStrings;
     }
 }

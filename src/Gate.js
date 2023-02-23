@@ -3,8 +3,8 @@ class Gate {
         this.label = _args.label;
         this.x = _args.x ?? 0;
         this.y = _args.y ?? 0;
-        this.w = 150; // 150;
-        this.h = 100; //90;
+        this.w = 150;
+        this.h = 100;
         this.cSize = 29;
         this.parent = _parent;
         this.id = _id;
@@ -28,6 +28,11 @@ class Gate {
 
     areOutputsFull() {
         return this.gateOutputs.every((outNode) => outNode.next.length > 0);
+    }
+
+    setPos(x, y) {
+        this.x = x;
+        this.y = y;
     }
 
     isMouseHovering() {
@@ -101,14 +106,15 @@ class Gate {
         const outDivider = this.h / (output_count + 1);
 
         this.gateInputs.forEach((inpNode, index) => {
-            inpNode.x = this.x;
-            inpNode.y = this.y + inDivider + index * inDivider;
+            inpNode.setPos(this.x, this.y + inDivider + index * inDivider);
             inpNode.show();
         });
 
         this.gateOutputs.forEach((outNode, index) => {
-            outNode.x = this.x + this.w;
-            outNode.y = this.y + outDivider + index * outDivider;
+            outNode.setPos(
+                this.x + this.w,
+                this.y + outDivider + index * outDivider
+            );
             outNode.show();
         });
     }
@@ -120,8 +126,7 @@ class Gate {
             mouseY > this.parent.y && mouseY < this.parent.y + this.parent.h;
 
         if (mouseIsPressed || (!x && !y)) {
-            this.x = mouseX - this.w / 2;
-            this.y = mouseY - this.h / 2;
+            this.setPos(mouseX - this.w / 2, mouseY - this.h / 2);
         } else {
             this.stickingToMouse = false;
         }
@@ -130,7 +135,7 @@ class Gate {
     // Compute gate logic from truth table
     evaluateLogic() {
         // Only check if all the nodes are occupied
-        if (this.areInputsFull() && this.areOutputsFull()) {
+        if (this.areNodesFull()) {
             // Create string representation of current inputs
             let inputPermutation = '';
             this.gateInputs.forEach((inpNode) => {
@@ -146,11 +151,11 @@ class Gate {
                 outNode.setPower(outputBool);
                 outNode.next.forEach((connectedNode) => {
                     // Propagate the power value
-
                     connectedNode.setPower(outputBool);
                 });
             });
         } else {
+            // Switch outputs off if gate nodes are not full
             this.gateOutputs.forEach((outNode) => {
                 outNode.setPower(false);
             });
@@ -169,7 +174,7 @@ class Gate {
             'color: #f80'
         );
 
-        // Count gates to the start for each input node on this gate
+        // Count the amount of gates to the left of each input node
         this.gateInputs.forEach((inpNode) => {
             DEBUG.msg(
                 `%c========== STARTING NODE: ${inpNode.id} ==========`,

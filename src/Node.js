@@ -12,6 +12,11 @@ class Node {
         this.power = false;
     }
 
+    setPos(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
     setPower(bool) {
         if (bool != this.power) {
             this.power = bool;
@@ -32,6 +37,8 @@ class Node {
         this.power ? fill(COLORS.ON_RED) : fill(COLORS.WHITE);
     }
 
+    // IF THE NODE IS A BOARD INPUT OR A GATE OUTPUT
+    // THEN SEND THE POWER TO THE NEXT NODE
     evalPower() {
         if (this.type === 'INPUT' || this.type === 'GATE_OUTPUT') {
             if (this.next.length > 0) {

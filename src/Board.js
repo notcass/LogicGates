@@ -1,5 +1,5 @@
 class Board {
-    // Don't remove this prettier-ignore
+    // Don't remove this prettier-ignore line
     // prettier-ignore
     constructor(w, h, inputs, outputs) {
         this.label = 'Board';
@@ -82,8 +82,8 @@ class Board {
         // Input Nodes
         let divider = height / (this.inpCount + 1);
         for (let i = 0; i < this.inpCount; i++) {
-            let x = this.x + 30;
-            let y = divider + i * divider;
+            const x = this.x + 30;
+            const y = divider + i * divider;
             this.inputs.push(
                 new InputNode(this, 'INPUT', x, y, this.getNextNodeId(), i)
             );
@@ -118,8 +118,8 @@ class Board {
         // Output Nodes
         divider = height / (this.outCount + 1);
         for (let i = 0; i < this.outCount; i++) {
-            let x = this.x + this.w;
-            let y = divider + i * divider;
+            const x = this.x + this.w;
+            const y = divider + i * divider;
             this.outputs.push(
                 new OutputNode(this, 'OUTPUT', x, y, this.getNextNodeId(), i)
             );
@@ -218,9 +218,10 @@ class Board {
             }
         } else {
             const gate = this.gates[this.draggingGate];
+            gate.setPos(mouseX - gate.w / 2, mouseY - gate.h / 2);
 
-            gate.x = mouseX - gate.w / 2;
-            gate.y = mouseY - gate.h / 2;
+            // The only time a gate is moving is when it is being dragged,
+            // so we only care about constraining the gate in this method
             gate.x = constrain(gate.x, this.x, this.w + this.x - gate.w);
             gate.y = constrain(gate.y, this.y, this.h + this.y - gate.h);
         }
@@ -282,8 +283,8 @@ class Board {
         this.stopDrawingToMouse();
 
         // Trash square coords
-        let x = this.x + this.w - 50;
-        let y = this.y + 50;
+        const x = this.x + this.w - 50;
+        const y = this.y + 50;
 
         // If mouse is in the trash square, prune the dragging gate if there is one
         if (dist(mouseX, mouseY, x, y) < 100) {
@@ -395,7 +396,6 @@ class Board {
         if (node.prev) {
             if (node.prev.type !== 'INPUT') node.prev.setPower(false);
             if (node.type !== 'INPUT') node.setPower(false);
-            // nodeA.prev.next = null;
             node.prev.next = node.prev.next.filter(
                 (connectedNode) => connectedNode !== node
             );
