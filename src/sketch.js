@@ -30,7 +30,7 @@ function setup() {
 }
 
 function resetSketch() {
-    board = new Board(width, height, 8, 8);
+    board = new Board(width, height, 8, 5);
 
     //========== DEBUGGING/TESTING ==========
     DEBUG = new Debug();
